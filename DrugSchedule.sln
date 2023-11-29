@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34316.72
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrugSchedule.Api", "DrugSchedule.Api\DrugSchedule.Api.csproj", "{CC89CD1F-D3EB-471D-A062-28C4918851F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrugSchedule.Shared", "DrugSchedule.Shared\DrugSchedule.Shared.csproj", "{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AAA99217-685C-4073-B81E-E7D0DCF77676}
+	EndGlobalSection
+EndGlobal
