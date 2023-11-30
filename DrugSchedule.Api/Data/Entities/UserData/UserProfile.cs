@@ -1,4 +1,4 @@
-﻿using DrugSchedule.Api.Data.Entities.UserData;
+﻿using DrugSchedule.Api.Data.Entities.Schedule;
 
 namespace DrugSchedule.Api.Data;
 
@@ -17,4 +17,8 @@ public class UserProfile
     public List<UserMedicament> UserMedicaments { get; set; } = new();
 
     public List<MedicamentTakingSchedule> MedicamentTakingSchedules { get; set; } = new();
+
+    public List<Repeat> TakingRepeats { get; set; } = new();
+
+    public List<UserProfileContact> Contacts { get; set; } = new();
 }

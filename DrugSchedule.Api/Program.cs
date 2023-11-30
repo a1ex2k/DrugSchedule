@@ -1,24 +1,39 @@
+using DrugSchedule.Api.Data;
+using DrugSchedule.Api.Services.DrugSchedule;
+using DrugSchedule.Api.Services.FileStorage;
+using DrugSchedule.Api.Services.Users;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+
+builder.Services.AddDbContextPool<DrugScheduleContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"));
+
+#if DEBUG
+    options.EnableSensitiveDataLogging();
+    options.EnableDetailedErrors();
+#endif
+});
+
+builder.Services.AddScoped<IDrugScheduleService, DrugScheduleService>();
+builder.Services.AddScoped<IDrugScheduleService, DrugScheduleService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFileStorageService, LocalFileSystemStorageService>();
+
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
-
-//app.UseAuthorization();
 
 app.MapControllers();
 

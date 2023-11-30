@@ -1,6 +1,4 @@
-﻿using DrugSchedule.Api.Data.Entities.UserData;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using DrugSchedule.Api.Data.Entities.Schedule;
 
 namespace DrugSchedule.Api.Data;
 
@@ -12,17 +10,15 @@ public class MedicamentTakingSchedule
 
     public UserProfile UserProfile { get; set; }
 
-    public int? MedicamentId { get; set; }
-
-    public Medicament? Medicament { get; set; }
-
-    public int? UserMedicamentId { get; set; }
+    public long? UserMedicamentId { get; set; }
 
     public UserMedicament? UserMedicament { get; set; }
 
-    public required string Information { get; set; }
+    public string? Information { get; set; }
 
     public required DateTime CreationTime { get; set; }
 
-    public List<Repeat> TakingRepeats { get; set; } = new();
+    public List<ScheduleRepeat> RepeatSchedules { get; set; } = new();
+
+    public List<UserProfileContact> SharedWith { get; set; } = new();
 }

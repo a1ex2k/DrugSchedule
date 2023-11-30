@@ -6,9 +6,11 @@ public class TakingСonfirmation
 
     public required DateTime DateTime { get; set; }
 
-    public required byte[] Image { get; set; }
+    public required Guid ImageGuid { get; set; }
 
-    public long? ComputedScheduleId { get; set; }
+    public string Text { get; set; }
 
-    public ScheduledRepeat? ComputedScheduleRepeat { get; set; }
+    public long? ScheduleRepeatId { get; set; }
+
+    public ScheduleRepeat? ScheduleRepeat { get; set; }
 }

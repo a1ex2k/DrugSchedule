@@ -1,14 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-
-namespace DrugSchedule.Api.Data.Entities.UserData;
+﻿namespace DrugSchedule.Api.Data.Entities.Schedule;
 
 public class UserMedicament
 {
     public long Id { get; set; }
 
-    public required string Name { get; set; }
+    public int? BasedOnMedicamentId { get; set; }
+
+    public Medicament? BasedOnMedicament { get; set; }
+
+    public string? Name { get; set; }
 
     public int? PackQuantity { get; set; }
 
