@@ -3,9 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrugSchedule.Api", "DrugSchedule.Api\DrugSchedule.Api.csproj", "{CC89CD1F-D3EB-471D-A062-28C4918851F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api", "DrugSchedule.Api\DrugSchedule.Api.csproj", "{CC89CD1F-D3EB-471D-A062-28C4918851F0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DrugSchedule.Shared", "DrugSchedule.Shared\DrugSchedule.Shared.csproj", "{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.SqlServer", "DrugSchedule.SqlServer\DrugSchedule.SqlServer.csproj", "{195240E0-93FB-4109-81F2-A3AB95F162FE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.StorageContract", "DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj", "{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.BusinessLogic", "DrugSchedule.Services\DrugSchedule.BusinessLogic.csproj", "{2599A001-8AF7-482B-ACA1-5CFE70166687}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api.Shared", "DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj", "{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +23,22 @@ Global
 		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC89CD1F-D3EB-471D-A062-28C4918851F0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{51E6DDEC-2BBE-4C9B-95BE-6B5BF6E13202}.Release|Any CPU.Build.0 = Release|Any CPU
+		{195240E0-93FB-4109-81F2-A3AB95F162FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{195240E0-93FB-4109-81F2-A3AB95F162FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{195240E0-93FB-4109-81F2-A3AB95F162FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{195240E0-93FB-4109-81F2-A3AB95F162FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2599A001-8AF7-482B-ACA1-5CFE70166687}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2599A001-8AF7-482B-ACA1-5CFE70166687}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2599A001-8AF7-482B-ACA1-5CFE70166687}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2599A001-8AF7-482B-ACA1-5CFE70166687}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

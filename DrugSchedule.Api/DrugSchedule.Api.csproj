@@ -8,19 +8,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-    <PackageReference Include="OneOf" Version="3.0.263" />
-    <PackageReference Include="OneOf.SourceGenerator" Version="3.0.263" />
+    
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Controllers\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj" />
+    <ProjectReference Include="..\DrugSchedule.Services\DrugSchedule.BusinessLogic.csproj" />
+    <ProjectReference Include="..\DrugSchedule.SqlServer\DrugSchedule.SqlServer.csproj" />
+    <ProjectReference Include="..\DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj" />
   </ItemGroup>
 
 </Project>
