@@ -21,6 +21,7 @@
     <ProjectReference Include="..\DrugSchedule.Services\DrugSchedule.BusinessLogic.csproj" />
     <ProjectReference Include="..\DrugSchedule.SqlServer\DrugSchedule.SqlServer.csproj" />
     <ProjectReference Include="..\DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj" />
+    <ProjectReference Include="..\FileStorage\DrugSchedule.FileStorage.csproj" />
   </ItemGroup>
 
 </Project>

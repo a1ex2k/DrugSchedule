@@ -1,0 +1,172 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.FileInfo">
+    <Position X="0.5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAgAAAACAAAAAAAAAABAAAAAAQAABAAAA=</HashCode>
+      <FileName>Data\Entities\Files\File.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.Manufacturer">
+    <Position X="6.75" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\Medicaments\Manufacturer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.Medicament">
+    <Position X="3.75" Y="0.5" Width="2" />
+    <AssociationLine Name="ReleaseForm" Type="DrugSchedule.SqlServer.Data.Entities.MedicamentReleaseForm" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.75" Y="2.25" />
+        <Point X="5.666" Y="2.25" />
+        <Point X="5.666" Y="2.223" />
+        <Point X="10.125" Y="2.223" />
+        <Point X="10.125" Y="1.796" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAoCAAAAAAAAAAAAAAACAAQAAIEEAAgAAAAAAAAAAIA=</HashCode>
+      <FileName>Data\Entities\Medicaments\Medicament.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ReleaseForm" />
+      <Property Name="Manufacturer" />
+      <Property Name="ImageFileInfo" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.MedicamentReleaseForm">
+    <Position X="9" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\Medicaments\MedicamentReleaseForm.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.MedicamentTakingSchedule">
+    <Position X="7" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQACEAAAAAAAAAAABQAAAAAAAAQAAAAQAAAAgAACAAA=</HashCode>
+      <FileName>Data\Entities\Schedule\MedicamentTakingSchedule.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="SharedWith" />
+      <Property Name="RepeatSchedules" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.Repeat">
+    <Position X="0.5" Y="4" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAGAgAAIAAAAAIABAAAAEAgAAQAAAAAAAAAAAAAAQA=</HashCode>
+      <FileName>Data\Entities\Schedule\Repeat.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.ScheduleRepeat">
+    <Position X="3.75" Y="3.25" Width="2" />
+    <AssociationLine Name="TakingRule" Type="DrugSchedule.SqlServer.Data.Entities.TakingRule" ManuallyRouted="true">
+      <Path>
+        <Point X="3.844" Y="5.123" />
+        <Point X="3.844" Y="5.448" />
+        <Point X="3.667" Y="5.448" />
+        <Point X="3.667" Y="7.469" />
+        <Point X="2.5" Y="7.469" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAGAgAAAAAABAAAAAAAAAAAAAAAAAAAAAIQIAAAAAA=</HashCode>
+      <FileName>Data\Entities\Schedule\ScheduleRepeat.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Repeat" />
+      <Property Name="TakingRule" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.ScheduleShare">
+    <Position X="8.25" Y="8.5" Width="2.75" />
+    <AssociationLine Name="ShareWithProfile" Type="DrugSchedule.SqlServer.Data.Entities.UserProfile" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.625" Y="8.5" />
+        <Point X="10.625" Y="7.583" />
+        <Point X="11.25" Y="7.583" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAEAgAAAAACAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\Schedule\ScheduleShare.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="MedicamentTakingSchedule" />
+      <Property Name="ShareWithProfile" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.TakingRule">
+    <Position X="0.5" Y="7.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>Data\Entities\Schedule\TakingRule.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.TakingСonfirmation">
+    <Position X="4.75" Y="6" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAAAAAAAAAAACAAAAQAAEQAQAAAAACAAAAAA=</HashCode>
+      <FileName>Data\Entities\Schedule\TakingСonfirmation.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ImageFileInfo" />
+      <Property Name="ScheduleRepeat" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.User">
+    <Position X="11.5" Y="8.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAACAAAAAAAQAAAAAAAAAAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\UserData\User.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.UserMedicament">
+    <Position X="11" Y="2" Width="2" />
+    <AssociationLine Name="BasedOnMedicament" Type="DrugSchedule.SqlServer.Data.Entities.Medicament" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="11" Y="2.625" />
+        <Point X="10.935" Y="2.625" />
+        <Point X="10.935" Y="2.625" />
+        <Point X="5.75" Y="2.625" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.214" Y="-0.003" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAICAAAAAAAAAAAABAAQAQYAAIAAQAAAAAAAAAAAAIA=</HashCode>
+      <FileName>Data\Entities\Schedule\UserMedicament.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="BasedOnMedicament" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.UserProfile">
+    <Position X="11.25" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BQADAAAAAAAAAAAAACAAAAgAAAAUQACAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\UserData\UserProfile.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="User" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="UserMedicaments" />
+      <Property Name="Contacts" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="DrugSchedule.SqlServer.Data.Entities.UserProfileContact">
+    <Position X="8.25" Y="5.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAADAAAAAAAIAAAABAAAAgQAAAQAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Data\Entities\UserData\UserProfileContact.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ContactProfile" />
+    </ShowAsAssociation>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

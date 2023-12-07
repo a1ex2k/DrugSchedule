@@ -6,7 +6,7 @@ public class UserProfile
 
     public required int UserId { get; set; }
 
-    public User User { get; set; }
+    public User? User { get; set; }
 
     public required string? RealName { get; set; }
 

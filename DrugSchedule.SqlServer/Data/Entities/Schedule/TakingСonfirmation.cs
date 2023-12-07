@@ -6,9 +6,11 @@ public class TakingСonfirmation
 
     public required DateTime DateTime { get; set; }
 
-    public required Guid? ImageGuid { get; set; }
+    public long? ImageFileInfoId { get; set; }
 
-    public string Text { get; set; }
+    public FileInfo? ImageFileInfo { get; set; }
+
+    public string? Text { get; set; }
 
     public long? ScheduleRepeatId { get; set; }
 

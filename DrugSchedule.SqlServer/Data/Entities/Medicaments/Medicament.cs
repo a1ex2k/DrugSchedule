@@ -18,7 +18,7 @@ public class Medicament
 
     public Manufacturer? Manufacturer { get; set; }
 
-    public long? FileInfoId { get; set; }
+    public long? ImageFileInfoId { get; set; }
 
-    public FileInfo? FileInfo { get; set; }
+    public FileInfo? ImageFileInfo { get; set; }
 }
