@@ -1,7 +1,5 @@
-using DrugSchedule.Api.Data;
-using DrugSchedule.Api.Services.DrugSchedule;
-using DrugSchedule.Api.Services.FileStorage;
-using DrugSchedule.Api.Services.Users;
+using DrugSchedule.SqlServer.Data;
+using DrugSchedule.SqlServer.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,8 +17,8 @@ builder.Services.AddDbContextPool<DrugScheduleContext>(options =>
 #endif
 });
 
-builder.Services.AddScoped<IDrugScheduleService, DrugScheduleService>();
-builder.Services.AddScoped<IDrugScheduleService, DrugScheduleService>();
+builder.Services.AddScoped<IDrugScheduleService, DrugScheduleRepository>();
+builder.Services.AddScoped<IDrugScheduleService, DrugScheduleRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileStorageService, LocalFileSystemStorageService>();
 

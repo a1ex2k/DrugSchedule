@@ -7,16 +7,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Services\FileStorage\**" />
+	  <EmbeddedResource Remove="Services\FileStorage\**" />
+	  <None Remove="Services\FileStorage\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Services\FileStorage\" />
 	</ItemGroup>
 
 	<ItemGroup>

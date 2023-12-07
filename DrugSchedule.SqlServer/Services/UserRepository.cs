@@ -1,8 +1,10 @@
-﻿using DrugSchedule.Api.Data;
+﻿using DrugSchedule.SqlServer.Data;
+using DrugSchedule.StorageContract.Abstractions;
+using Microsoft.Extensions.Logging;
 
-namespace DrugSchedule.Api.Services.Users;
+namespace DrugSchedule.SqlServer.Services;
 
-public class UserRepository : IUserService
+public class UserRepository : IUserRepository
 {
     private readonly DrugScheduleContext _dbContext;
     private readonly ILogger<UserRepository> _logger;

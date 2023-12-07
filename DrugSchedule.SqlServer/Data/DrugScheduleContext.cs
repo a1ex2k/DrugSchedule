@@ -1,7 +1,7 @@
-﻿using DrugSchedule.Api.Data.Entities.Schedule;
+﻿using DrugSchedule.SqlServer.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace DrugSchedule.Api.Data;
+namespace DrugSchedule.SqlServer.Data;
 
 public class DrugScheduleContext : DbContext
 {
@@ -48,4 +48,6 @@ public class DrugScheduleContext : DbContext
     public DbSet<UserProfile> RoadMapStatuses { get; set; }
     
     public DbSet<UserProfileContact> UserProfileContacts { get; set; }
+
+    public DbSet<Entities.FileInfo> FileInfos { get; set; }
 }
