@@ -1,7 +1,4 @@
-﻿using System;
-using DrugSchedule.StorageContract.Data.Enums;
-
-namespace DrugSchedule.StorageContract.Data.Common;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public class StringFilter
 {

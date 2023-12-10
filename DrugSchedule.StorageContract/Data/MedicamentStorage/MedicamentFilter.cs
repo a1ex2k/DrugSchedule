@@ -1,16 +1,15 @@
-﻿using DrugSchedule.StorageContract.Data.Common;
-using DrugSchedule.StorageContract.Data.MedicamentStorage.Filters;
+﻿using DrugSchedule.StorageContract.Data;
 using System.Collections.Generic;
 
-namespace DrugSchedule.StorageContract.Data.MedicamentStorage;
+namespace DrugSchedule.StorageContract.Data;
 
 public class MedicamentFilter
 {
     public IList<int>? IdFilter { get; set; }
 
-    public IList<StringFilter>? NameFilter { get; set; }
+    public StringFilter? NameFilter { get; set; }
 
-    public IList<ManufacturerFilter>? ManufacturerFilter { get; set; }
+    public ManufacturerFilter? ManufacturerFilter { get; set; }
 
-    public IList<MedicamentReleaseFormFilter>? MedicamentReleaseFormFilter { get; set; }
+    public MedicamentReleaseFormFilter? MedicamentReleaseFormFilter { get; set; }
 }

@@ -6,7 +6,7 @@ public class Repeat
 {
     public long Id { get; set; }
 
-    public required int UserProfileId { get; set; }
+    public required long UserProfileId { get; set; }
 
     public UserProfile? UserProfile { get; set; }
     
@@ -20,7 +20,7 @@ public class Repeat
 
     public required DateOnly EndDate { get; set; }
     
-    public required int MedicamentTakingScheduleId { get; set; }
+    public required long MedicamentTakingScheduleId { get; set; }
 
     public MedicamentTakingSchedule? MedicamentTakingSchedule { get; set; }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using DrugSchedule.StorageContract.Data.FileStorage;
+using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.StorageContract.Abstractions;
 

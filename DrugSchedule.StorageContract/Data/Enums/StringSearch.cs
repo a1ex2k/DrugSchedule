@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.StorageContract.Data.Enums;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public enum StringSearch
 {

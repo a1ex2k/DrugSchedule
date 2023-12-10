@@ -13,6 +13,6 @@ public class ScheduleRepeat
     public Repeat? Repeat { get; set; }
 
     public required long TakingRuleId { get; set; }
-
+    
     public TakingRule? TakingRule { get; set; }
 }

@@ -6,7 +6,7 @@ public class ScheduleShare
 
     public MedicamentTakingSchedule? MedicamentTakingSchedule { get; set; }
 
-    public required int ShareWithProfileId { get; set; }
+    public required long ShareWithProfileId { get; set; }
 
     public UserProfile? ShareWithProfile { get; set; }
 }

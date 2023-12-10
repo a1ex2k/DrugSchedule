@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
-using DrugSchedule.StorageContract.Data.Common;
+using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.StorageContract.Data.MedicamentStorage.Filters;
+namespace DrugSchedule.StorageContract.Data;
 
 public class MedicamentReleaseFormFilter
 {
     public IList<int>? IdFilter { get; set; }
 
-    public IList<StringFilter>? NameFilter { get; set; }
+    public StringFilter? NameFilter { get; set; }
 }

@@ -18,7 +18,9 @@ public class UserMedicament
 
     public string? ManufacturerName { get; set; }
 
-    public required int UserProfileId { get; set; }
+    public required long UserProfileId { get; set; }
 
-    public Guid? ImageGuid { get; set; }
+    public UserProfile? UserProfile { get; set; }
+
+    public List<FileInfo> Images { get; set; } = new();
 }

@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.StorageContract.Data.MedicamentStorage;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public class MedicamentReleaseForm
 {

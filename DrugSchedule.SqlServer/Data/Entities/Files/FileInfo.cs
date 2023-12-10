@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace DrugSchedule.SqlServer.Data.Entities;
 
 [Index(nameof(Guid), Name = "FileGuid")]
 public class FileInfo
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
 
     public required Guid Guid { get; set; }
 

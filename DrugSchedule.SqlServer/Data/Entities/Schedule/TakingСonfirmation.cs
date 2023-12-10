@@ -6,9 +6,7 @@ public class TakingСonfirmation
 
     public required DateTime DateTime { get; set; }
 
-    public long? ImageFileInfoId { get; set; }
-
-    public FileInfo? ImageFileInfo { get; set; }
+    public List<FileInfo> Images { get; set; } = new();
 
     public string? Text { get; set; }
 

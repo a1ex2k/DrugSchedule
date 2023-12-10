@@ -18,7 +18,5 @@ public class Medicament
 
     public Manufacturer? Manufacturer { get; set; }
 
-    public long? ImageFileInfoId { get; set; }
-
-    public FileInfo? ImageFileInfo { get; set; }
+    public List<FileInfo> Images { get; set; } = new();
 }

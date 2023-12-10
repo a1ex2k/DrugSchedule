@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace DrugSchedule.StorageContract.Data.FileStorage;
+namespace DrugSchedule.StorageContract.Data;
 
 public class File
 {

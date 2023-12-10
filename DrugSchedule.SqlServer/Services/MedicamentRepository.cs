@@ -1,7 +1,6 @@
 ﻿using DrugSchedule.SqlServer.Data;
 using DrugSchedule.StorageContract.Abstractions;
-using DrugSchedule.StorageContract.Data.MedicamentStorage;
-using DrugSchedule.StorageContract.Data.MedicamentStorage.Filters;
+using DrugSchedule.StorageContract.Data;
 using Microsoft.Extensions.Logging;
 
 namespace DrugSchedule.SqlServer.Services;
@@ -17,77 +16,92 @@ public class MedicamentRepository : IMedicamentRepository
         _logger = logger;
     }
 
-    public async Task<List<Medicament>> GetMedicamentsAsync(MedicamentFilter filter, int skip, int count)
+
+    public Task<List<Medicament>> GetMedicamentsAsync(MedicamentFilter filter, int skip, int count)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<List<Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, int skip, int count)
+
+    public Task<List<Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, int skip, int count)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<List<MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(MedicamentReleaseFormFilter filter, int skip, int count)
+
+    public Task<List<MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(MedicamentReleaseFormFilter filter, int skip, int count)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Medicament> GetMedicamentsByIdAsync(int id)
+
+    public Task<Medicament> GetMedicamentsByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Manufacturer> GetManufacturerByIdAsync(int id)
+
+    public Task<Manufacturer> GetManufacturerByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<MedicamentReleaseForm> GetMedicamentReleaseFormByIdAsync(int id)
+
+    public Task<MedicamentReleaseForm> GetMedicamentReleaseFormByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Medicament> UpdateMedicamentAsync(Medicament medicament)
+
+    public Task<Medicament> UpdateMedicamentAsync(Medicament medicament)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Manufacturer> UpdateManufacturerAsync(Manufacturer medicament)
+
+    public Task<Manufacturer> UpdateManufacturerAsync(Manufacturer medicament)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<MedicamentReleaseForm> UpdateMedicamentReleaseForAsync(MedicamentReleaseForm releaseForm)
+
+    public Task<MedicamentReleaseForm> UpdateMedicamentReleaseForAsync(MedicamentReleaseForm releaseForm)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Medicament> CreateMedicamentAsync(Medicament medicament)
+
+    public Task<Medicament> CreateMedicamentAsync(Medicament medicament)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<Manufacturer> CreateManufacturerAsync(Manufacturer medicament)
+
+    public Task<Manufacturer> CreateManufacturerAsync(Manufacturer medicament)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<MedicamentReleaseForm> CreateMedicamentReleaseForAsync(MedicamentReleaseForm releaseForm)
+
+    public Task<MedicamentReleaseForm> CreateMedicamentReleaseForAsync(MedicamentReleaseForm releaseForm)
     {
         throw new NotImplementedException();
     }
 
-    public async Task RemoveMedicamentsByIdAsync(int id)
+
+    public Task RemoveMedicamentsByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task RemoveManufacturerByIdAsync(int id)
+
+    public Task RemoveManufacturerByIdAsync(int id)
     {
         throw new NotImplementedException();
     }
 
-    public async Task RemoveMedicamentReleaseFormByIdAsync(int id)
+
+    public Task RemoveMedicamentReleaseFormByIdAsync(int id)
     {
         throw new NotImplementedException();
     }

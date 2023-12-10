@@ -1,10 +1,10 @@
-﻿namespace DrugSchedule.StorageContract.Data.MedicamentStorage;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public class Manufacturer
 {
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
-    public required string Name { get; set; }
+    public string? Name { get; set; }
 
     public string? AdditionalInfo { get; set; }
 }
