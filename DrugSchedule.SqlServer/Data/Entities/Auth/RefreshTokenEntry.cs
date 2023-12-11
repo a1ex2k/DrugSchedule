@@ -8,7 +8,7 @@ public class RefreshTokenEntry
 
     public IdentityUser? IdentityUser { get; set; }
 
-    public string IdentityUserGuid { get; set; }
+    public required string IdentityUserGuid { get; set; } 
 
     public required string RefreshToken { get; set; }
 

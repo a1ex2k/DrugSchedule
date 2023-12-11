@@ -36,6 +36,11 @@ namespace DrugSchedule.Api.Controllers
                 loginResult.Result.Identity.Guid, loginResult.Result.Profile.UserProfileId,
                 HttpContext.Request.Headers.UserAgent);
 
+            if (tokens is null)
+            {
+                return Status.Fail("Token creation failed");
+            }
+
             return tokens;
         }
 

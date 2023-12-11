@@ -30,6 +30,7 @@ public static class EntityMapExtensions
         return new Contract.UserProfile
         {
             UserProfileId = userProfile.Id,
+            UserIdentityGuid = userProfile.UserGuid,
             RealName = userProfile.RealName,
             DateOfBirth = userProfile.DateOfBirth,
             Image = userProfile.ImageFileInfo?.ToContractFileInfo()

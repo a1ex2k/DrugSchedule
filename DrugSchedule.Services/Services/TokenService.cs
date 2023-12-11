@@ -6,6 +6,7 @@ using System.Text;
 using DrugSchedule.BusinessLogic.Auth;
 using DrugSchedule.StorageContract.Abstractions;
 using Microsoft.Extensions.Options;
+using DrugSchedule.BusinessLogic.Options;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
@@ -105,7 +106,7 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private async Task<string> CreateRefreshTokenStringAsync(Guid userGuid, string clientInfo)
+    private async Task<string> CreateRefreshTokenStringAsync(Guid userGuid, string? clientInfo)
     {
         var newRefreshToken = GenerateBytesString(RefreshTokenLength);
 
