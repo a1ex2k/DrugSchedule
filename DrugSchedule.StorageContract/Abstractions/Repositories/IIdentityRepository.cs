@@ -6,9 +6,11 @@ namespace DrugSchedule.StorageContract.Abstractions;
 
 public interface IIdentityRepository
 {
-    public Task<UserIdentity?> GetUserIdentityByUsernameAsync(string username);
+    public Task<UserIdentity?> GetUserIdentityAsync(string username);
 
-    public Task<UserIdentity?> GetUserIdentityByUserIdAsync(Guid userGuid);
+    public Task<UserIdentity?> GetUserIdentityAsync(string username, string password);
+
+    public Task<UserIdentity?> GetUserIdentityAsync(Guid userGuid);
 
     public Task<bool> IsUsernameUsedAsync(string username);
 

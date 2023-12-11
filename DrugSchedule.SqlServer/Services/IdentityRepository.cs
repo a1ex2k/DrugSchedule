@@ -4,37 +4,46 @@ using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Security.Principal;
 
 namespace DrugSchedule.SqlServer.Services;
 
 public class IdentityRepository : IIdentityRepository
 {
     private readonly IdentityContext _identityContext;
-    private readonly ILogger<IdentityRepository> _logger;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public IdentityRepository(IdentityContext dbContext, UserManager<IdentityUser> userManager, ILogger<IdentityRepository> logger)
+    public IdentityRepository(IdentityContext dbContext, UserManager<IdentityUser> userManager)
     {
         _identityContext = dbContext;
         _userManager = userManager;
-        _logger = logger;
     }
 
 
-    public async Task<UserIdentity?> GetUserIdentityByUsernameAsync(string username)
+    public async Task<UserIdentity?> GetUserIdentityAsync(string username)
     {
         var identityUser = await _userManager.FindByNameAsync(username);
-        return identityUser?.ToContracUserIdentity();
+        return identityUser?.ToContractUserIdentity();
+    }
+
+    public async Task<UserIdentity?> GetUserIdentityAsync(string username, string password)
+    {
+        var identityUser = await _userManager.FindByNameAsync(username);
+
+        if (identityUser == null)
+        {
+            return null;
+        }
+
+        var isPasswordValid = await _userManager.CheckPasswordAsync(identityUser, password);
+        return isPasswordValid ? identityUser?.ToContractUserIdentity() : null;
     }
 
 
-    public async Task<UserIdentity?> GetUserIdentityByUserIdAsync(Guid userGuid)
+    public async Task<UserIdentity?> GetUserIdentityAsync(Guid userGuid)
     {
         var guidString = userGuid.ToString();
         var identityUser = await _userManager.FindByIdAsync(guidString);
-        return identityUser?.ToContracUserIdentity();
+        return identityUser?.ToContractUserIdentity();
     }
 
 
@@ -67,7 +76,7 @@ public class IdentityRepository : IIdentityRepository
             throw new AggregateException("Cannot save user", resultIdentity.Errors.Select(e => new Exception(e.Description)));
         }
 
-        return identityUser.ToContracUserIdentity();
+        return identityUser.ToContractUserIdentity();
     }
 
 

@@ -9,6 +9,6 @@ public interface IRefreshTokenRepository
     public Task<bool> AddRefreshTokenAsync(RefreshTokenEntry refreshTokenEntry);
 
     public Task<bool> RemoveRefreshTokenAsync(Guid userGuid, string refreshToken);
-
-    public Task<bool> IsRefreshTokenExistsAsync(Guid userGuid, string refreshToken);
+    
+    public Task<RefreshTokenEntry?> GetRefreshTokenEntryAsync(Guid userGuid, string refreshToken);
 }

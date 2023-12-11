@@ -1,7 +1,4 @@
-﻿using System;
-using DrugSchedule.StorageContract.Data;
-
-namespace DrugSchedule.StorageContract.Data;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public class Medicament
 {

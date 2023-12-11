@@ -17,7 +17,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         _identityContext = dbContext;
         _logger = logger;
     }
-    
+
 
     public async Task<bool> AddRefreshTokenAsync(RefreshTokenEntry refreshTokenEntry)
     {
@@ -55,13 +55,27 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     }
 
 
-    public async Task<bool> IsRefreshTokenExistsAsync(Guid userGuid, string refreshToken)
+    public async Task<RefreshTokenEntry?> GetRefreshTokenEntryAsync(Guid userGuid, string refreshToken)
     {
         var result = await _identityContext.RefreshTokens
-                                           .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
-                                           .Where(rte => rte.RefreshToken == refreshToken)
-                                           .AnyAsync();
+            .AsNoTracking()
+            .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
+            .Where(rte => rte.RefreshToken == refreshToken)
+            .Select(rte => new
+            {
+                RefreshTokenExpiryTime = rte.RefreshTokenExpiryTime,
+                ClientInfo = rte.ClientInfo
+            })
+            .FirstOrDefaultAsync();
 
-        return result;
+        return result is null
+            ? null
+            : new RefreshTokenEntry
+            {
+                UserGuid = userGuid,
+                RefreshToken = refreshToken,
+                RefreshTokenExpiryTime = result.RefreshTokenExpiryTime,
+                ClientInfo = result.ClientInfo
+            };
     }
 }
