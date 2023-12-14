@@ -6,7 +6,7 @@ namespace DrugSchedule.StorageContract.Abstractions;
 
 public interface IRefreshTokenRepository
 {
-    public Task<bool> AddRefreshTokenAsync(RefreshTokenEntry refreshTokenEntry);
+    public Task AddRefreshTokenAsync(RefreshTokenEntry refreshTokenEntry);
 
     public Task<bool> RemoveRefreshTokenAsync(Guid userGuid, string refreshToken);
     

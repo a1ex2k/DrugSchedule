@@ -1,9 +1,10 @@
 ﻿using DrugSchedule.SqlServer.Data.Entities;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DrugSchedule.SqlServer.Data;
 
-public class DrugScheduleContext : DbContext
+public class DrugScheduleContext : IdentityDbContext
 {
     public DrugScheduleContext()
     {
@@ -17,7 +18,7 @@ public class DrugScheduleContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseSqlServer(Constants.ConnectionString);
+            optionsBuilder.UseSqlServer(string.Empty);
         }
 
         base.OnConfiguring(optionsBuilder);
@@ -26,36 +27,48 @@ public class DrugScheduleContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<UserProfile>()
-                    .HasMany(u => u.Contacts)
-                    .WithOne(c => c.UserProfile);
+            .HasMany(u => u.Contacts)
+            .WithOne(c => c.UserProfile);
+
+        modelBuilder.Entity<UserProfileContact>()
+            .HasOne(x => x.UserProfile)
+            .WithMany(x => x.Contacts)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<UserProfileContact>()
+            .HasOne(x => x.ContactProfile);
 
         modelBuilder.Entity<MedicamentTakingSchedule>()
-                    .HasMany(s => s.SharedWith)
-                    .WithMany(c => c.SharedSchedules)
-                    .UsingEntity<ScheduleShare>();
+            .HasMany(s => s.SharedWith)
+            .WithMany(c => c.SharedSchedules)
+            .UsingEntity<ScheduleShare>();
 
         modelBuilder.Entity<Medicament>()
-                    .HasMany(m => m.Images)
-                    .WithMany()
-                    .UsingEntity<MedicamentToFile>();
+            .HasMany(m => m.Images)
+            .WithMany()
+            .UsingEntity<MedicamentToFile>();
 
         modelBuilder.Entity<UserMedicament>()
-                    .HasMany(m => m.Images)
-                    .WithMany()
-                    .UsingEntity<UserMedicamentToFile>();
+            .HasMany(m => m.Images)
+            .WithMany()
+            .UsingEntity<UserMedicamentToFile>();
 
         modelBuilder.Entity<TakingСonfirmation>()
-                    .HasMany(m => m.Images)
-                    .WithMany()
-                    .UsingEntity<TakingСonfirmationToFile>();
+            .HasMany(m => m.Images)
+            .WithMany()
+            .UsingEntity<TakingСonfirmationToFile>();
+
+        base.OnModelCreating(modelBuilder);
     }
 
+
+    public DbSet<RefreshTokenEntry> RefreshTokens { get; set; }
 
     public DbSet<Manufacturer> Manufacturers { get; set; }
 
     public DbSet<Medicament> Medicaments { get; set; }
 
-    public DbSet<MedicamentReleaseForm> Events { get; set; }
+    public DbSet<MedicamentReleaseForm> ReleaseForms { get; set; }
 
     public DbSet<MedicamentTakingSchedule> MedicamentTakingSchedule { get; set; }
 

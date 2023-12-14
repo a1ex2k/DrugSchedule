@@ -11,10 +11,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.local.json", true);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-
 
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
@@ -24,30 +24,23 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 
-
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(JwtOptions.Jwt));
 
 
-builder.Services.AddDbContext<IdentityContext>(o =>
-{
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"), x =>
-        x.MigrationsAssembly(nameof(DrugSchedule.SqlServer)));
-    o.EnableSensitiveDataLogging();
-});
-
 builder.Services.AddDbContext<DrugScheduleContext>(o =>
 {
-    o.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"), x =>
-        x.MigrationsAssembly(nameof(DrugSchedule.SqlServer)));
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"));
     o.EnableSensitiveDataLogging();
 });
 
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(o =>
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     {
-        o.User.RequireUniqueEmail = true;
+        options.Password.RequireDigit = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
     })
-    .AddEntityFrameworkStores<IdentityContext>();
+    .AddEntityFrameworkStores<DrugScheduleContext>();
 
 
 builder.Services.AddAuthentication(options =>

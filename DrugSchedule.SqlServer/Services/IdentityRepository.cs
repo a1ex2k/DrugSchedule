@@ -9,12 +9,12 @@ namespace DrugSchedule.SqlServer.Services;
 
 public class IdentityRepository : IIdentityRepository
 {
-    private readonly IdentityContext _identityContext;
+    private readonly DrugScheduleContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public IdentityRepository(IdentityContext dbContext, UserManager<IdentityUser> userManager)
+    public IdentityRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager)
     {
-        _identityContext = dbContext;
+        _dbContext = dbContext;
         _userManager = userManager;
     }
 
