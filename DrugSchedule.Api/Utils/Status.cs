@@ -1,12 +1,12 @@
-﻿using DrugSchedule.Api.Models;
+﻿using DrugSchedule.Api.Shared.Models;
 
 namespace DrugSchedule.Api.Utils;
 
 public static class Status
 {
-    public static StatusResponse Success(string? message)
+    public static StatusResponseDto Success(string? message)
     {
-        return new StatusResponse
+        return new StatusResponseDto
         {
             Success = true,
             Message = message,
@@ -14,9 +14,9 @@ public static class Status
         };
     }
 
-    public static StatusResponse Fail(string? message, List<string>? errors = null)
+    public static StatusResponseDto Fail(string? message, List<string>? errors = null)
     {
-        return new StatusResponse
+        return new StatusResponseDto
         {
             Success = false,
             Message = message,

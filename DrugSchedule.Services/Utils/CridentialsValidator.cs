@@ -8,7 +8,7 @@ public static class CridentialsValidator
     public const int MaxUsernameLength = 20;
 
     public const string PasswordRegexString = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{5,}$";
-    public const string UsernameRegexString = @"^[A-Za-z_][A-Za-z\d]{3,}$";
+    public const string UsernameRegexString = @"^[A-Za-z\d_][A-Za-z\d]{3,}$";
 
     private static readonly Regex PasswordRegex =
         new Regex(PasswordRegexString, RegexOptions.Compiled);
@@ -22,12 +22,7 @@ public static class CridentialsValidator
             return false;
         }
 
-        if (!PasswordRegex.IsMatch(password))
-        {
-            return false;
-        }
-
-        return true;
+        return PasswordRegex.IsMatch(password);
     }
 
     public static bool ValidateUsername(string? username)
@@ -37,11 +32,6 @@ public static class CridentialsValidator
             return false;
         }
 
-        if (!PasswordRegex.IsMatch(username))
-        {
-            return false;
-        }
-
-        return true;
+        return UsernameRegex.IsMatch(username);
     }
 }

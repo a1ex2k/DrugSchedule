@@ -22,7 +22,7 @@ public class UserService : IUserService
     {
         var errors = new List<string>();
 
-        if (CridentialsValidator.ValidatePassword(registerModel.Username))
+        if (!CridentialsValidator.ValidatePassword(registerModel.Username))
         {
             errors.Add("Username must match the pattern: " + CridentialsValidator.UsernameRegexString);
         }
@@ -32,9 +32,14 @@ public class UserService : IUserService
             errors.Add("Email is empty");
         }
 
-        if (CridentialsValidator.ValidatePassword(registerModel.Password))
+        if (!CridentialsValidator.ValidatePassword(registerModel.Password))
         {
             errors.Add("Password must match the pattern: " + CridentialsValidator.PasswordRegexString);
+        }
+
+        if (string.Equals(registerModel.Password, registerModel.Username, StringComparison.OrdinalIgnoreCase))
+        {
+            errors.Add("Password and username must differ");
         }
 
         if (errors.Count > 0)
@@ -64,17 +69,17 @@ public class UserService : IUserService
 
     public async Task<LoginResult> LogUserInAsync(LoginModel loginModel)
     {
-        if (CridentialsValidator.ValidatePassword(loginModel.Username)
-            || CridentialsValidator.ValidateUsername(loginModel.Password))
+        if (!CridentialsValidator.ValidatePassword(loginModel.Username)
+            || !CridentialsValidator.ValidateUsername(loginModel.Password))
         {
             return LoginResult.Fail("Invalid username or password");
         }
 
-        var userIdentity = await _identityRepository.GetUserIdentityAsync(loginModel.Username!);
+        var userIdentity = await _identityRepository.GetUserIdentityAsync(loginModel.Username!, loginModel.Password!);
 
         if (userIdentity == null)
         {
-            return LoginResult.Fail("User does not exists");
+            return LoginResult.Fail("Either username or password is incorrect");
         }
 
         var userProfile = await _profileRepository.GetUserProfilesByIdentityGuidAsync(userIdentity.Guid) 
@@ -86,5 +91,26 @@ public class UserService : IUserService
         });
 
         return LoginResult.Success((userIdentity, userProfile));
+    }
+
+    public async Task<ServiceResult<AvailableUsernameModel>> IsUsernameAvailableAsync(string username)
+    {
+        if (!CridentialsValidator.ValidateUsername(username))
+        {
+            return ServiceResult<AvailableUsernameModel>.Success(new AvailableUsernameModel
+            {
+                Username = username,
+                IsAvailable = false,
+                Comment = "Username doesn't match the pattern: " + CridentialsValidator.UsernameRegexString
+            });
+        }
+
+        var isUsed = await _identityRepository.IsUsernameUsedAsync(username);
+        return ServiceResult<AvailableUsernameModel>.Success(new AvailableUsernameModel
+        {
+            Username = username,
+            IsAvailable = !isUsed,
+            Comment = isUsed ? "Username already used" : "OK"
+        });
     }
 }
