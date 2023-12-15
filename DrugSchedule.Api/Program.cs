@@ -1,4 +1,5 @@
 using System.Text;
+using DrugSchedule.Api.Middlwares;
 using DrugSchedule.BusinessLogic.Options;
 using DrugSchedule.BusinessLogic.Services;
 using DrugSchedule.SqlServer.Data;
@@ -17,6 +18,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<CurrentUserMiddleware>();
+builder.Services.AddScoped<ICurrentUserIdentificator, CurrentUserIdentificator>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
 
@@ -110,6 +113,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<CurrentUserMiddleware>();
 app.MapControllers();
 
 app.Run();

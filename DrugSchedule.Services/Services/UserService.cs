@@ -22,7 +22,7 @@ public class UserService : IUserService
     {
         var errors = new List<string>();
 
-        if (!CridentialsValidator.ValidatePassword(registerModel.Username))
+        if (!CridentialsValidator.ValidateUsername(registerModel.Username))
         {
             errors.Add("Username must match the pattern: " + CridentialsValidator.UsernameRegexString);
         }
@@ -69,8 +69,8 @@ public class UserService : IUserService
 
     public async Task<LoginResult> LogUserInAsync(LoginModel loginModel)
     {
-        if (!CridentialsValidator.ValidatePassword(loginModel.Username)
-            || !CridentialsValidator.ValidateUsername(loginModel.Password))
+        if (!CridentialsValidator.ValidateUsername(loginModel.Username)
+            || !CridentialsValidator.ValidatePassword(loginModel.Password))
         {
             return LoginResult.Fail("Invalid username or password");
         }
