@@ -1,4 +1,6 @@
-﻿namespace DrugSchedule.StorageContract.Data;
+﻿using System.Collections.Generic;
+
+namespace DrugSchedule.StorageContract.Data;
 
 public class Medicament
 {
@@ -14,5 +16,5 @@ public class Medicament
 
     public Manufacturer? Manufacturer { get; set; }
 
-    public FileInfo? FileInfo { get; set; }
+    public List<FileInfo>? Images { get; set; }
 }

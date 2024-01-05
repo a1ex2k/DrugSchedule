@@ -55,6 +55,8 @@ public class DrugScheduleContext : DbContext
 
     public DbSet<Medicament> Medicaments { get; set; }
 
+    public DbSet<MedicamentReleaseForm> MedicamentReleaseForms { get; set; }
+
     public DbSet<MedicamentReleaseForm> Events { get; set; }
 
     public DbSet<MedicamentTakingSchedule> MedicamentTakingSchedule { get; set; }

@@ -37,4 +37,36 @@ public static class EntityMapExtensions
         };
     }
 
+    public static Contract.Manufacturer ToContractManufacturer(this Entities.Manufacturer manufacturer)
+    {
+        return new Contract.Manufacturer
+        {
+            Id = manufacturer.Id,
+            Name = manufacturer.Name,
+            AdditionalInfo = manufacturer.AdditionalInfo,
+        };
+    }
+
+    public static Contract.MedicamentReleaseForm ToContractReleaseForm(this Entities.MedicamentReleaseForm releaseForm)
+    {
+        return new Contract.MedicamentReleaseForm
+        {
+            Id = releaseForm.Id,
+            Name = releaseForm.Name
+        };
+    }
+
+    public static Contract.Medicament ToContractMedicament(this Entities.Medicament medicament)
+    {
+        return new Contract.Medicament
+        {
+            Id = medicament.Id,
+            Name = medicament.Name,
+            PackQuantity = medicament.PackQuantity,
+            Dosage = medicament.Dosage,
+            ReleaseForm = medicament.ReleaseForm?.ToContractReleaseForm(),
+            Manufacturer = medicament.Manufacturer?.ToContractManufacturer(),
+            Images = medicament.Images.Select(f => f.ToContractFileInfo()).ToList()
+        };
+    }
 }
