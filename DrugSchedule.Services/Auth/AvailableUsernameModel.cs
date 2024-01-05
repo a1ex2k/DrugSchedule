@@ -2,9 +2,11 @@
 
 namespace DrugSchedule.BusinessLogic.Auth;
 
-public class LoginModel
+public class AvailableUsernameModel
 {
     public required string Username { get; set; }
 
-    public required string Password { get; set; }
+    public required bool IsAvailable { get; set; }
+
+    public required string Comment { get; set; }
 }

@@ -12,7 +12,6 @@ namespace DrugSchedule.BusinessLogic.Services;
 
 public class TokenService : ITokenService
 {
-    private const string UserProfileIdClaimName = "user-profile-id";
     private const int RefreshTokenLength = 64;
 
     private readonly IOptions<JwtOptions> _jwtOptions;
@@ -47,7 +46,7 @@ public class TokenService : ITokenService
             return null;
         }
 
-        var userProfileIdString = principal.Claims.FirstOrDefault(c => c.Type == UserProfileIdClaimName)?.Value;
+        var userProfileIdString = principal.Claims.FirstOrDefault(c => c.Type == StringConstants.UserProfileIdClaimName)?.Value;
         if (string.IsNullOrWhiteSpace(userProfileIdString) || !long.TryParse(userProfileIdString, out var userProfileId))
         {
             return null;
@@ -89,7 +88,7 @@ public class TokenService : ITokenService
         var authClaims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, userGuid.ToString()),
-            new Claim(UserProfileIdClaimName, userProfileId.ToString()),
+            new Claim(StringConstants.UserProfileIdClaimName, userProfileId.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 

@@ -9,17 +9,17 @@ namespace DrugSchedule.SqlServer.Services;
 
 public class RefreshTokenRepository : IRefreshTokenRepository
 {
-    private readonly IdentityContext _identityContext;
+    private readonly DrugScheduleContext _dbContext;
     private readonly ILogger<RefreshTokenRepository> _logger;
 
-    public RefreshTokenRepository(IdentityContext dbContext, UserManager<IdentityUser> userManager, ILogger<RefreshTokenRepository> logger)
+    public RefreshTokenRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager, ILogger<RefreshTokenRepository> logger)
     {
-        _identityContext = dbContext;
+        _dbContext = dbContext;
         _logger = logger;
     }
 
 
-    public async Task<bool> AddRefreshTokenAsync(RefreshTokenEntry refreshTokenEntry)
+    public async Task AddRefreshTokenAsync(RefreshTokenEntry refreshTokenEntry)
     {
         var entry = new Data.Entities.RefreshTokenEntry
         {
@@ -29,24 +29,14 @@ public class RefreshTokenRepository : IRefreshTokenRepository
             ClientInfo = refreshTokenEntry.ClientInfo
         };
 
-        try
-        {
-            await _identityContext.RefreshTokens.AddAsync(entry);
-            await _identityContext.SaveChangesAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Cannot save Refresh token");
-            return false;
-        }
-
-        return true;
+        await _dbContext.RefreshTokens.AddAsync(entry);
+        await _dbContext.SaveChangesAsync();
     }
 
 
     public async Task<bool> RemoveRefreshTokenAsync(Guid userGuid, string refreshToken)
     {
-        var result = await _identityContext.RefreshTokens
+        var result = await _dbContext.RefreshTokens
                                            .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
                                            .Where(rte => rte.RefreshToken == refreshToken)
                                            .ExecuteDeleteAsync();
@@ -57,7 +47,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
 
     public async Task<RefreshTokenEntry?> GetRefreshTokenEntryAsync(Guid userGuid, string refreshToken)
     {
-        var result = await _identityContext.RefreshTokens
+        var result = await _dbContext.RefreshTokens
             .AsNoTracking()
             .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
             .Where(rte => rte.RefreshToken == refreshToken)
