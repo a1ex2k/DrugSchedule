@@ -5,10 +5,12 @@ namespace DrugSchedule.BusinessLogic.Utils;
 public static class CridentialsValidator
 {
     public const int MaxPasswordLength = 32;
-    public const int MaxUsernameLength = 20;
+    public const int MaxUsernameLength = 32;
+    public const int MinPasswordLength = 8;
+    public const int MinUsernameLength = 4;
 
-    public const string PasswordRegexString = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{5,}$";
-    public const string UsernameRegexString = @"^[A-Za-z\d_][A-Za-z\d]{3,}$";
+    public const string PasswordRegexString = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,32}$";
+    public const string UsernameRegexString = @"^[A-Za-z\d_][A-Za-z\d]{4,32}$";
 
     private static readonly Regex PasswordRegex =
         new Regex(PasswordRegexString, RegexOptions.Compiled);

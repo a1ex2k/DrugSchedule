@@ -2,21 +2,15 @@
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using DrugSchedule.StorageContract.Data;
-using File = DrugSchedule.StorageContract.Data.File;
 using FileInfo = DrugSchedule.StorageContract.Data.FileInfo;
 
 namespace DrugSchedule.StorageContract.Abstractions;
 
-public interface IFileStorage : IRemoteFileUrlProvider
+public interface IFileStorage
 {
-    Task<File> GetFileByGuidAsync(Guid guid);
+    Task<Stream?> GetReadStreamAsync(FileInfo fileInfo, CancellationToken cancellationToken = default);
 
-    Task<FileInfo> GetFileInfoByGuidAsync(Guid guid);
+    Task<bool> WriteFileAsync(FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default);
 
-    Task<FileInfo> CreateFileInfoAsync(NewFileInfo newFileInfo);
-
-    Task<FileInfo> CreateFileAsync(NewFileInfo newFileInfo, Stream stream);
-
-    Task<RemovedFileInfo> RemoveFileByGuidAsync(Guid guid);
+    Task<bool> RemoveFileAsync(FileInfo fileInfo, CancellationToken cancellationToken = default);
 }
