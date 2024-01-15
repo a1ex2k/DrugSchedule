@@ -5,15 +5,13 @@ VisualStudioVersion = 17.8.34316.72
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api", "DrugSchedule.Api\DrugSchedule.Api.csproj", "{CC89CD1F-D3EB-471D-A062-28C4918851F0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.SqlServer", "DrugSchedule.SqlServer\DrugSchedule.SqlServer.csproj", "{195240E0-93FB-4109-81F2-A3AB95F162FE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Storage", "DrugSchedule.Storage\DrugSchedule.Storage.csproj", "{195240E0-93FB-4109-81F2-A3AB95F162FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.StorageContract", "DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj", "{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.BusinessLogic", "DrugSchedule.Services\DrugSchedule.BusinessLogic.csproj", "{2599A001-8AF7-482B-ACA1-5CFE70166687}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api.Shared", "DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj", "{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.FileStorage", "FileStorage\DrugSchedule.FileStorage.csproj", "{0B5D2444-3F01-4845-B9BC-B38BB244E333}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +39,6 @@ Global
 		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B5D2444-3F01-4845-B9BC-B38BB244E333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B5D2444-3F01-4845-B9BC-B38BB244E333}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B5D2444-3F01-4845-B9BC-B38BB244E333}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B5D2444-3F01-4845-B9BC-B38BB244E333}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

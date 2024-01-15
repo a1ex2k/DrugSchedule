@@ -2,9 +2,12 @@ using System.Text;
 using DrugSchedule.Api.Middlwares;
 using DrugSchedule.BusinessLogic.Options;
 using DrugSchedule.BusinessLogic.Services;
-using DrugSchedule.SqlServer.Data;
-using DrugSchedule.SqlServer.Services;
+using DrugSchedule.BusinessLogic.Services.Abstractions;
+using DrugSchedule.Storage;
+using DrugSchedule.Storage.Data;
+using DrugSchedule.Storage.Services;
 using DrugSchedule.StorageContract.Abstractions;
+using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -17,18 +20,27 @@ builder.Configuration.AddJsonFile("appsettings.local.json", true);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
+// storage repositories
+builder.Services.AddScoped<IFileInfoRepository, FileInfoRepository>();
+builder.Services.AddScoped<IFileStorage, FileStorageService>();
+builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+
+// business logic services
 builder.Services.AddScoped<CurrentUserMiddleware>();
 builder.Services.AddScoped<ICurrentUserIdentificator, CurrentUserIdentificator>();
-builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
-builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
-
 builder.Services.AddScoped<ITokenService, TokenService>();
-builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IIdentityService, UserService>();
+builder.Services.AddScoped<ICurrentUserService, UserService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFileStore, FileService>();
+builder.Services.AddScoped<ICurrentUserService, UserService>();
 
 builder.Services.Configure<JwtOptions>(
-    builder.Configuration.GetSection(JwtOptions.Jwt));
+    builder.Configuration.GetSection(JwtOptions.Title));
+builder.Services.Configure<FileStorageOptions>(
+    builder.Configuration.GetSection(FileStorageOptions.Title));
 
 
 builder.Services.AddDbContext<DrugScheduleContext>(o =>
@@ -36,7 +48,6 @@ builder.Services.AddDbContext<DrugScheduleContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"));
     o.EnableSensitiveDataLogging();
 });
-
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     {
         options.Password.RequireDigit = false;
@@ -44,24 +55,19 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.Password.RequireNonAlphanumeric = false;
     })
     .AddEntityFrameworkStores<DrugScheduleContext>();
-
-
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
-
     .AddJwtBearer(options =>
     {
         options.SaveToken = true;
         options.RequireHttpsMetadata = false;
-
         var jwtOptions = builder.Configuration
-            .GetSection(JwtOptions.Jwt)
+            .GetSection(JwtOptions.Title)
             .Get<JwtOptions>();
-
         options.TokenValidationParameters = new TokenValidationParameters()
         {
             ValidateIssuer = true,
@@ -74,7 +80,6 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret))
         };
     });
-
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -103,6 +108,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddMapster();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -115,5 +122,4 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<CurrentUserMiddleware>();
 app.MapControllers();
-
 app.Run();

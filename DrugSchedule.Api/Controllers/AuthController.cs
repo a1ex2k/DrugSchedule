@@ -1,10 +1,7 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
-using DrugSchedule.Api.Shared.Dttos;
-using DrugSchedule.Api.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
-using DrugSchedule.Api.Utils;
-using DrugSchedule.BusinessLogic.Auth;
-using DrugSchedule.BusinessLogic.Services;
+using DrugSchedule.BusinessLogic.Models;
+using DrugSchedule.BusinessLogic.Services.Abstractions;
 using Mapster;
 
 namespace DrugSchedule.Api.Controllers;
@@ -14,76 +11,64 @@ namespace DrugSchedule.Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly ITokenService _tokenService;
-    private readonly IUserService _userService;
+    private readonly IIdentityService _identityService;
 
-    public AuthController(ITokenService tokenService, IUserService userService)
+    public AuthController(ITokenService tokenService, IIdentityService identityService)
     {
         _tokenService = tokenService;
-        _userService = userService;
+        _identityService = identityService;
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    public async Task<IActionResult> Login([FromBody] LoginDto dto, CancellationToken cancellationToken)
     {
-        var loginResult = await _userService.LogUserInAsync(dto.Adapt<LoginModel>());
-
-        if (!loginResult.IsSuccess)
+        var loginResult = await _identityService.LogUserInAsync(dto.Adapt<LoginModel>(), cancellationToken);
+        if (loginResult.IsT1)
         {
-            return Ok(Status.Fail("User was not found", loginResult.Errors));
+            return BadRequest(loginResult.AsT1);
+        }
+ 
+        var tokenParams = new TokenCreateParams
+        {
+            UserGuid = loginResult.AsT0.UserIdentityGuid,
+            UserProfileId = loginResult.AsT0.UserProfileId,
+            ClientInfo = Request.Headers.UserAgent
+        };
+        var tokensResult = await _tokenService.CreateTokensAsync(tokenParams, cancellationToken);
+        if (tokensResult.IsT1)
+        {
+            return BadRequest(tokensResult.AsT1);
         }
 
-        var tokens = await _tokenService.CreateTokensAsync(
-            loginResult.Result.Identity.Guid, loginResult.Result.Profile.UserProfileId,
-            HttpContext.Request.Headers.UserAgent);
-
-        if (tokens is null)
-        {
-            return Ok(Status.Fail("Token creation failed"));
-        }
-
-        return Ok(tokens);
+        return Ok(tokensResult.AsT0);
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto, CancellationToken cancellationToken)
     {
-        var registerResult = await _userService.RegisterUserAsync(dto.Adapt<RegisterModel>());
+        var registerResult = await _identityService.RegisterUserAsync(dto.Adapt<RegisterModel>(), cancellationToken);
+        return registerResult.Match(
+            yes => (IActionResult)Ok("User created successfully!"),
+            error => (IActionResult)BadRequest(error));
+    }
+        
 
-        if (!registerResult.IsSuccess)
-        {
-            return Ok(Status.Fail("User was not created", registerResult.Errors));
-        }
-
-        return Ok(Status.Success("User created successfully!"));
+    [HttpPost]
+    public async Task<IActionResult> RefreshToken(TokenDto tokenDto, CancellationToken cancellationToken)
+    {
+        var newTokenModel = await _tokenService.RefreshTokensAsync(tokenDto.Adapt<TokenModel>(), cancellationToken);
+        return newTokenModel.Match(
+            tokenModel => (IActionResult)Ok(tokenModel.Adapt<TokenDto>()),
+            error => (IActionResult)BadRequest(error));
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> RefreshToken(TokenDto tokenDto)
+    public async Task<IActionResult> UsernameAvailable(UsernameDto usernameDto, CancellationToken cancellationToken)
     {
-        var newTokenModel = await _tokenService.RefreshTokensAsync(tokenDto.Adapt<TokenModel>());
-
-        if (newTokenModel == null)
-        {
-            return Ok(Status.Fail("Invalid access token or refresh token"));
-        }
-
-        return Ok(newTokenModel.Adapt<TokenDto>());
-    }
-
-
-    [HttpPost]
-    public async Task<IActionResult> UsernameAvailable(UsernameDto usernameDto)
-    {
-        var usernameResult = await _userService.IsUsernameAvailableAsync(usernameDto.Username!);
-
-        if (!usernameResult.IsSuccess)
-        {
-            return Ok(Status.Fail(null, usernameResult.Errors));
-        }
-
-        return Ok(usernameResult.Result.Adapt<AvailableUsernameModel>());
+        var usernameResult = await _identityService.IsUsernameAvailableAsync(usernameDto.Username!, cancellationToken);
+        return Ok(usernameResult.Adapt<AvailableUsernameModel>());
     }
 }

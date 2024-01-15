@@ -1,8 +1,8 @@
-﻿namespace DrugSchedule.StorageContract.Data.Common;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public enum RemoveOperationResult
 {
     SuccessfullyRemoved = 1,
-    NotExists = 2,
-    Restricted = 3
+    NotFound = 2,
+    Used = 3
 }
