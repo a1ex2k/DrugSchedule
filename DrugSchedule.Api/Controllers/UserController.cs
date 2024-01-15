@@ -1,0 +1,116 @@
+﻿using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.BusinessLogic.Models;
+using Microsoft.AspNetCore.Mvc;
+using Mapster;
+using Microsoft.AspNetCore.Authorization;
+using DrugSchedule.BusinessLogic.Services.Abstractions;
+
+namespace DrugSchedule.Api.Controllers;
+
+[Route("api/[controller]/[action]")]
+[ApiController]
+[Authorize]
+public class UserController : ControllerBase
+{
+    private readonly ICurrentUserService _userService;
+
+    public UserController(ICurrentUserService userService)
+    {
+        _userService = userService;
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
+    {
+        var userModel = await _userService.GetCurrentUserAsync(cancellationToken);
+        return Ok(userModel.Adapt<UserDto>());
+    }
+
+    
+    [HttpPost]
+    public async Task<IActionResult> SearchForUsers(UserSearchDto dto, CancellationToken cancellationToken)
+    {
+        var searchResult = await _userService.FindUsersAsync(dto.Adapt<UserSearchModel>(), cancellationToken);
+        return searchResult.Match(
+            users => (IActionResult)Ok(users.Adapt<UserPublicCollectionDto>()),
+            error => (IActionResult)BadRequest(error));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> GetContacts(CancellationToken cancellationToken)
+    {
+        var contacts = await _userService.GetUserContactsAsync(cancellationToken);
+        return Ok(contacts.Adapt<UserContactDto>());
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> AddContact(NewUserContactDto dto, CancellationToken cancellationToken)
+    {
+        var contactAddResult = await _userService.AddUserContactAsync(dto.Adapt<NewUserContactModel>(), cancellationToken);
+        return contactAddResult.Match(
+            ok => (IActionResult)Ok(),
+            errorInput => BadRequest(errorInput),
+            notFound => NotFound(notFound));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveContact(UserIdDto dto, CancellationToken cancellationToken)
+    {
+        var contactRemoveResult = await _userService.RemoveUserContactAsync(dto.Adapt<UserIdModel>(), cancellationToken);
+        return contactRemoveResult.Match(
+            ok => (IActionResult)Ok(),
+            notFound => NotFound(notFound));
+    }
+
+    
+    [HttpPost]
+    public async Task<IActionResult> UpdateProfile(UserUpdateDto dto, CancellationToken cancellationToken)
+    {
+        var updateResult = await _userService.UpdateProfileAsync(dto.Adapt<UserUpdateModel>(), cancellationToken);
+        return updateResult.Match(
+            userModel => (IActionResult)Ok(userModel),
+            errorInput => BadRequest(errorInput));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> ChangePassword(NewPasswordDto dto, CancellationToken cancellationToken)
+    {
+        var changePasswordResult = await _userService.UpdatePasswordAsync(dto.Adapt<NewPasswordModel>(), cancellationToken);
+        return changePasswordResult.Match(
+            ok => (IActionResult)Ok(),
+            errorInput => BadRequest(errorInput));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> SetAvatar(IFormFile file, CancellationToken cancellationToken)
+    {
+        var fileModel = new NewFileModel
+        {
+            NameWithExtension = file.FileName,
+            MediaType = file.ContentType,
+            Stream = file.OpenReadStream()
+        };
+
+        var setAvatarResult = await _userService.SetAvatarAsync(fileModel, cancellationToken);
+
+        return setAvatarResult.Match(
+            fileInfo => (IActionResult)Ok(fileInfo),
+            errorInput => BadRequest(errorInput));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> RemoveAvatar(FileRemoveDto dto, CancellationToken cancellationToken)
+    {
+        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileInfoRemoveModel>(), cancellationToken);
+        return removeAvatarResult.Match(
+            ok => (IActionResult)Ok(),
+            notFound => NotFound(notFound));
+    }
+}
