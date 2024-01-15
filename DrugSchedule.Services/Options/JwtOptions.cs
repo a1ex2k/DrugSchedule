@@ -2,7 +2,7 @@
 
 public class JwtOptions
 {
-    public const string Jwt = "JWT";
+    public const string Title = "JWT";
     public string ValidIssuer { get; set; } = string.Empty;
     public string ValidAudience { get; set; } = string.Empty;
     public string Secret { get; set; } = string.Empty;

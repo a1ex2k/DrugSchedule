@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DrugSchedule.StorageContract.Data.UserStorage;
+namespace DrugSchedule.StorageContract.Data;
 
 public class RefreshTokenEntry
 {

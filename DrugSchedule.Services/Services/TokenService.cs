@@ -3,10 +3,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using DrugSchedule.BusinessLogic.Auth;
+using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.StorageContract.Abstractions;
 using Microsoft.Extensions.Options;
 using DrugSchedule.BusinessLogic.Options;
+using DrugSchedule.BusinessLogic.Services.Abstractions;
+using DrugSchedule.BusinessLogic.Utils;
+using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
@@ -24,52 +27,69 @@ public class TokenService : ITokenService
     }
 
 
-    public async Task<TokenModel?> RefreshTokensAsync(TokenModel tokenModel)
+    public async Task<OneOf<TokenModel, InvalidInput>> RefreshTokensAsync(TokenModel tokenModel, CancellationToken cancellationToken = default)
     {
         var accessToken = tokenModel.AccessToken;
         var refreshToken = tokenModel.RefreshToken;
+        var invalidTokenError = new InvalidInput("Invalid token(s)");
 
         if (string.IsNullOrWhiteSpace(accessToken) || string.IsNullOrWhiteSpace(refreshToken))
         {
-            return null;
+            return invalidTokenError;
         }
 
         var principal = GetPrincipalFromExpiredToken(accessToken);
         if (principal == null)
         {
-            return null;
+            return invalidTokenError;
         }
 
         var userGuidString = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         if (string.IsNullOrWhiteSpace(userGuidString) || !Guid.TryParse(userGuidString, out var guid))
         {
-            return null;
+            return invalidTokenError;
         }
 
         var userProfileIdString = principal.Claims.FirstOrDefault(c => c.Type == StringConstants.UserProfileIdClaimName)?.Value;
         if (string.IsNullOrWhiteSpace(userProfileIdString) || !long.TryParse(userProfileIdString, out var userProfileId))
         {
-            return null;
+            return invalidTokenError;
         }
 
-        var refreshTokenEntry = await _tokenRepository.GetRefreshTokenEntryAsync(guid, refreshToken!);
+        var refreshTokenEntry = await _tokenRepository.GetRefreshTokenEntryAsync(guid, refreshToken!, cancellationToken);
         if (refreshTokenEntry is null || refreshTokenEntry.RefreshTokenExpiryTime > DateTime.UtcNow)
+        {
+            return invalidTokenError;
+        }
+
+        var tokenParams = new TokenCreateParams
+        {
+            UserGuid = guid,
+            UserProfileId = userProfileId,
+            ClientInfo = refreshTokenEntry.ClientInfo
+        };
+
+        var newTokenModel = await CreateTokensInternalAsync(tokenParams, cancellationToken);
+        await _tokenRepository.RemoveRefreshTokenAsync(guid, refreshToken!, cancellationToken).ConfigureAwait(false);
+
+        return tokenModel;
+    }
+
+    public async Task<OneOf<TokenModel, InvalidInput>> CreateTokensAsync(TokenCreateParams parameters, CancellationToken cancellationToken = default)
+    {
+        var newTokenModel = await CreateTokensInternalAsync(parameters, cancellationToken);
+        return newTokenModel;
+    }
+
+    private async Task<TokenModel?> CreateTokensInternalAsync(TokenCreateParams parameters, CancellationToken cancellationToken = default)
+    {
+        var newAccessToken = CreateAccessTokenString(parameters.UserGuid, parameters.UserProfileId);
+        var newRefreshToken = await CreateRefreshTokenStringAsync(parameters.UserGuid, parameters.ClientInfo, cancellationToken);
+
+        if (newRefreshToken == null)
         {
             return null;
         }
-
-        var tokens = await CreateTokensAsync(guid, userProfileId, refreshTokenEntry.ClientInfo);
-
-        await _tokenRepository.RemoveRefreshTokenAsync(guid, refreshToken!).ConfigureAwait(false);
-
-        return tokens;
-    }
-
-    public async Task<TokenModel?> CreateTokensAsync(Guid userGuid, long userProfileId, string? clientInfo)
-    {
-        var newAccessToken = CreateAccessTokenString(userGuid, userProfileId);
-        var newRefreshToken = await CreateRefreshTokenStringAsync(userGuid, clientInfo);
-
         return new TokenModel
         {
             AccessToken = newAccessToken,
@@ -77,9 +97,10 @@ public class TokenService : ITokenService
         };
     }
 
-    public async Task<bool> RevokeRefreshTokenAsync(Guid userGuid, string refreshToken)
+    public async Task<bool> RevokeRefreshTokenAsync(Guid userGuid, string refreshToken, CancellationToken cancellationToken = default)
     {
-        return await _tokenRepository.RemoveRefreshTokenAsync(userGuid, refreshToken);
+        var removeResult = await _tokenRepository.RemoveRefreshTokenAsync(userGuid, refreshToken, cancellationToken);
+        return removeResult == RemoveOperationResult.SuccessfullyRemoved;
     }
 
 
@@ -105,22 +126,20 @@ public class TokenService : ITokenService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private async Task<string> CreateRefreshTokenStringAsync(Guid userGuid, string? clientInfo)
+    private async Task<string?> CreateRefreshTokenStringAsync(Guid userGuid, string? clientInfo, CancellationToken cancellationToken = default)
     {
         var newRefreshToken = GenerateBytesString(RefreshTokenLength);
-
-        await _tokenRepository.AddRefreshTokenAsync(new()
+        var saved = await _tokenRepository.AddRefreshTokenAsync(new()
         {
             UserGuid = userGuid,
             RefreshToken = newRefreshToken,
             RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(_jwtOptions.Value.RefreshTokenValidityInDays),
             ClientInfo = clientInfo
-        });
-
-        return newRefreshToken;
+        }, cancellationToken);
+        return saved?.RefreshToken;
     }
-    
-    private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+
+    private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token, CancellationToken cancellationToken = default)
     {
         var tokenValidationParameters = new TokenValidationParameters
         {

@@ -4,7 +4,7 @@ public class UserContact
 {
     public required long UserProfileId { get; set; }
 
-    public required string CustomName { get; set; }
+    public UserProfile Profile { get; set; } = default!;
 
-    public bool IsMutual { get; set; }
+    public required string CustomName { get; set; }
 }
