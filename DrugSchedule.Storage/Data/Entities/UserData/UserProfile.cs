@@ -14,6 +14,8 @@ public class UserProfile
 
     public required Guid? AvatarGuid { get; set; }
 
+    public FileInfo? AvatarInfo { get; set; }
+
     public List<UserMedicament> UserMedicaments { get; set; } = new();
 
     public List<MedicamentTakingSchedule> MedicamentTakingSchedules { get; set; } = new();

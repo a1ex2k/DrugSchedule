@@ -52,7 +52,7 @@ public class DrugScheduleContext : IdentityDbContext
             .HasForeignKey(umf => umf.FileGuid);
 
         modelBuilder.Entity<UserProfile>()
-            .HasOne<FileInfo>()
+            .HasOne(u => u.AvatarInfo)
             .WithMany()
             .HasForeignKey(up => up.AvatarGuid);
 
