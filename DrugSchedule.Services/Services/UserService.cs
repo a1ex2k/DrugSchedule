@@ -10,17 +10,17 @@ namespace DrugSchedule.BusinessLogic.Services;
 
 public class UserService : IIdentityService, ICurrentUserService
 {
-    private readonly IFileService _fileService;
+    private readonly IFileInfoService _fileInfoService;
     private readonly IIdentityRepository _identityRepository;
     private readonly IUserProfileRepository _profileRepository;
     private readonly ICurrentUserIdentificator _currentUserIdentificator;
 
-    public UserService(IIdentityRepository identityRepository, IUserProfileRepository profileRepository, ICurrentUserIdentificator currentUserIdentificator, IFileService fileService)
+    public UserService(IIdentityRepository identityRepository, IUserProfileRepository profileRepository, ICurrentUserIdentificator currentUserIdentificator, IFileInfoService fileInfoService)
     {
         _identityRepository = identityRepository;
         _profileRepository = profileRepository;
         _currentUserIdentificator = currentUserIdentificator;
-        _fileService = fileService;
+        _fileInfoService = fileInfoService;
     }
 
 
@@ -222,7 +222,7 @@ public class UserService : IIdentityService, ICurrentUserService
     {
         var contacts = await _profileRepository.GetContactsAsync(_currentUserIdentificator.UserProfileId, cancellationToken);
         var identities = await _identityRepository.GetUserIdentitiesAsync(contacts.ConvertAll(c => c.Profile.UserIdentityGuid), cancellationToken);
-        var avatarInfos = await _fileService.GetFileInfosAsync(contacts
+        var avatarInfos = await _fileInfoService.GetFileInfosAsync(contacts
             .Where(c => c.Profile.AvatarGuid.HasValue)
             .Select(c => c.Profile.AvatarGuid!.Value).ToList(), cancellationToken);
 
@@ -257,7 +257,7 @@ public class UserService : IIdentityService, ICurrentUserService
         
         var identities = await _identityRepository.GetUserIdentitiesAsync(usernamePart, cancellationToken);
         var profiles = await _profileRepository.GetUserProfilesAsync(identities.ConvertAll(i => i.Guid), cancellationToken);
-        var avatarInfos = await _fileService.GetFileInfosAsync(profiles
+        var avatarInfos = await _fileInfoService.GetFileInfosAsync(profiles
             .Where(p => p.AvatarGuid.HasValue)
             .Select(p => p.AvatarGuid!.Value).ToList(), cancellationToken);
 
@@ -339,7 +339,7 @@ public class UserService : IIdentityService, ICurrentUserService
             MediaType = newAvatar.MediaType,
             Stream = newAvatar.Stream,
         };
-        var fileServiceResult = await _fileService.CreateAsync(newFile, cancellationToken);
+        var fileServiceResult = await _fileInfoService.CreateAsync(newFile, cancellationToken);
 
         if (fileServiceResult.IsT1)
         {
@@ -382,6 +382,11 @@ public class UserService : IIdentityService, ICurrentUserService
         return new True();
     }
 
+    public async Task<OneOf<True, NotFound>> GetAvatarsInfoAsync(FileInfoRequestModel fileInfoRemoveModel, CancellationToken cancellationToken = default)
+    {
+        var avatarsInfo =  
+    }
+
 
     private async Task<UserModel?> GetUserModelAsync(UserIdentity userIdentity, UserProfile? userProfile, bool createIfNotExists, CancellationToken cancellationToken)
     {
@@ -406,7 +411,7 @@ public class UserService : IIdentityService, ICurrentUserService
         FileInfo avatar = null;
         if (userProfile.AvatarGuid != null)
         {
-            var avatarResult = await _fileService.GetFileInfoAsync(userProfile.AvatarGuid.Value, cancellationToken);
+            var avatarResult = await _fileInfoService.GetFileInfoAsync(userProfile.AvatarGuid.Value, cancellationToken);
             avatar = avatarResult.AsT0;
         }
         var userModel = new UserModel

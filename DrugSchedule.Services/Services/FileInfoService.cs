@@ -5,12 +5,12 @@ using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
-public class FileService : IFileService
+public class FileInfoService : IFileInfoService
 {
     private readonly IFileInfoRepository _fileInfoRepository;
     private readonly IFileStorage _fileStorage;
 
-    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage)
+    public FileInfoService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage)
     {
         _fileInfoRepository = fileInfoRepository;
         _fileStorage = fileStorage;

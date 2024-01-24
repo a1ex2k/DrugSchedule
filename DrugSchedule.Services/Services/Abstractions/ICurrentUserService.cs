@@ -23,4 +23,6 @@ public interface ICurrentUserService
     Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFileModel newFileInfoModel, CancellationToken cancellationToken = default);
 
     Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileInfoRemoveModel fileInfoRemoveModel, CancellationToken cancellationToken = default);
+
+    Task<OneOf<True, NotFound>> GetAvatarsInfoAsync(FileInfoRequestModel fileInfoRemoveModel, CancellationToken cancellationToken = default);
 }
