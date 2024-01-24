@@ -5,7 +5,7 @@ using DrugSchedule.BusinessLogic.Utils;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
-public interface IFileService : IFileStore
+public interface IFileInfoService
 {
     Task<OneOf<FileInfo, NotFound>> GetFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default);
 

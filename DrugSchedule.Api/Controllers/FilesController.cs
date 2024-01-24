@@ -15,14 +15,14 @@ public class FilesController : ControllerBase
 {
     private readonly IFileStore _fileStore;
 
-    public FilesController(IFileStore fileStore)
+    public FilesController(IFileStore fileStore, IFileInfoService fileInfoService)
     {
         _fileStore = fileStore;
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> Download([FromBody] FileRequestDto dto)
+    public async Task<IActionResult> Download([FromBody] FileRequestDto dto, CancellationToken cancellationToken)
     {
         var fileResult = await _fileStore.GetReadStreamAsync(dto.Adapt<FileRequest>(), CancellationToken.None);
         if (fileResult.IsT1)
