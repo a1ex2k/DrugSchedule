@@ -113,4 +113,13 @@ public class UserController : ControllerBase
             ok => (IActionResult)Ok(),
             notFound => NotFound(notFound));
     }
+
+    [HttpPost]
+    public async Task<IActionResult> GetAvatarInfos(FileInfoRequestDto dto, CancellationToken cancellationToken)
+    {
+        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileInfoRemoveModel>(), cancellationToken);
+        return removeAvatarResult.Match(
+            ok => (IActionResult)Ok(),
+            notFound => NotFound(notFound));
+    }
 }

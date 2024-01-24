@@ -25,4 +25,6 @@ public interface IUserProfileRepository
     public Task<UserContact?> AddOrUpdateContactAsync(UserContact userContact, CancellationToken cancellationToken = default);
 
     public Task<bool> RemoveContactAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default);
+
+    public Task<List<FileInfo>> GetUserAvatarsInfo(List<Guid> filesGuids, CancellationToken cancellationToken = default);
 }

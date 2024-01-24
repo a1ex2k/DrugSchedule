@@ -148,4 +148,15 @@ public class UserProfileRepository : IUserProfileRepository
             .ExecuteDeleteAsync(cancellationToken);
         return deleted > 0;
     }
+
+    public async Task<List<Contract.FileInfo>> GetUserAvatarsInfo(List<Guid> filesGuids, CancellationToken cancellationToken = default)
+    {
+        var avatarsInfo = await _dbContext.UserProfiles
+            .AsNoTracking()
+            .Where(u => u.AvatarGuid != null)
+            .Where(u => filesGuids.Contains(u.AvatarGuid!.Value))
+            .Select(u => u.AvatarInfo!.ToContractModel())
+            .ToListAsync(cancellationToken);
+        return avatarsInfo;
+    }
 }
