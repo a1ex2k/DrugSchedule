@@ -10,5 +10,5 @@ public class UserContactModel
 
     public required string? RealName { get; set; }
 
-    public FileInfoModel? Avatar { get; set; }
+    public DownloadableFile? AvatarGuid { get; set; }
 }

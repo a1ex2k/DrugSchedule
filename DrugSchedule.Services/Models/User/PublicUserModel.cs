@@ -8,5 +8,6 @@ public class PublicUserModel
 
     public string? RealName { get; set; }
 
-    public FileInfoModel? Avatar { get; set; }
+    public Guid? AvatarGuid { get; set; }
+
 }

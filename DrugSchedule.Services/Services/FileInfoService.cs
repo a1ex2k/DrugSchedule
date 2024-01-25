@@ -1,4 +1,5 @@
 ﻿using DrugSchedule.BusinessLogic.Models;
+using DrugSchedule.BusinessLogic.Services.Abstractions;
 using DrugSchedule.BusinessLogic.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
@@ -9,11 +10,13 @@ public class FileInfoService : IFileInfoService
 {
     private readonly IFileInfoRepository _fileInfoRepository;
     private readonly IFileStorage _fileStorage;
+    private readonly IFileAssociatingService _fileAssociate;
 
-    public FileInfoService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage)
+    public FileInfoService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage, IFileAssociatingService fileAssociate)
     {
         _fileInfoRepository = fileInfoRepository;
         _fileStorage = fileStorage;
+        _fileAssociate = fileAssociate;
     }
 
     public async Task<OneOf<FileInfo, NotFound>> GetFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -33,12 +36,19 @@ public class FileInfoService : IFileInfoService
         return fileInfos;
     }
 
-    public async Task<OneOf<FileData, NotFound>> GetReadStreamAsync(FileRequest fileRequest, CancellationToken cancellationToken = default)
+    public async Task<OneOf<FileData, NotFound>> GetReadStreamAsync(long downloadId, CancellationToken cancellationToken = default)
     {
-        var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileRequest.Guid, cancellationToken);
-        if (fileInfo == null || !string.Equals(fileInfo.OriginalName + fileInfo.FileExtension, fileRequest.OriginalName))
+        var fileGuid = await _fileAssociate.GetFileGuidAsync(downloadId, cancellationToken);
+        
+        if (fileGuid == null)
         {
-            return new NotFound("No file found with specified parameters");
+            return new NotFound("File not found");
+        }
+        
+        var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid.Value, cancellationToken);
+        if (fileInfo == null)
+        {
+            return new NotFound("File not found");
         }
         
         var stream = await _fileStorage.GetReadStreamAsync(fileInfo, cancellationToken);

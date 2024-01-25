@@ -32,10 +32,10 @@ builder.Services.AddScoped<CurrentUserMiddleware>();
 builder.Services.AddScoped<ICurrentUserIdentificator, CurrentUserIdentificator>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
-builder.Services.AddScoped<ICurrentUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFileInfoService, FileInfoService>();
 builder.Services.AddScoped<IFileStore, FileInfoService>();
-builder.Services.AddScoped<ICurrentUserService, UserService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.Configure<JwtOptions>(
     builder.Configuration.GetSection(JwtOptions.Title));

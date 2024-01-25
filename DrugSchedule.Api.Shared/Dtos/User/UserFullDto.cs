@@ -1,8 +1,8 @@
-﻿using DrugSchedule.StorageContract.Data;
+﻿using System;
 
-namespace DrugSchedule.BusinessLogic.Models;
+namespace DrugSchedule.Api.Shared.Dtos;
 
-public class UserModel
+public class UserFullDto
 {
     public required long Id { get; set; }
 
@@ -16,5 +16,5 @@ public class UserModel
 
     public DateOnly? DateOfBirth { get; set; }
 
-    public FileInfoModel? Avatar { get; set; }
+    public DownloadableFileDto? Avatar { get; set; }
 }
