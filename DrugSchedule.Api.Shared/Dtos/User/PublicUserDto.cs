@@ -1,4 +1,6 @@
-﻿namespace DrugSchedule.Api.Shared.Dtos;
+﻿using System;
+
+namespace DrugSchedule.Api.Shared.Dtos;
 
 public class PublicUserDto
 {
@@ -8,5 +10,5 @@ public class PublicUserDto
 
     public string? RealName { get; set; }
 
-    public FileInfoDto? Avatar { get; set; }
+    public DownloadableFileDto? Avatar { get; set; }
 }
