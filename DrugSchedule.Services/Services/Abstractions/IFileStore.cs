@@ -5,5 +5,5 @@ namespace DrugSchedule.BusinessLogic.Services;
 
 public interface IFileStore
 {
-    Task<OneOf<FileData, NotFound>> GetReadStreamAsync(FileRequest fileRequest, CancellationToken cancellationToken = default);
+    Task<OneOf<FileData, NotFound>> GetReadStreamAsync(int downloadId, CancellationToken cancellationToken = default);
 }

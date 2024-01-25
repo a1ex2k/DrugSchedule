@@ -1,6 +1,8 @@
 ﻿namespace DrugSchedule.BusinessLogic.Models;
 
-public class FileInfoRequestModel
+public class FileRequestModel
 {
-    public required List<Guid> FilesGuid { get; set; }
+    public required Guid FileGuid { get; set; }
+
+    public required long DownloadId { get; set; }
 }

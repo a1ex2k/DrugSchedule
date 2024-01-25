@@ -12,11 +12,13 @@ namespace DrugSchedule.Api.Controllers;
 [Authorize]
 public class UserController : ControllerBase
 {
-    private readonly ICurrentUserService _userService;
+    private readonly IUserService _userService;
+    private readonly IUserContactsService _userContactsService;
 
-    public UserController(ICurrentUserService userService)
+    public UserController(IUserService userService, IUserContactsService userContactsService)
     {
         _userService = userService;
+        _userContactsService = userContactsService;
     }
 
 
@@ -24,7 +26,7 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetMe(CancellationToken cancellationToken)
     {
         var userModel = await _userService.GetCurrentUserAsync(cancellationToken);
-        return Ok(userModel.Adapt<UserDto>());
+        return Ok(userModel.Adapt<UserFullDto>());
     }
 
     
@@ -41,7 +43,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> GetContacts(CancellationToken cancellationToken)
     {
-        var contacts = await _userService.GetUserContactsAsync(cancellationToken);
+        var contacts = await _userContactsService.GetUserContactsAsync(cancellationToken);
         return Ok(contacts.Adapt<UserContactDto>());
     }
 
@@ -49,7 +51,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddContact(NewUserContactDto dto, CancellationToken cancellationToken)
     {
-        var contactAddResult = await _userService.AddUserContactAsync(dto.Adapt<NewUserContactModel>(), cancellationToken);
+        var contactAddResult = await _userContactsService.AddUserContactAsync(dto.Adapt<NewUserContactModel>(), cancellationToken);
         return contactAddResult.Match(
             ok => (IActionResult)Ok(),
             errorInput => BadRequest(errorInput),
@@ -60,7 +62,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RemoveContact(UserIdDto dto, CancellationToken cancellationToken)
     {
-        var contactRemoveResult = await _userService.RemoveUserContactAsync(dto.Adapt<UserIdModel>(), cancellationToken);
+        var contactRemoveResult = await _userContactsService.RemoveUserContactAsync(dto.Adapt<UserIdModel>(), cancellationToken);
         return contactRemoveResult.Match(
             ok => (IActionResult)Ok(),
             notFound => NotFound(notFound));
@@ -115,9 +117,12 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetAvatarInfos(FileInfoRequestDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAvatarInfos(FileGuidCollectionDto dto, CancellationToken cancellationToken)
     {
-        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileInfoRemoveModel>(), cancellationToken);
+        var filesInfo = await _userService.GetAvatarsInfoAsync(dto.Adapt<FileInfoRequestModel>(), cancellationToken);
+        
+        var fileInfoDtos = filesInfo
+        
         return removeAvatarResult.Match(
             ok => (IActionResult)Ok(),
             notFound => NotFound(notFound));
