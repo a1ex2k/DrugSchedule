@@ -9,7 +9,7 @@ public class CurrentUserMiddleware : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var currentUserIdentificator = context.RequestServices.GetService<ICurrentUserIdentificator>();
+        var currentUserIdentificator = context.RequestServices.GetService<ICurrentUserIdentifier>();
 
         if (currentUserIdentificator?.CanBeSet != true)
         {

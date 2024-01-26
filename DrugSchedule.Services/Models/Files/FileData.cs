@@ -2,7 +2,7 @@
 
 public class FileData
 {
-    public required FileInfoModel FileInfoModel { get; set; }
+    public required FileInfo FileInfo { get; set; }
 
     public required Stream Stream { get; set; }
 }

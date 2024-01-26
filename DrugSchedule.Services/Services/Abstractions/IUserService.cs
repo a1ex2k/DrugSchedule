@@ -12,7 +12,7 @@ public interface IUserService
 
     Task<UserFullModel> GetCurrentUserAsync(CancellationToken cancellationToken = default);
 
-    Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFileModel newFileInfoModel, CancellationToken cancellationToken = default);
+    Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFile newFileInfo, CancellationToken cancellationToken = default);
 
     Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileInfoRemoveModel fileInfoRemoveModel, CancellationToken cancellationToken = default);
 
