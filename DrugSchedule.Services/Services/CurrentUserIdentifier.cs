@@ -2,7 +2,7 @@
 
 namespace DrugSchedule.BusinessLogic.Services;
 
-public class CurrentUserIdentificator : ICurrentUserIdentificator
+public class CurrentUserIdentifier : ICurrentUserIdentifier
 {
     private long _userProfileId;
     private Guid _userIdentityGuid;

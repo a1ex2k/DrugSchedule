@@ -11,17 +11,17 @@ namespace DrugSchedule.BusinessLogic.Services;
 
 public class UserService : IIdentityService, IUserService, IUserContactsService
 {
-    private readonly IFileInfoService _fileInfoService;
+    private readonly IFileService _fileService;
     private readonly IIdentityRepository _identityRepository;
     private readonly IUserProfileRepository _profileRepository;
-    private readonly ICurrentUserIdentificator _currentUserIdentificator;
+    private readonly ICurrentUserIdentifier _currentUserIdentifier;
 
-    public UserService(IIdentityRepository identityRepository, IUserProfileRepository profileRepository, ICurrentUserIdentificator currentUserIdentificator, IFileInfoService fileInfoService)
+    public UserService(IIdentityRepository identityRepository, IUserProfileRepository profileRepository, ICurrentUserIdentifier currentUserIdentifier, IFileService fileService)
     {
         _identityRepository = identityRepository;
         _profileRepository = profileRepository;
-        _currentUserIdentificator = currentUserIdentificator;
-        _fileInfoService = fileInfoService;
+        _currentUserIdentifier = currentUserIdentifier;
+        _fileService = fileService;
     }
 
 
@@ -132,7 +132,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
     public async Task<OneOf<True, InvalidInput>> UpdatePasswordAsync(NewPasswordModel newPassword, CancellationToken cancellationToken = default)
     {
-        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentificator.UserIdentityGuid, cancellationToken);
+        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
 
         var error = new InvalidInput();
         if (!CridentialsValidator.ValidatePassword(newPassword.NewPassword))
@@ -152,7 +152,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
         var passwordUpdate = new PasswordUpdate
         {
-            IdentityGuid = _currentUserIdentificator.UserIdentityGuid,
+            IdentityGuid = _currentUserIdentifier.UserIdentityGuid,
             OldPassword = newPassword.OldPassword,
             NewPassword = newPassword.NewPassword
         };
@@ -197,15 +197,15 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
         var userProfile = new UserProfile
         {
-            UserProfileId = _currentUserIdentificator.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserProfileId,
             RealName = string.IsNullOrWhiteSpace(userUpdateModel.RealName) ? null : userUpdateModel.RealName.Trim(),
             DateOfBirth = userUpdateModel.DateOfBirth == DateOnly.MinValue ? null : userUpdateModel.DateOfBirth,
-            UserIdentityGuid = _currentUserIdentificator.UserIdentityGuid,
+            UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
             Sex = userUpdateModel.Sex ?? Sex.Undefined,
         };
         var updateResult = await _profileRepository.UpdateUserProfileAsync(userProfile, updateFlags, cancellationToken);
 
-        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentificator.UserIdentityGuid, cancellationToken);
+        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
         var userModel = await GetUserModelAsync(identity!, updateResult, false, cancellationToken);
         return userModel!;
     }
@@ -213,7 +213,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
     public async Task<UserFullModel> GetCurrentUserAsync(CancellationToken cancellationToken = default)
     {
-        var userIdentity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentificator.UserIdentityGuid, cancellationToken);
+        var userIdentity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
         var userModel = await GetUserModelAsync(userIdentity, null, false, cancellationToken);
         return userModel;
     }
@@ -221,9 +221,9 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
     public async Task<UserContactsCollectionModel> GetUserContactsAsync(CancellationToken cancellationToken = default)
     {
-        var contacts = await _profileRepository.GetContactsAsync(_currentUserIdentificator.UserProfileId, cancellationToken);
+        var contacts = await _profileRepository.GetContactsAsync(_currentUserIdentifier.UserProfileId, cancellationToken);
         var identities = await _identityRepository.GetUserIdentitiesAsync(contacts.ConvertAll(c => c.Profile.UserIdentityGuid), cancellationToken);
-        var avatarInfos = await _fileInfoService.GetFileInfosAsync(contacts
+        var avatarInfos = await _fileService.GetFileInfosAsync(contacts
             .Where(c => c.Profile.AvatarGuid.HasValue)
             .Select(c => c.Profile.AvatarGuid!.Value).ToList(), cancellationToken);
 
@@ -240,7 +240,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
             .ToList();
         return new UserContactsCollectionModel
         {
-            UserId = _currentUserIdentificator.UserProfileId,
+            UserId = _currentUserIdentifier.UserProfileId,
             Contacts = contactModelList
         };
     }
@@ -256,12 +256,12 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         
         var identities = await _identityRepository.GetUserIdentitiesAsync(usernamePart, cancellationToken);
         var profiles = await _profileRepository.GetUserProfilesAsync(identities.ConvertAll(i => i.Guid), cancellationToken);
-        var avatarInfos = await _fileInfoService.GetFileInfosAsync(profiles
+        var avatarInfos = await _fileService.GetFileInfosAsync(profiles
             .Where(p => p.AvatarGuid.HasValue)
             .Select(p => p.AvatarGuid!.Value).ToList(), cancellationToken);
 
         var usersList = identities
-            .Where(idn => idn.Guid != _currentUserIdentificator.UserIdentityGuid)
+            .Where(idn => idn.Guid != _currentUserIdentifier.UserIdentityGuid)
             .Join(profiles, i => i.Guid, p => p.UserIdentityGuid, (i, p) =>
                 new PublicUserModel()
                 {
@@ -280,7 +280,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
     public async Task<OneOf<True, InvalidInput, NotFound>> AddUserContactAsync(NewUserContactModel newContactModel, CancellationToken cancellationToken = default)
     {
-        if (newContactModel.UserProfileId == _currentUserIdentificator.UserProfileId)
+        if (newContactModel.UserProfileId == _currentUserIdentifier.UserProfileId)
         {
             return new InvalidInput($"Current user itself cannot be added to contacts");
         }
@@ -305,7 +305,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
         var userContact = new UserContact
         {
-            UserProfileId = _currentUserIdentificator.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserProfileId,
             Profile = userProfile,
             CustomName = customName ?? "user" + userProfile.UserProfileId,
         };
@@ -317,7 +317,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     public async Task<OneOf<True, NotFound>> RemoveUserContactAsync(UserIdModel userId, CancellationToken cancellationToken = default)
     {
         var contactRemoved = await
-            _profileRepository.RemoveContactAsync(_currentUserIdentificator.UserProfileId, userId.UserProfileId, cancellationToken);
+            _profileRepository.RemoveContactAsync(_currentUserIdentifier.UserProfileId, userId.UserProfileId, cancellationToken);
         if (!contactRemoved)
         {
             return new NotFound("No contact with such ID found");
@@ -327,16 +327,16 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFileModel newAvatar, CancellationToken cancellationToken = default)
+    public async Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFile newAvatar, CancellationToken cancellationToken = default)
     {
-        var newFile = new NewFile
+        var newFile = new NewCategorizedFile
         {
             NameWithExtension = newAvatar.NameWithExtension,
             Category = FileCategory.UserAvatar,
             MediaType = newAvatar.MediaType,
             Stream = newAvatar.Stream,
         };
-        var fileServiceResult = await _fileInfoService.CreateAsync(newFile, cancellationToken);
+        var fileServiceResult = await _fileService.CreateAsync(newFile, cancellationToken);
 
         if (fileServiceResult.IsT1)
         {
@@ -345,7 +345,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
 
         var profile = new UserProfile
         {
-            UserProfileId = _currentUserIdentificator.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserProfileId,
             AvatarGuid = fileServiceResult.AsT0.Guid
         };
         var updateFlags = new UserProfileUpdateFlags
@@ -362,8 +362,8 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     {
         var profile = new UserProfile
         {
-            UserProfileId = _currentUserIdentificator.UserProfileId,
-            UserIdentityGuid = _currentUserIdentificator.UserIdentityGuid,
+            UserProfileId = _currentUserIdentifier.UserProfileId,
+            UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
             AvatarGuid = null
         };
         var updateFlags = new UserProfileUpdateFlags
