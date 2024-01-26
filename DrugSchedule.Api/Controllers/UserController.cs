@@ -92,7 +92,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SetAvatar(IFormFile file, CancellationToken cancellationToken)
     {
-        var fileModel = new NewFileModel
+        var fileModel = new NewFile
         {
             NameWithExtension = file.FileName,
             MediaType = file.ContentType,

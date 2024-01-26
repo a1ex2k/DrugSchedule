@@ -6,5 +6,6 @@ public enum FileCategory
     MedicamentImage = 1,
     MedicamentInstruction = 2,
     UserAvatar = 3,
-    DrugConfirmation = 4
+    DrugConfirmation = 4,
+    UserMedicamentImage = 5,
 }
