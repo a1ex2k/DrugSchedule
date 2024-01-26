@@ -29,12 +29,12 @@ builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 // business logic services
 builder.Services.AddScoped<CurrentUserMiddleware>();
-builder.Services.AddScoped<ICurrentUserIdentificator, CurrentUserIdentificator>();
+builder.Services.AddScoped<ICurrentUserIdentifier, CurrentUserIdentifier>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IFileInfoService, FileInfoService>();
-builder.Services.AddScoped<IFileStore, FileInfoService>();
+builder.Services.AddScoped<IFileService, FileService>();
+builder.Services.AddScoped<IFileStore, FileService>();
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.Configure<JwtOptions>(

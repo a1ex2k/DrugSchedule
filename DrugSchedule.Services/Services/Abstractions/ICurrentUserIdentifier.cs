@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.BusinessLogic.Services.Abstractions;
 
-public interface ICurrentUserIdentificator
+public interface ICurrentUserIdentifier
 {
     bool IsAvailable { get; }
 
