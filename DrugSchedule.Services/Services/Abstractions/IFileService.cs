@@ -13,5 +13,5 @@ public interface IFileService
     
     Task<OneOf<FileInfo, InvalidInput>> CreateAsync(NewCategorizedFile newCategorizedFileInfoModel, CancellationToken cancellationToken = default);
 
-    Task<OneOf<bool, NotFound>> RemoveFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default);
+    Task<OneOf<bool, NotFound>> RemoveFileAsync(Guid fileGuid, CancellationToken cancellationToken = default);
 }

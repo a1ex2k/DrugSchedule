@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.BusinessLogic.Models;
 
-public class NewFile 
+public class InputFile 
 {
     public required string NameWithExtension { get; set; }
 

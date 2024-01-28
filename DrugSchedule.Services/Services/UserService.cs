@@ -1,31 +1,34 @@
 ﻿using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
 using DrugSchedule.BusinessLogic.Utils;
-using DrugSchedule.Storage.Extensions;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using DrugSchedule.StorageContract.Data.UserStorage;
 using OneOf.Types;
+using NewUserIdentity = DrugSchedule.BusinessLogic.Models.NewUserIdentity;
+using UserContact = DrugSchedule.BusinessLogic.Models.UserContact;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
 public class UserService : IIdentityService, IUserService, IUserContactsService
 {
     private readonly IFileService _fileService;
+    private readonly IDownloadableFileConverter _downloadableFileConverter;
     private readonly IIdentityRepository _identityRepository;
     private readonly IUserProfileRepository _profileRepository;
     private readonly ICurrentUserIdentifier _currentUserIdentifier;
 
-    public UserService(IIdentityRepository identityRepository, IUserProfileRepository profileRepository, ICurrentUserIdentifier currentUserIdentifier, IFileService fileService)
+    public UserService(IIdentityRepository identityRepository, IUserProfileRepository profileRepository, ICurrentUserIdentifier currentUserIdentifier, IFileService fileService, IDownloadableFileConverter downloadableFileConverter)
     {
         _identityRepository = identityRepository;
         _profileRepository = profileRepository;
         _currentUserIdentifier = currentUserIdentifier;
         _fileService = fileService;
+        _downloadableFileConverter = downloadableFileConverter;
     }
 
 
-    public async Task<OneOf<NewUserIdentityModel, InvalidInput>> RegisterUserAsync(RegisterModel registerModel, CancellationToken cancellationToken = default)
+    public async Task<OneOf<NewUserIdentity, InvalidInput>> RegisterUserAsync(RegisterModel registerModel, CancellationToken cancellationToken = default)
     {
         var error = new InvalidInput();
 
@@ -63,14 +66,14 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
             return error;
         }
 
-        var newUserIdentity = await _identityRepository.CreateUserIdentityAsync(new NewUserIdentity
+        var newUserIdentity = await _identityRepository.CreateUserIdentityAsync(new StorageContract.Data.NewUserIdentity
         {
             Username = registerModel.Username!,
             Email = registerModel.Email!,
             Password = registerModel.Password!
         }, cancellationToken);
 
-        return new NewUserIdentityModel
+        return new NewUserIdentity
         {
             Username = newUserIdentity.Username!,
             Email = newUserIdentity.Email!
@@ -78,7 +81,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<OneOf<SuccessfulLoginModel, InvalidInput>> LogUserInAsync(LoginModel loginModel, CancellationToken cancellationToken = default)
+    public async Task<OneOf<SuccessfulLogin, InvalidInput>> LogUserInAsync(LoginModel loginModel, CancellationToken cancellationToken = default)
     {
         var userIdentity = await _identityRepository.GetUserIdentityAsync(loginModel.Username!, loginModel.Password!, cancellationToken);
         if (userIdentity == null)
@@ -86,17 +89,16 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
             return new InvalidInput("Either username or password is incorrect");
         }
 
-        var userProfile = await _profileRepository.GetUserProfileAsync(userIdentity.Guid, cancellationToken) 
+        var userProfile = await _profileRepository.GetUserProfileAsync(userIdentity.Guid, false, cancellationToken)
                           ?? await _profileRepository.CreateUserProfileAsync(new UserProfile
-        {
-            UserIdentityGuid = userIdentity.Guid,
-            RealName = null,
-            DateOfBirth = null,
-            Sex = Sex.Undefined,
-            AvatarGuid = null,
-        }, cancellationToken);
+                          {
+                              UserIdentityGuid = userIdentity.Guid,
+                              RealName = null,
+                              DateOfBirth = null,
+                              Sex = Sex.Undefined,
+                          }, cancellationToken);
 
-        var successfulLoginModel = new SuccessfulLoginModel
+        var successfulLoginModel = new SuccessfulLogin
         {
             UserProfileId = userProfile.UserProfileId,
             UserIdentityGuid = userIdentity.Guid,
@@ -108,11 +110,11 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<AvailableUsernameModel> IsUsernameAvailableAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<AvailableUsername> IsUsernameAvailableAsync(string username, CancellationToken cancellationToken = default)
     {
         if (!CridentialsValidator.ValidateUsername(username))
         {
-            return new AvailableUsernameModel
+            return new AvailableUsername
             {
                 Username = username,
                 IsAvailable = false,
@@ -121,7 +123,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         }
 
         var isUsed = await _identityRepository.IsUsernameUsedAsync(username, cancellationToken);
-        return new AvailableUsernameModel
+        return new AvailableUsername
         {
             Username = username,
             IsAvailable = !isUsed,
@@ -168,29 +170,29 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<OneOf<UserFullModel, InvalidInput>> UpdateProfileAsync(UserUpdateModel userUpdateModel, CancellationToken cancellationToken = default)
+    public async Task<OneOf<UserUpdate, InvalidInput>> UpdateProfileAsync(UserUpdate userUpdate, CancellationToken cancellationToken = default)
     {
         var updateFlags = new UserProfileUpdateFlags
         {
-            RealName = userUpdateModel.RealName != null,
-            DateOfBirth = userUpdateModel.DateOfBirth.HasValue,
-            Sex = userUpdateModel.Sex.HasValue,
+            RealName = userUpdate.RealName != null,
+            DateOfBirth = userUpdate.DateOfBirth.HasValue,
+            Sex = userUpdate.Sex.HasValue,
         };
 
         var error = new InvalidInput();
 
-        if (updateFlags.DateOfBirth 
-            && userUpdateModel.DateOfBirth!.Value != DateOnly.MinValue)
+        if (updateFlags.DateOfBirth
+            && userUpdate.DateOfBirth!.Value != DateOnly.MinValue)
         {
             var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (userUpdateModel.DateOfBirth.Value > currentDate.AddYears(-5)
-                || userUpdateModel.DateOfBirth.Value < currentDate.AddYears(-120))
+            if (userUpdate.DateOfBirth.Value > currentDate.AddYears(-5)
+                || userUpdate.DateOfBirth.Value < currentDate.AddYears(-120))
             {
                 error.Add("Invalid DateOfBirth: 01.01.0001 to reset, current age > 5 and < 120");
             }
         }
 
-        if (updateFlags.RealName && userUpdateModel.RealName!.Length > 20)
+        if (updateFlags.RealName && userUpdate.RealName!.Length > 20)
         {
             error.Add("Invalid RealName: empty string to reset, up to 20 characters");
         }
@@ -198,47 +200,61 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         var userProfile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
-            RealName = string.IsNullOrWhiteSpace(userUpdateModel.RealName) ? null : userUpdateModel.RealName.Trim(),
-            DateOfBirth = userUpdateModel.DateOfBirth == DateOnly.MinValue ? null : userUpdateModel.DateOfBirth,
+            RealName = string.IsNullOrWhiteSpace(userUpdate.RealName) ? null : userUpdate.RealName.Trim(),
+            DateOfBirth = userUpdate.DateOfBirth == DateOnly.MinValue ? null : userUpdate.DateOfBirth,
             UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
-            Sex = userUpdateModel.Sex ?? Sex.Undefined,
+            Sex = userUpdate.Sex ?? Sex.Undefined,
         };
         var updateResult = await _profileRepository.UpdateUserProfileAsync(userProfile, updateFlags, cancellationToken);
 
-        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
-        var userModel = await GetUserModelAsync(identity!, updateResult, false, cancellationToken);
-        return userModel!;
+        var model = new UserUpdate
+        {
+            RealName = updateResult!.RealName,
+            DateOfBirth = updateResult!.DateOfBirth,
+            Sex = updateResult!.Sex
+        };
+        return model!;
     }
 
 
-    public async Task<UserFullModel> GetCurrentUserAsync(CancellationToken cancellationToken = default)
+    public async Task<UserFull> GetCurrentUserAsync(CancellationToken cancellationToken = default)
     {
         var userIdentity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
-        var userModel = await GetUserModelAsync(userIdentity, null, false, cancellationToken);
+        var userProfile = await _profileRepository.GetUserProfileAsync(userIdentity!.Guid, true, cancellationToken);
+
+        var userModel = new UserFull
+        {
+            Id = userProfile!.UserProfileId,
+            Username = userIdentity.Username!,
+            Email = userIdentity.Email!,
+            RealName = userProfile.RealName,
+            DateOfBirth = userProfile.DateOfBirth,
+            Sex = userProfile.Sex,
+            Avatar = userProfile.Avatar != null ? _downloadableFileConverter.ToDownloadableFile(userProfile.Avatar, true) : null,
+        };
+
         return userModel;
     }
 
 
-    public async Task<UserContactsCollectionModel> GetUserContactsAsync(CancellationToken cancellationToken = default)
+    public async Task<UserContactsCollection> GetUserContactsAsync(CancellationToken cancellationToken = default)
     {
-        var contacts = await _profileRepository.GetContactsAsync(_currentUserIdentifier.UserProfileId, cancellationToken);
-        var identities = await _identityRepository.GetUserIdentitiesAsync(contacts.ConvertAll(c => c.Profile.UserIdentityGuid), cancellationToken);
-        var avatarInfos = await _fileService.GetFileInfosAsync(contacts
-            .Where(c => c.Profile.AvatarGuid.HasValue)
-            .Select(c => c.Profile.AvatarGuid!.Value).ToList(), cancellationToken);
+        var contacts = await _profileRepository.GetContactsAsync(_currentUserIdentifier.UserProfileId, true, cancellationToken);
+        var identities = await _identityRepository.GetUserIdentitiesAsync(new UserIdentityFilter { GuidsFilter = contacts.Select(c => c.Profile.UserIdentityGuid).ToList() }, cancellationToken);
 
-        var contactModelList = contacts
-            .Join(identities, c => c.Profile.UserIdentityGuid, i => i.Guid, (c, i) =>
-                new UserContactModel
-                {
-                    Id = c.Profile.UserProfileId,
-                    Username = i.Username!,
-                    СontactName = c.CustomName,
-                    RealName = c.Profile.RealName,
-                    AvatarGuid = c.Profile.AvatarGuid
-                })
-            .ToList();
-        return new UserContactsCollectionModel
+        var contactModelList = (
+             from c in contacts
+             join i in identities on c.Profile.UserIdentityGuid equals i.Guid
+             select new UserContact()
+             {
+                 Id = c.Profile.UserProfileId,
+                 Username = i.Username!,
+                 СontactName = c.CustomName,
+                 RealName = c.Profile.RealName,
+                 Avatar = c.Profile.Avatar is null ? null : _downloadableFileConverter.ToDownloadableFile(c.Profile.Avatar, true)
+             })
+             .ToList();
+        return new UserContactsCollection
         {
             UserId = _currentUserIdentifier.UserProfileId,
             Contacts = contactModelList
@@ -246,52 +262,59 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<OneOf<UserPublicCollectionModel, InvalidInput>> FindUsersAsync(UserSearchModel searchModel, CancellationToken cancellationToken = default)
+    public async Task<OneOf<UserPublicCollection, InvalidInput>> FindUsersAsync(UserSearch search, CancellationToken cancellationToken = default)
     {
-        var usernamePart = searchModel.UsernameSubstring;
+        var usernamePart = search.UsernameSubstring;
         if (string.IsNullOrWhiteSpace(usernamePart.Trim()) || usernamePart.Length < 3)
         {
             return new InvalidInput("Search value must be at least 3 not whitespace characters long");
         }
-        
-        var identities = await _identityRepository.GetUserIdentitiesAsync(usernamePart, cancellationToken);
-        var profiles = await _profileRepository.GetUserProfilesAsync(identities.ConvertAll(i => i.Guid), cancellationToken);
-        var avatarInfos = await _fileService.GetFileInfosAsync(profiles
-            .Where(p => p.AvatarGuid.HasValue)
-            .Select(p => p.AvatarGuid!.Value).ToList(), cancellationToken);
 
-        var usersList = identities
-            .Where(idn => idn.Guid != _currentUserIdentifier.UserIdentityGuid)
-            .Join(profiles, i => i.Guid, p => p.UserIdentityGuid, (i, p) =>
-                new PublicUserModel()
+        var filter = new UserIdentityFilter
+        {
+            UsernameFilter = new StringFilter
+            {
+                SubString = search.UsernameSubstring,
+                StringSearchType = StringSearch.Contains
+            },
+            Take = search.MaxCount
+        };
+        filter.LimitPaging();
+        var identities = await _identityRepository.GetUserIdentitiesAsync(filter, cancellationToken);
+        var profiles = await _profileRepository.GetUserProfilesAsync(identities.ConvertAll(i => i.Guid), true, cancellationToken);
+
+        var usersList = (
+                from p in profiles
+                join i in identities on p.UserIdentityGuid equals i.Guid
+                select new PublicUser()
                 {
                     Id = p.UserProfileId,
                     Username = i.Username!,
                     RealName = p.RealName,
-                    AvatarGuid = p.AvatarGuid
+                    Avatar = p is null ? null : _downloadableFileConverter.ToDownloadableFile(p.Avatar, true)
                 })
             .ToList();
-        return new UserPublicCollectionModel
+        return new UserPublicCollection
         {
             Users = usersList
         };
     }
 
 
-    public async Task<OneOf<True, InvalidInput, NotFound>> AddUserContactAsync(NewUserContactModel newContactModel, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, InvalidInput, NotFound>> AddUserContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default)
     {
-        if (newContactModel.UserProfileId == _currentUserIdentifier.UserProfileId)
+        if (newContact.UserProfileId == _currentUserIdentifier.UserProfileId)
         {
             return new InvalidInput($"Current user itself cannot be added to contacts");
         }
 
-        var userProfile = await _profileRepository.GetUserProfileAsync(newContactModel.UserProfileId, cancellationToken);
+        var userProfile = await _profileRepository.GetUserProfileAsync(newContact.UserProfileId, false, cancellationToken);
         if (userProfile == null)
         {
-            return new NotFound($"User with Id={newContactModel.UserProfileId} not found");
+            return new NotFound($"User with Id={newContact.UserProfileId} not found");
         }
 
-        var customName = newContactModel.CustomName;
+        var customName = newContact.CustomName;
         if (string.IsNullOrWhiteSpace(customName))
         {
             customName = userProfile.RealName;
@@ -303,7 +326,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
             customName = identity!.Username;
         }
 
-        var userContact = new UserContact
+        var userContact = new StorageContract.Data.UserContact
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
             Profile = userProfile,
@@ -314,7 +337,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<OneOf<True, NotFound>> RemoveUserContactAsync(UserIdModel userId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveUserContactAsync(UserId userId, CancellationToken cancellationToken = default)
     {
         var contactRemoved = await
             _profileRepository.RemoveContactAsync(_currentUserIdentifier.UserProfileId, userId.UserProfileId, cancellationToken);
@@ -327,14 +350,14 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFile newAvatar, CancellationToken cancellationToken = default)
+    public async Task<OneOf<DownloadableFile, InvalidInput>> SetAvatarAsync(InputFile inputAvatar, CancellationToken cancellationToken = default)
     {
         var newFile = new NewCategorizedFile
         {
-            NameWithExtension = newAvatar.NameWithExtension,
+            NameWithExtension = inputAvatar.NameWithExtension,
             Category = FileCategory.UserAvatar,
-            MediaType = newAvatar.MediaType,
-            Stream = newAvatar.Stream,
+            MediaType = inputAvatar.MediaType,
+            Stream = inputAvatar.Stream,
         };
         var fileServiceResult = await _fileService.CreateAsync(newFile, cancellationToken);
 
@@ -346,25 +369,25 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         var profile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
-            AvatarGuid = fileServiceResult.AsT0.Guid
+            Avatar = fileServiceResult.AsT0
         };
         var updateFlags = new UserProfileUpdateFlags
         {
             AvatarGuid = true
         };
         var updateResult = await _profileRepository.UpdateUserProfileAsync(profile, updateFlags, cancellationToken);
-
-        return fileServiceResult.AsT0.ToFileInfoModel();
+        var file = _downloadableFileConverter.ToDownloadableFile(fileServiceResult.AsT0, true);
+        return file;
     }
 
 
-    public async Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileInfoRemoveModel fileInfoRemoveModel, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileId fileId, CancellationToken cancellationToken = default)
     {
         var profile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
             UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
-            AvatarGuid = null
+            Avatar = null
         };
         var updateFlags = new UserProfileUpdateFlags
         {
@@ -379,56 +402,21 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         return new True();
     }
 
-    public async Task<FileInfoCollectionModel> GetAvatarsInfoAsync(FileInfoRequestModel fileInfoRequestModel, CancellationToken cancellationToken = default)
+    public async Task<FileCollection> GetAvatarsAsync(FileIdCollection fileIdCollection, CancellationToken cancellationToken = default)
     {
-        if (fileInfoRequestModel.FilesGuids.IsNullOrEmpty())
+        if (fileIdCollection?.FilesGuids is null || fileIdCollection.FilesGuids.Count == 0)
         {
             return new()
             {
-                FileInfos = new()
+                Files = new()
             };
         }
         var avatarsInfo =
-            await _profileRepository.GetUserAvatarsInfo(fileInfoRequestModel.FilesGuids, cancellationToken);
-        var model = new FileInfoCollectionModel()
+            await _profileRepository.GetUserAvatarsInfo(fileIdCollection.FilesGuids, cancellationToken);
+        var model = new FileCollection
         {
-            FileInfos = avatarsInfo.ConvertAll(f => f.ToFileInfoModel())
+            Files = _downloadableFileConverter.ToDownloadableFiles(avatarsInfo, true)
         };
         return model;
-    }
-
-
-    private async Task<UserFullModel?> GetUserModelAsync(UserIdentity userIdentity, UserProfile? userProfile, bool createIfNotExists, CancellationToken cancellationToken)
-    {
-        userProfile ??= await _profileRepository.GetUserProfileAsync(userIdentity.Guid, cancellationToken);
-        if (userProfile == null)
-        {
-            if (!createIfNotExists)
-            {
-                return null;
-            }
-
-            userProfile = await _profileRepository.CreateUserProfileAsync(new UserProfile
-            {
-                UserIdentityGuid = userIdentity.Guid,
-                RealName = null,
-                DateOfBirth = null,
-                Sex = Sex.Undefined,
-                AvatarGuid = null,
-            }, cancellationToken);
-        }
-
-        var userModel = new UserFullModel
-        {
-            Id = userProfile.UserProfileId,
-            Username = userIdentity.Username!,
-            Email = userIdentity.Email!,
-            RealName = userProfile.RealName,
-            DateOfBirth = userProfile.DateOfBirth,
-            Sex = userProfile.Sex,
-            AvatarGuid = userProfile.AvatarGuid,
-        };
-
-        return userModel;
     }
 }

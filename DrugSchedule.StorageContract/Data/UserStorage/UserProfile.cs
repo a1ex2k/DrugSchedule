@@ -14,5 +14,5 @@ public class UserProfile
 
     public Sex Sex { get; set; }
 
-    public Guid? AvatarGuid { get; set; }
+    public FileInfo? Avatar { get; set; }
 }

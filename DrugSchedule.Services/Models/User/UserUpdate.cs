@@ -2,7 +2,7 @@
 
 namespace DrugSchedule.BusinessLogic.Models;
 
-public class UserUpdateModel
+public class UserUpdate
 {
     public string? RealName { get; set; }
 

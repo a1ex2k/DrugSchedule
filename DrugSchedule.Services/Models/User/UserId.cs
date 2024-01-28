@@ -1,8 +1,6 @@
 ﻿namespace DrugSchedule.BusinessLogic.Models;
 
-public class NewUserContactModel
+public class UserId
 {
     public required long UserProfileId { get; set; }
-
-    public string? CustomName { get; set; }
 }

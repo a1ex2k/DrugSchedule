@@ -84,7 +84,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.ToTable("Manufacturers");
                 });
 
-            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.Medicament", b =>
+            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.MedicamentSimple", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -652,7 +652,7 @@ namespace DrugSchedule.Storage.Migrations
                         .HasForeignKey("UserMedicamentId");
                 });
 
-            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.Medicament", b =>
+            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.MedicamentSimple", b =>
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.Manufacturer", "Manufacturer")
                         .WithMany()
@@ -677,7 +677,7 @@ namespace DrugSchedule.Storage.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DrugSchedule.Storage.Data.Entities.Medicament", "Medicament")
+                    b.HasOne("DrugSchedule.Storage.Data.Entities.MedicamentSimple", "MedicamentSimple")
                         .WithMany("Images")
                         .HasForeignKey("MedicamentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -685,7 +685,7 @@ namespace DrugSchedule.Storage.Migrations
 
                     b.Navigation("FileInfo");
 
-                    b.Navigation("Medicament");
+                    b.Navigation("MedicamentSimple");
                 });
 
             modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.MedicamentTakingSchedule", b =>
@@ -782,7 +782,7 @@ namespace DrugSchedule.Storage.Migrations
 
             modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicament", b =>
                 {
-                    b.HasOne("DrugSchedule.Storage.Data.Entities.Medicament", "BasedOnMedicament")
+                    b.HasOne("DrugSchedule.Storage.Data.Entities.MedicamentSimple", "BasedOnMedicament")
                         .WithMany()
                         .HasForeignKey("BasedOnMedicamentId");
 
@@ -899,7 +899,7 @@ namespace DrugSchedule.Storage.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.Medicament", b =>
+            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.MedicamentSimple", b =>
                 {
                     b.Navigation("Images");
                 });

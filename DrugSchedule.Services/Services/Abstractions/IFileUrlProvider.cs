@@ -2,7 +2,7 @@
 
 public interface IFileUrlProvider
 {
-    Task<Uri> GetPrivateFileUriAsync(FileInfo fileGuid, CancellationToken cancellationToken = default);
+    string GetPrivateFileUri(Guid fileGuid, CancellationToken cancellationToken = default);
 
-    Task<Uri> GetPublicFileUriAsync(FileInfo fileGuid, CancellationToken cancellationToken = default);
+    string GetPublicFileUri(Guid fileGuid, CancellationToken cancellationToken = default);
 }
