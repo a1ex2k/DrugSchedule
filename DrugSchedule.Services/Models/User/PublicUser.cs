@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.BusinessLogic.Models;
 
-public class PublicUserModel
+public class PublicUser
 {
     public required long Id { get; set; }
 
@@ -8,6 +8,5 @@ public class PublicUserModel
 
     public string? RealName { get; set; }
 
-    public Guid? AvatarGuid { get; set; }
-
+    public DownloadableFile? Avatar { get; set; }
 }

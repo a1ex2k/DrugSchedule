@@ -8,16 +8,16 @@ public interface IUserService
 {
     Task<OneOf<True, InvalidInput>> UpdatePasswordAsync(NewPasswordModel newPassword, CancellationToken cancellationToken = default);
 
-    Task<OneOf<UserFullModel, InvalidInput>> UpdateProfileAsync(UserUpdateModel userUpdateModel, CancellationToken cancellationToken = default);
+    Task<OneOf<UserUpdate, InvalidInput>> UpdateProfileAsync(UserUpdate userUpdate, CancellationToken cancellationToken = default);
 
-    Task<UserFullModel> GetCurrentUserAsync(CancellationToken cancellationToken = default);
+    Task<UserFull> GetCurrentUserAsync(CancellationToken cancellationToken = default);
 
-    Task<OneOf<FileInfoModel, InvalidInput>> SetAvatarAsync(NewFile newFileInfo, CancellationToken cancellationToken = default);
+    Task<OneOf<DownloadableFile, InvalidInput>> SetAvatarAsync(InputFile inputFileInfo, CancellationToken cancellationToken = default);
 
-    Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileInfoRemoveModel fileInfoRemoveModel, CancellationToken cancellationToken = default);
+    Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileId fileId, CancellationToken cancellationToken = default);
 
-    Task<FileInfoCollectionModel> GetAvatarsInfoAsync(FileInfoRequestModel fileInfoRemoveModel, CancellationToken cancellationToken = default);
+    Task<FileCollection> GetAvatarsAsync(FileIdCollection fileIdCollection, CancellationToken cancellationToken = default);
 
-    Task<OneOf<UserPublicCollectionModel, InvalidInput>> FindUsersAsync(UserSearchModel searchModel,
+    Task<OneOf<UserPublicCollection, InvalidInput>> FindUsersAsync(UserSearch search,
         CancellationToken cancellationToken = default);
 }

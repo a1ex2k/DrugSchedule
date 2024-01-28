@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DrugSchedule.StorageContract.Data;
 
-public class Medicament
+public class MedicamentExtended
 {
     public int Id { get; set; }
 
@@ -17,5 +17,5 @@ public class Medicament
 
     public required Manufacturer? Manufacturer { get; set; }
 
-    public required List<Guid> ImagesGuids{ get; set; }
+    public required List<FileInfo>? Images { get; set; }
 }

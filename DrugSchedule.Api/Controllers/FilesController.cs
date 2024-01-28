@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DrugSchedule.Api.FileAccessProvider;
+using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.BusinessLogic.Services;
 using DrugSchedule.BusinessLogic.Utils;
+using DrugSchedule.BusinessLogic.Models;
 
 namespace DrugSchedule.Api.Controllers;
 
@@ -9,17 +11,17 @@ namespace DrugSchedule.Api.Controllers;
 public class FilesController : ControllerBase
 {
     private readonly IFileService _fileService;
-    private readonly IFileAccessKeyService _accessKeyService;
+    private readonly IFileAccessService _accessService;
 
-    public FilesController(IFileService fileService, IFileAccessKeyService accessKeyService)
+    public FilesController(IFileService fileService, IFileAccessService accessService)
     {
         _fileService = fileService;
-        _accessKeyService = accessKeyService;
+        _accessService = accessService;
     }
 
 
     [HttpGet]
-    public async Task<IActionResult> Download([FromRoute] Guid fileGuid, [FromQuery] string? accessKey, CancellationToken cancellationToken)
+    public async Task<IActionResult> Download([FromRoute] Guid fileGuid, CancellationToken cancellationToken)
     {
         var fileResult = await _fileService.GetFileDataAsync(fileGuid, CancellationToken.None);
         if (fileResult.IsT1)
@@ -28,50 +30,49 @@ public class FilesController : ControllerBase
         }
 
         var fileData = fileResult.AsT0;
-        if (!fileData.FileInfo.IsPublic() && !_accessKeyService.ValidateKey(fileGuid, accessKey))
+
+        if (!fileData.FileInfo.IsPublic())
         {
             return Unauthorized("A valid access key is required to download the file");
         }
 
+        return CreateFileResult(fileData);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Download([FromRoute] Guid fileGuid, [FromQuery] string accessKey,
+        [FromQuery] int expiry, [FromQuery] string signature, CancellationToken cancellationToken)
+    {
+        var accessParams = new FileAccessParams
+        {
+            FileGuid = fileGuid,
+            AccessKey = accessKey,
+            ExpiryTime = expiry,
+            Signature = signature
+        };
+
+        var areValid = _accessService.Validate(accessParams);
+        if (!areValid)
+        {
+            return Unauthorized("A valid access key is required to download the file");
+        }
+
+        var fileResult = await _fileService.GetFileDataAsync(fileGuid, CancellationToken.None);
+        if (fileResult.IsT1)
+        {
+            return NotFound(fileResult.AsT1);
+        }
+
+        var fileData = fileResult.AsT0;
+        return CreateFileResult(fileData);
+    }
+
+    private FileStreamResult CreateFileResult(FileData fileData)
+    {
         var result = new FileStreamResult(fileData.Stream, fileData.FileInfo.MediaType)
         {
             FileDownloadName = fileData.FileInfo.OriginalName + fileData.FileInfo.FileExtension
         };
-        return Ok(result);
-    }
-}
-
-public interface IFileAccessKeyService
-{
-    bool ValidateKey(Guid fileGuid, string? accessKey);
-
-    string GenerateKey(Guid fileGuid);
-}
-
-public class FileAccessKeyService : IFileAccessKeyService
-{
-    private string GenerateKey(Guid fileGuid)
-    {
-        
-
-
-        fileGuid.
-
-        return $"{fileGuid}:{DateTime.}"
-    }
-
-    public bool ValidateKey(Guid fileGuid, string? accessKey)
-    {
-        if (string.IsNullOrWhiteSpace(accessKey))
-        {
-            return false;
-        }
-
-
-    }
-
-    public string GenerateKey(Guid fileGuid)
-    {
-        throw new NotImplementedException();
+        return result;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using DrugSchedule.BusinessLogic.Models;
+using DrugSchedule.BusinessLogic.Services.Abstractions;
 using DrugSchedule.BusinessLogic.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
@@ -9,11 +10,13 @@ public class FileService : IFileService
 {
     private readonly IFileInfoRepository _fileInfoRepository;
     private readonly IFileStorage _fileStorage;
+    private readonly IFileUrlProvider _fileUrlProvider;
 
-    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage)
+    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage, IFileUrlProvider fileUrlProvider)
     {
         _fileInfoRepository = fileInfoRepository;
         _fileStorage = fileStorage;
+        _fileUrlProvider = fileUrlProvider;
     }
 
     public async Task<OneOf<FileInfo, NotFound>> GetFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -21,7 +24,7 @@ public class FileService : IFileService
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File info not found");
+            return new NotFound("DownloadableFile info not found");
         }
 
         return fileInfo;
@@ -31,6 +34,12 @@ public class FileService : IFileService
     {
         var fileInfos = await _fileInfoRepository.GetFileInfosAsync(fileGuids, cancellationToken);
         return fileInfos;
+    }
+
+
+    public Task<List<DownloadableFile>> GetDownloadableFilesAsync(List<Guid> fileGuids, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
     }
 
     public async Task<OneOf<FileData, NotFound>> GetFileDataAsync(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -43,13 +52,13 @@ public class FileService : IFileService
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File not found");
+            return new NotFound("DownloadableFile not found");
         }
         
         var stream = await _fileStorage.GetReadStreamAsync(fileInfo, cancellationToken);
         if (stream == null)
         {
-            return new NotFound("File not found");
+            return new NotFound("DownloadableFile not found");
         }
 
         var fileData = new FileData
@@ -100,12 +109,12 @@ public class FileService : IFileService
         return fileInfo;
     }
 
-    public async Task<OneOf<bool, NotFound>> RemoveFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default)
+    public async Task<OneOf<bool, NotFound>> RemoveFileAsync(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File info not found");
+            return new NotFound("DownloadableFile info not found");
         }
 
         var wasRemovedFromStorage = await _fileStorage.RemoveFileAsync(fileInfo, cancellationToken);

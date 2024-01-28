@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using DrugSchedule.StorageContract.Data.Common;
 
 namespace DrugSchedule.StorageContract.Data;
 
-public class MedicamentFilter
+public class MedicamentFilter : FilterBase
 {
     public List<int>? IdFilter { get; set; }
 
