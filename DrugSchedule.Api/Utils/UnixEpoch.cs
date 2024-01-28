@@ -2,5 +2,8 @@
 
 public static class TimeConverter
 {
-    public static in
+    public static long ToUnixTime(this DateTime utc)
+    {
+        return ((DateTimeOffset)utc).ToUnixTimeSeconds();
+    }
 }

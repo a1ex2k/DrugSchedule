@@ -69,6 +69,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> UsernameAvailable(UsernameDto usernameDto, CancellationToken cancellationToken)
     {
         var usernameResult = await _identityService.IsUsernameAvailableAsync(usernameDto.Username!, cancellationToken);
-        return Ok(usernameResult.Adapt<AvailableUsernameModel>());
+        return Ok(usernameResult.Adapt<AvailableUsername>());
     }
 }

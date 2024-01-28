@@ -8,7 +8,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DrugSchedule.Storage.Services;
 
-public class DrugRepository : IDrugRepository
+public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
 {
     private readonly DrugScheduleContext _dbContext;
     private readonly ILogger<DrugRepository> _logger;
@@ -20,13 +20,10 @@ public class DrugRepository : IDrugRepository
     }
 
 
-    public async Task<List<Contract.Medicament>> GetMedicamentsAsync(MedicamentFilter filter, int skip, int count, CancellationToken cancellationToken = default)
+    public async Task<List<MedicamentExtended>> GetMedicamentsExtendedAsync(MedicamentFilter filter, bool withImages, CancellationToken cancellationToken = default)
     {
         var medicaments = await _dbContext.Medicaments
             .AsNoTracking()
-            .Include(m => m.ReleaseForm)
-            .Include(m => m.Manufacturer)
-            .Include(m => m.Images)
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .WithFilter(m => m.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
@@ -34,22 +31,38 @@ public class DrugRepository : IDrugRepository
             .WithFilter(m => m.ReleaseFormId, filter.MedicamentReleaseFormFilter?.IdFilter)
             .WithFilter(m => m.ReleaseForm!.Name, filter.MedicamentReleaseFormFilter?.NameFilter)
             .OrderBy(m => m.Name)
-            .WithPaging(skip, count)
-            .Select(m => m.ToContractModel())
+            .WithPaging(filter)
+            .Select(m => m.ToContractModel(withImages))
             .ToListAsync(cancellationToken);
 
         return medicaments;
     }
 
 
-    public async Task<List<Contract.Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, int skip, int count, CancellationToken cancellationToken = default)
+    public async Task<MedicamentSimple?> GetMedicamentSimpleByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var medicament = await _dbContext.Medicaments
+            .AsNoTracking()
+            .Select(m => new MedicamentSimple
+            {
+                Id = m.Id,
+                Name = m.Name,
+                ReleaseForm = m.ReleaseForm!.Name,
+                Manufacturer = m.ManufacturerId != null ? m.Manufacturer!.Name : null,
+            })
+            .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+        return medicament;
+    }
+
+
+    public async Task<List<Contract.Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, CancellationToken cancellationToken = default)
     {
         var manufacturers = await _dbContext.Manufacturers
             .AsNoTracking()
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .OrderBy(m => m.Name)
-            .WithPaging(skip, count)
+            .WithPaging(filter)
             .Select(m => m.ToContractModel())
             .ToListAsync(cancellationToken);
 
@@ -57,14 +70,14 @@ public class DrugRepository : IDrugRepository
     }
 
 
-    public async Task<List<Contract.MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(MedicamentReleaseFormFilter filter, int skip, int count, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(MedicamentReleaseFormFilter filter, CancellationToken cancellationToken = default)
     {
         var releaseForms = await _dbContext.ReleaseForms
             .AsNoTracking()
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .OrderBy(m => m.Name)
-            .WithPaging(skip, count)
+            .WithPaging(filter)
             .Select(m => m.ToContractModel())
             .ToListAsync(cancellationToken);
 
@@ -72,23 +85,44 @@ public class DrugRepository : IDrugRepository
     }
 
 
-    public async Task<Contract.Medicament?> GetMedicamentByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<MedicamentExtended?> GetMedicamentExtendedByIdAsync(int id, bool withImages, CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.Medicaments
             .AsNoTracking()
-            .Include(m => m.ReleaseForm)
-            .Include(m => m.Manufacturer)
-            .Include(m => m.Images)
+            .Select(m => m.ToContractModel(withImages))
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
-        return medicament?.ToContractModel();
+        return medicament;
     }
 
-    public async Task<Contract.Medicament?> UpdateMedicamentAsync(Contract.Medicament medicament, MedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
+    public async Task<List<MedicamentSimple>> GetMedicamentsSimpleAsync(MedicamentFilter filter, CancellationToken cancellationToken = default)
+    {
+        var medicaments = await _dbContext.Medicaments
+            .AsNoTracking()
+            .WithFilter(m => m.Id, filter.IdFilter)
+            .WithFilter(m => m.Name, filter.NameFilter)
+            .WithFilter(m => m.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
+            .WithFilter(m => m.Manufacturer!.Name, filter.ManufacturerFilter?.NameFilter)
+            .WithFilter(m => m.ReleaseFormId, filter.MedicamentReleaseFormFilter?.IdFilter)
+            .WithFilter(m => m.ReleaseForm!.Name, filter.MedicamentReleaseFormFilter?.NameFilter)
+            .OrderBy(m => m.Name)
+            .WithPaging(filter)
+            .Select(m => new MedicamentSimple
+            {
+                Id = m.Id,
+                Name = m.Name,
+                ReleaseForm = m.ReleaseForm!.Name,
+                Manufacturer = m.ManufacturerId != null ? m.Manufacturer!.Name : null,
+            })
+            .ToListAsync(cancellationToken);
+        return medicaments;
+    }
+
+    public async Task<MedicamentExtended?> UpdateMedicamentAsync(MedicamentExtended medicamentSimple, MedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var existingMedicament = await _dbContext.Medicaments
             .Include(m => m.Images)
-            .FirstOrDefaultAsync(m => m.Id == medicament.Id, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Id == medicamentSimple.Id, cancellationToken);
         if (existingMedicament is null)
         {
             return null;
@@ -96,52 +130,54 @@ public class DrugRepository : IDrugRepository
 
         if (updateFlags.Name)
         {
-            existingMedicament.Name = medicament.Name;
+            existingMedicament.Name = medicamentSimple.Name;
         }
 
         if (updateFlags.Description)
         {
-            existingMedicament.Description = medicament.Description;
+            existingMedicament.Description = medicamentSimple.Description;
         }
 
         if (updateFlags.Composition)
         {
-            existingMedicament.Composition = medicament.Composition;
+            existingMedicament.Composition = medicamentSimple.Composition;
         }
 
         if (updateFlags.ReleaseForm)
         {
             existingMedicament.ReleaseForm = new Entities.MedicamentReleaseForm
             {
-                Id = medicament.ReleaseForm.Id,
-                Name = medicament.ReleaseForm.Name
+                Id = medicamentSimple.ReleaseForm.Id,
+                Name = medicamentSimple.ReleaseForm.Name
             };
         }
 
         if (updateFlags.Manufacturer)
         {
-            existingMedicament.Manufacturer = medicament.Manufacturer is null ? null : new Entities.Manufacturer
+            existingMedicament.Manufacturer = medicamentSimple.Manufacturer is null ? null : new Entities.Manufacturer
             {
-                Id = medicament.Manufacturer.Id,
-                Name = medicament.Manufacturer.Name,
-                AdditionalInfo = medicament.Manufacturer.AdditionalInfo
+                Id = medicamentSimple.Manufacturer.Id,
+                Name = medicamentSimple.Manufacturer.Name,
+                AdditionalInfo = medicamentSimple.Manufacturer.AdditionalInfo
             };
         }
 
         if (updateFlags.ImagesGuids)
         {
-            existingMedicament.Images.RemoveAll(i => !medicament.ImagesGuids.Contains(i.FileGuid));
-            var newGuids = medicament.ImagesGuids
-                .Except(existingMedicament.Images.Select(i => i.FileGuid));
-            var newMedicamentFilesEntities = newGuids.Select(guid => new MedicamentFile
+            existingMedicament.Images.Clear();
+            var newGuids = medicamentSimple?.Images?.Select(i => i.Guid);
+            if (newGuids != null)
             {
-                FileGuid = guid
-            });
-            existingMedicament.Images.AddRange(newMedicamentFilesEntities);
+                var newMedicamentFilesEntities = newGuids.Select(guid => new MedicamentFile
+                {
+                    FileGuid = guid
+                });
+                existingMedicament.Images.AddRange(newMedicamentFilesEntities);
+            }
         }
 
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return saved ? existingMedicament.ToContractModel() : null;
+        return saved ? existingMedicament.ToContractModel(false) : null;
     }
 
 
@@ -207,7 +243,7 @@ public class DrugRepository : IDrugRepository
     }
 
 
-    public async Task<Contract.Medicament?> CreateMedicamentAsync(Contract.Medicament medicament, CancellationToken cancellationToken = default)
+    public async Task<MedicamentExtended?> CreateMedicamentAsync(MedicamentExtended medicament, CancellationToken cancellationToken = default)
     {
         var medicamentEntity = new Entities.Medicament
         {
@@ -236,14 +272,17 @@ public class DrugRepository : IDrugRepository
             };
         }
 
-        var newMedicamentFilesEntities = medicament.ImagesGuids.Select(guid => new MedicamentFile
+        var newMedicamentFilesEntities = medicament?.Images?.Select(i => new MedicamentFile
         {
-            FileGuid = guid
+            FileGuid = i.Guid
         });
-        medicamentEntity.Images.AddRange(newMedicamentFilesEntities);
+        if (newMedicamentFilesEntities != null)
+        {
+            medicamentEntity.Images.AddRange(newMedicamentFilesEntities);
+        }
 
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return saved ? medicamentEntity.ToContractModel() : null;
+        return saved ? medicamentEntity.ToContractModel(false) : null;
     }
 
 
@@ -307,11 +346,11 @@ public class DrugRepository : IDrugRepository
 
     public async Task<bool> RemoveMedicamentImageGuidAsync(int medicamentId, Guid imageGuid, CancellationToken cancellationToken = default)
     {
-         var removedCount = await _dbContext.MedicamentFiles
-            .Where(m => m.MedicamentId == medicamentId && m.FileGuid == imageGuid)
-            .ExecuteDeleteAsync(cancellationToken);
+        var removedCount = await _dbContext.MedicamentFiles
+           .Where(m => m.MedicamentId == medicamentId && m.FileGuid == imageGuid)
+           .ExecuteDeleteAsync(cancellationToken);
 
-         return removedCount >= 1;
+        return removedCount >= 1;
     }
 
 

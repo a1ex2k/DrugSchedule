@@ -33,7 +33,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SearchForUsers(UserSearchDto dto, CancellationToken cancellationToken)
     {
-        var searchResult = await _userService.FindUsersAsync(dto.Adapt<UserSearchModel>(), cancellationToken);
+        var searchResult = await _userService.FindUsersAsync(dto.Adapt<UserSearch>(), cancellationToken);
         return searchResult.Match(
             users => (IActionResult)Ok(users.Adapt<UserPublicCollectionDto>()),
             error => (IActionResult)BadRequest(error));
@@ -51,7 +51,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddContact(NewUserContactDto dto, CancellationToken cancellationToken)
     {
-        var contactAddResult = await _userContactsService.AddUserContactAsync(dto.Adapt<NewUserContactModel>(), cancellationToken);
+        var contactAddResult = await _userContactsService.AddUserContactAsync(dto.Adapt<NewUserContact>(), cancellationToken);
         return contactAddResult.Match(
             ok => (IActionResult)Ok(),
             errorInput => BadRequest(errorInput),
@@ -62,7 +62,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RemoveContact(UserIdDto dto, CancellationToken cancellationToken)
     {
-        var contactRemoveResult = await _userContactsService.RemoveUserContactAsync(dto.Adapt<UserIdModel>(), cancellationToken);
+        var contactRemoveResult = await _userContactsService.RemoveUserContactAsync(dto.Adapt<UserId>(), cancellationToken);
         return contactRemoveResult.Match(
             ok => (IActionResult)Ok(),
             notFound => NotFound(notFound));
@@ -72,7 +72,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> UpdateProfile(UserUpdateDto dto, CancellationToken cancellationToken)
     {
-        var updateResult = await _userService.UpdateProfileAsync(dto.Adapt<UserUpdateModel>(), cancellationToken);
+        var updateResult = await _userService.UpdateProfileAsync(dto.Adapt<UserUpdate>(), cancellationToken);
         return updateResult.Match(
             userModel => (IActionResult)Ok(userModel),
             errorInput => BadRequest(errorInput));
@@ -92,7 +92,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> SetAvatar(IFormFile file, CancellationToken cancellationToken)
     {
-        var fileModel = new NewFile
+        var fileModel = new InputFile
         {
             NameWithExtension = file.FileName,
             MediaType = file.ContentType,
@@ -110,7 +110,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RemoveAvatar(FileRemoveDto dto, CancellationToken cancellationToken)
     {
-        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileInfoRemoveModel>(), cancellationToken);
+        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileId>(), cancellationToken);
         return removeAvatarResult.Match(
             ok => (IActionResult)Ok(),
             notFound => NotFound(notFound));
@@ -119,7 +119,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> GetAvatarInfos(FileGuidCollectionDto dto, CancellationToken cancellationToken)
     {
-        var filesInfo = await _userService.GetAvatarsInfoAsync(dto.Adapt<FileInfoRequestModel>(), cancellationToken);
+        var filesInfo = await _userService.GetAvatarsAsync(dto.Adapt<FileInfoRequestModel>(), cancellationToken);
         
         var fileInfoDtos = filesInfo
         

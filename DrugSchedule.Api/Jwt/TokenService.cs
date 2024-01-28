@@ -1,17 +1,20 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using DrugSchedule.BusinessLogic;
 using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.StorageContract.Abstractions;
-using Microsoft.Extensions.Options;
 using DrugSchedule.BusinessLogic.Options;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
 using DrugSchedule.BusinessLogic.Utils;
+using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using OneOf;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Api.Jwt;
 
 public class TokenService : ITokenService
 {
