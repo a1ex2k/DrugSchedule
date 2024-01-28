@@ -6,9 +6,9 @@ namespace DrugSchedule.BusinessLogic.Services.Abstractions;
 
 public interface IUserContactsService
 {
-    Task<UserContactsCollectionModel> GetUserContactsAsync(CancellationToken cancellationToken = default);
+    Task<UserContactsCollection> GetUserContactsAsync(CancellationToken cancellationToken = default);
 
-    Task<OneOf<True, InvalidInput, NotFound>> AddUserContactAsync(NewUserContactModel newContactModel, CancellationToken cancellationToken = default);
+    Task<OneOf<True, InvalidInput, NotFound>> AddUserContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default);
 
-    Task<OneOf<True, NotFound>> RemoveUserContactAsync(UserIdModel userId, CancellationToken cancellationToken = default);
+    Task<OneOf<True, NotFound>> RemoveUserContactAsync(UserId userId, CancellationToken cancellationToken = default);
 }

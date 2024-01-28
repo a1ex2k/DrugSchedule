@@ -27,7 +27,7 @@ public static class EntityMapExtensions
         };
     }
 
-    public static Contract.UserProfile ToContractModel(this Entities.UserProfile userProfile)
+    public static Contract.UserProfile ToContractModel(this Entities.UserProfile userProfile, bool withAvatar)
     {
         return new Contract.UserProfile
         {
@@ -35,7 +35,7 @@ public static class EntityMapExtensions
             UserIdentityGuid = Guid.Parse(userProfile.IdentityGuid),
             RealName = userProfile.RealName,
             DateOfBirth = userProfile.DateOfBirth ?? DateOnly.MinValue,
-            AvatarGuid = userProfile.AvatarGuid,
+            Avatar = withAvatar ? userProfile.AvatarInfo?.ToContractModel() : null,
             Sex = userProfile.Sex
         };
     }
@@ -59,9 +59,9 @@ public static class EntityMapExtensions
         };
     }
 
-    public static Contract.Medicament ToContractModel(this Entities.Medicament medicament)
+    public static Contract.MedicamentExtended ToContractModel(this Entities.Medicament medicament, bool withImages)
     {
-        return new Contract.Medicament
+        return new Contract.MedicamentExtended
         {
             Id = medicament.Id,
             Name = medicament.Name,
@@ -69,8 +69,8 @@ public static class EntityMapExtensions
             Description = medicament.Description,
             ReleaseForm = medicament.ReleaseForm!.ToContractModel(),
             Manufacturer = medicament.Manufacturer!.ToContractModel(),
-            ImagesGuids = medicament.Images.Select(f => f.FileGuid).ToList()
-        };  
+            Images = withImages ? medicament.Images.Select(f => f.FileInfo!.ToContractModel()).ToList() : null,
+        };
     }
 
     public static Contract.RefreshTokenEntry ToContractModel(this Entities.RefreshTokenEntry refreshTokenEntry)
@@ -84,12 +84,12 @@ public static class EntityMapExtensions
         };
     }
 
-    public static Contract.UserContact ToContractModel(this Entities.UserProfileContact userProfileContact)
+    public static Contract.UserContact ToContractModel(this Entities.UserProfileContact userProfileContact, bool withAvatar)
     {
         return new Contract.UserContact
         {
             UserProfileId = userProfileContact.UserProfileId,
-            Profile = userProfileContact.ContactProfile!.ToContractModel(),
+            Profile = userProfileContact.ContactProfile!.ToContractModel(withAvatar),
             CustomName = userProfileContact.Name
         };
     }

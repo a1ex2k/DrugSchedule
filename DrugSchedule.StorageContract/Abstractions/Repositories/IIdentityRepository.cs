@@ -15,9 +15,7 @@ public interface IIdentityRepository
 
     public Task<UserIdentity?> GetUserIdentityAsync(Guid userGuid, CancellationToken cancellationToken = default);
 
-    public Task<List<UserIdentity>> GetUserIdentitiesAsync(List<Guid> userGuids, CancellationToken cancellationToken = default);
-
-    public Task<List<UserIdentity>> GetUserIdentitiesAsync(string usernameSearchString, CancellationToken cancellationToken = default);
+    public Task<List<UserIdentity>> GetUserIdentitiesAsync(UserIdentityFilter filter, CancellationToken cancellationToken = default);
     
     public Task<bool> IsUsernameUsedAsync(string username, CancellationToken cancellationToken = default);
 

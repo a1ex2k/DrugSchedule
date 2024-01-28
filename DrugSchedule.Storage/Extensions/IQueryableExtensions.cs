@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using DrugSchedule.StorageContract.Data.Common;
 
 namespace DrugSchedule.Storage.Extensions;
 
@@ -54,18 +55,23 @@ public static class IQueryableExtensions
         return query.Where(compiledPredicate).AsQueryable();
     }
 
-    public static IQueryable<TEntity> WithPaging<TEntity>(this IQueryable<TEntity> query, int skipCount, int takeCount)
+    public static IQueryable<TEntity> WithPaging<TEntity>(this IQueryable<TEntity> query, FilterBase filter)
     {
-        var modifiedQuery = query;
-
-        if (skipCount > 0)
+        if (filter == null)
         {
-            modifiedQuery = modifiedQuery.Skip(skipCount);
+            return query;
         }
 
-        if (takeCount > 0) 
+        var modifiedQuery = query;
+
+        if (filter.Skip > 0)
         {
-            modifiedQuery = modifiedQuery.Take(takeCount);
+            modifiedQuery = modifiedQuery.Skip(filter.Skip);
+        }
+
+        if (filter.Take > 0) 
+        {
+            modifiedQuery = modifiedQuery.Take(filter.Take);
         }
 
         return modifiedQuery;

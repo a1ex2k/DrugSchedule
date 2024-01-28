@@ -2,7 +2,7 @@
 
 namespace DrugSchedule.BusinessLogic.Models;
 
-public class AvailableUsernameModel
+public class AvailableUsername
 {
     public required string Username { get; set; }
 

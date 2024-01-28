@@ -2,7 +2,7 @@
 
 namespace DrugSchedule.BusinessLogic.Models;
 
-public class UserFullModel
+public class UserFull
 {
     public required long Id { get; set; }
 
@@ -16,5 +16,5 @@ public class UserFullModel
 
     public DateOnly? DateOfBirth { get; set; }
 
-    public FileInfoModel? Avatar { get; set; }
+    public DownloadableFile? Avatar { get; set; }
 }

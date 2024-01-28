@@ -47,13 +47,17 @@ public class IdentityRepository : IIdentityRepository
         return identityUser?.ToContractModel();
     }
 
-    public async Task<List<UserIdentity>> GetUserIdentitiesAsync(List<Guid> userGuids, CancellationToken cancellationToken = default)
+    public async Task<List<UserIdentity>> GetUserIdentitiesAsync(UserIdentityFilter filter, CancellationToken cancellationToken = default)
     {
-        var guidStrings = userGuids.ConvertAll(g => g.ToString());
+        var guids = filter.GuidsFilter?.ConvertAll(g => g.ToString());
+
         var identityUsers = await _dbContext.Users
             .AsNoTracking()
-            .Where(i => guidStrings.Contains(i.Id))
+            .WithFilter(i => i.Id, guids)
+            .WithFilter(i => i.UserName, filter.UsernameFilter)
+            .WithPaging(filter)
             .Select(u => u.ToContractModel())
+            .OrderBy(i => i.Username)
             .ToListAsync(cancellationToken);
         return identityUsers;
     }

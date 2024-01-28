@@ -1,18 +1,23 @@
-﻿using DrugSchedule.StorageContract.Data;
+﻿using DrugSchedule.BusinessLogic.Models;
+using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.BusinessLogic.Services.Abstractions;
 
 public interface IDrugLibraryService
 {
-    public Task<List<MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(MedicamentReleaseFormFilter filter, int skip, int count, CancellationToken cancellationToken = default);
+    public Task<ReleaseFormCollection> GetReleaseFormsAsync(MedicamentReleaseFormFilter filter, CancellationToken cancellationToken = default);
 
-    public Task<MedicamentReleaseForm?> GetMedicamentReleaseFormByIdAsync(int id, CancellationToken cancellationToken = default);
+    public Task<OneOf<MedicamentReleaseForm, NotFound>> GetReleaseFormAsync(int id, CancellationToken cancellationToken = default);
 
-    public Task<List<Medicament>> GetMedicamentsAsync(MedicamentFilter filter, int skip, int count, CancellationToken cancellationToken = default);
+    public Task<MedicamentSimpleCollection> GetMedicamentsAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
 
-    public Task<Medicament?> GetMedicamentByIdAsync(int id, CancellationToken cancellationToken = default);
+    public Task<OneOf<MedicamentSimple, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default);
 
-    public Task<List<Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, int skip, int count, CancellationToken cancellationToken = default);
+    public Task<MedicamentExtendedCollection> GetMedicamentsExtendedAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
 
-    public Task<Manufacturer?> GetManufacturerByIdAsync(int id, CancellationToken cancellationToken = default);
+    public Task<OneOf<MedicamentExtendedModel, NotFound>> GetMedicamentExtendedAsync(int id, CancellationToken cancellationToken = default);
+
+    public Task<ManufacturerCollection> GetManufacturersAsync(ManufacturerFilter filter, CancellationToken cancellationToken = default);
+
+    public Task<OneOf<Manufacturer, NotFound>> GetManufacturerAsync(int id, CancellationToken cancellationToken = default);
 }

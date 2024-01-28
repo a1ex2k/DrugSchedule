@@ -1,4 +1,5 @@
 using System.Text;
+using DrugSchedule.Api.FileAccessProvider;
 using DrugSchedule.Api.Middlwares;
 using DrugSchedule.BusinessLogic.Options;
 using DrugSchedule.BusinessLogic.Services;
@@ -13,34 +14,60 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using JwtOptions = DrugSchedule.Api.Options.JwtOptions;
+using TokenService = DrugSchedule.Api.Jwt.TokenService;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", true);
 
+#region Services
+
+// web api
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddMapster();
+builder.Services.AddScoped<IFileAccessService, FileAccessService>();
+builder.Services.AddScoped<CurrentUserMiddleware>();
 
-// storage repositories
+// repositories
 builder.Services.AddScoped<IFileInfoRepository, FileInfoRepository>();
 builder.Services.AddScoped<IFileStorage, FileStorageService>();
 builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IReadonlyDrugRepository, DrugRepository>();
 
-// business logic services
-builder.Services.AddScoped<CurrentUserMiddleware>();
+// business logic
 builder.Services.AddScoped<ICurrentUserIdentifier, CurrentUserIdentifier>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserContactsService, UserService>();
 builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<IFileStore, FileService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IFileUrlProvider, FileUrlProvider>();
+builder.Services.AddScoped<IDownloadableFileConverter, DownloadableFileConverter>();
+builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 
-builder.Services.Configure<JwtOptions>(
-    builder.Configuration.GetSection(JwtOptions.Title));
-builder.Services.Configure<FileStorageOptions>(
-    builder.Configuration.GetSection(FileStorageOptions.Title));
+
+#endregion
+
+#region Options
+
+builder.Services.AddOptions<JwtOptions>()
+    .BindConfiguration(JwtOptions.Title)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddOptions<FileStorageOptions>()
+    .BindConfiguration(FileStorageOptions.Title)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddOptions<PrivateFileAccessOptions>()
+    .BindConfiguration(PrivateFileAccessOptions.Title)
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+#endregion
 
 
 builder.Services.AddDbContext<DrugScheduleContext>(o =>
@@ -48,6 +75,9 @@ builder.Services.AddDbContext<DrugScheduleContext>(o =>
     o.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"));
     o.EnableSensitiveDataLogging();
 });
+
+#region Auth
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
     {
         options.Password.RequireDigit = false;
@@ -81,6 +111,10 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
+#endregion
+
+#region Swagger
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -108,10 +142,10 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddMapster();
+
+#endregion
 
 var app = builder.Build();
-
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
