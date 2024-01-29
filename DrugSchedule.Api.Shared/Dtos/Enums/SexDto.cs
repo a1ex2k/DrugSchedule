@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.Api.Shared.Dtos;
 
-public enum Sex
+public enum SexDto
 {
     Undefined = 0,
     Male = 1,
