@@ -108,7 +108,7 @@ public class UserController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> RemoveAvatar(FileRemoveDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveAvatar(FileIdDto dto, CancellationToken cancellationToken)
     {
         var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileId>(), cancellationToken);
         return removeAvatarResult.Match(
@@ -117,14 +117,9 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetAvatarInfos(FileGuidCollectionDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAvatarInfos(FileIdCollectionDto dto, CancellationToken cancellationToken)
     {
-        var filesInfo = await _userService.GetAvatarsAsync(dto.Adapt<FileInfoRequestModel>(), cancellationToken);
-        
-        var fileInfoDtos = filesInfo
-        
-        return removeAvatarResult.Match(
-            ok => (IActionResult)Ok(),
-            notFound => NotFound(notFound));
+        var filesInfo = await _userService.GetAvatarsAsync(dto.Adapt<FileIdCollection>(), cancellationToken);
+        return filesInfo.Adapt<DownloadableFileDto>();
     }
 }

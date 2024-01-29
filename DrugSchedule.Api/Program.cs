@@ -14,9 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using JwtOptions = DrugSchedule.Api.Options.JwtOptions;
 using TokenService = DrugSchedule.Api.Jwt.TokenService;
-
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", true);

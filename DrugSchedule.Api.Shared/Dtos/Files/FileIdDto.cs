@@ -2,7 +2,7 @@
 
 namespace DrugSchedule.Api.Shared.Dtos;
 
-public class FileRemoveDto
+public class FileIdDto
 {
     public required Guid Guid { get; set; }
 }
