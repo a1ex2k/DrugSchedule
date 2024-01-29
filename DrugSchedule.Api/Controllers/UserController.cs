@@ -120,6 +120,6 @@ public class UserController : ControllerBase
     public async Task<IActionResult> GetAvatarInfos(FileIdCollectionDto dto, CancellationToken cancellationToken)
     {
         var filesInfo = await _userService.GetAvatarsAsync(dto.Adapt<FileIdCollection>(), cancellationToken);
-        return filesInfo.Adapt<DownloadableFileDto>();
+        return Ok(filesInfo.Adapt<FileCollectionDto>());
     }
 }
