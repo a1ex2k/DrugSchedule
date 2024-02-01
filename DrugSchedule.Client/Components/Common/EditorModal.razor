@@ -1,0 +1,152 @@
+﻿@namespace BarsuActivity.Components
+
+
+
+<Modal @ref="_editModal"
+       Closing="@OnModalClosing"
+       Animated="true"
+       AnimationDuration="400">
+    <ModalContent Scrollable="true" Centered="true" Size="ModalSize.Large">
+         <ModalHeader Class="">
+             <h5>@(ItemText)</h5>
+         </ModalHeader>
+
+         <ModalBody Class="" Style="scroll-behavior: smooth;">
+             <Validations @ref="_validations"
+                          Mode="ValidationMode.Auto"
+                          MissingFieldsErrorMessage="Поля заполнены некорректно!"
+                          StatusChanged="@(a => { _isValid = a.Status != ValidationStatus.Error; })">
+                 @EditorModalBody
+            </Validations>
+        </ModalBody>
+        <ModalFooter Style="justify-content: normal;" Class="d-flex align-content-around flex-wrap">
+
+            <CustomButton Displayable="@(AllowRemove && Delete != null && !IsNewItem)"
+                          Text="Удалить" Color="Color.Danger" Icon="fa-trash-can"
+                          Clicked="@ConfirmDeleteAsync" Width="8rem" />
+
+            <div class="ms-auto d-flex">
+                <CustomButton Displayable="@(AllowSave && Save != null && _isValid)"
+                              Text="Сохранить" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="10rem" />
+                <CustomButton Text="Закрыть" Color="Color.Secondary" Icon="fa-ban" Clicked="@Hide" Width="7rem" />
+            </div>
+
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<CustomAlert @ref="_alert" />
+
+
+@code
+{
+    public record ModalResult(bool Ok, string Message);
+
+    private Validations _validations = default!;
+    private Modal _editModal = default!;
+    private CustomAlert _alert = default!;
+    private const string DefaultDeleteAlert = $"Выполнить удаление? Отменить действие не возможно.";
+    private bool _isValid = true;
+
+    [Parameter]
+    public bool AllowToSave { get; set; } = true;
+
+    [Inject] INotificationService NotificationService { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public RenderFragment EditorModalBody { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public RenderFragment ViewerModalBody { get; set; } = default!;
+
+    public bool IsNewItem { get; set; } = false;
+
+    [Parameter]
+    public bool AllowRemove { get; set; } = true;
+
+    [Parameter]
+    public bool AllowSave { get; set; } = true;
+
+    [Parameter]
+    public Func<Task<ModalResult>> Delete { get; set; } = default!;
+
+    [Parameter]
+    public Func<Task<ModalResult>> Save { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public string ItemText { get; set; } = default!;
+
+    [Parameter]
+    public string? DeleteAlertText { get; set; }
+
+    [Parameter]
+    public int EditingId { get; set; } = -1;
+
+
+    private async Task ConfirmDeleteAsync()
+    {
+        await Hide();
+        var result = await _alert.ShowYesNo(DeleteAlertText ?? DefaultDeleteAlert, "Удалить?");
+        if (result == CustomAlert.ModalResult.Yes)
+        {
+            var deleted = await Delete.Invoke();
+            if (deleted.Ok)
+            {
+                await NotificationService.Error(ItemText, $"Удалено!");
+            }
+            else
+            {
+                await _alert.ShowOk(deleted.Message, "Ошибка");
+                await _editModal.Show();
+            }
+        }
+        else
+        {
+            await Show();
+        }
+    }
+
+
+    private async Task ConfirmSaveAsync()
+    {
+        bool isOk = await _validations.ValidateAll();
+        await Hide();
+        if (!isOk)
+        {
+            await NotificationService.Error("Поля заполнены некорректно", "Ошибка");
+            await Show();
+            return;
+        }
+
+        var saved = await Save.Invoke();
+        if (saved.Ok)
+        {
+            await NotificationService.Error(ItemText, $"Удалено!");
+        }
+        else
+        {
+            await _alert.ShowOk(saved.Message, "Ошибка");
+            await Show();
+        }
+    }
+
+    private async Task OnModalClosing(ModalClosingEventArgs e)
+    {
+        if (e.CloseReason == CloseReason.FocusLostClosing)
+        {
+            e.Cancel = true;
+            return;
+        }
+    }
+
+    public async Task Show()
+    {
+        await _editModal.Show();
+        _isValid = await _validations.ValidateAll();
+    }
+
+    public async Task Hide()
+    {
+        await _editModal.Hide();
+    }
+}

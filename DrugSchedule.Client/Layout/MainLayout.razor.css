@@ -1,0 +1,79 @@
+﻿.viewport-box {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+}
+
+.container-box {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    min-height: 0;
+}
+
+.title-bar {
+    background-color: var(--bs-primary);
+    color: #fff;
+    height: 3rem;
+    line-height: 0.96rem;
+    z-index: 1000;
+}
+
+    .title-bar .btn {
+        background-color: var(--bs-primary) !important;
+    }
+
+.nav-bar {
+    flex-basis: 15rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    background-color: inherit;
+}
+
+.spacer {
+    flex-basis: calc((100% - 1100px - 15rem) / 2)   
+}
+
+.main-box {
+    overflow: auto;
+    flex: 1 
+}
+
+.article {
+    padding-top: 3rem;
+    padding-bottom: 5rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    max-width: 1100px;
+}
+
+.width-limit {
+    max-width: calc(1100px + 15rem);
+    margin: 0 auto;
+}
+
+.edge-padding {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .container-box {
+        flex-direction: column-reverse;
+    }
+    .nav-bar {
+        flex-basis: 3.5rem;
+        background-color: var(--bs-body-bg);
+        color: white;
+        box-shadow: var(--bs-box-shadow-lg)
+    }
+    .spacer {
+        display: none;
+    }
+}
