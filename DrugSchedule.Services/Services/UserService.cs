@@ -142,7 +142,7 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
             error.Add("Password must match the pattern: " + CridentialsValidator.PasswordRegexString);
         }
 
-        if (string.Equals(newPassword.NewPassword, identity.Username, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(newPassword.NewPassword, identity!.Username, StringComparison.OrdinalIgnoreCase))
         {
             error.Add("Password and username must differ");
         }
