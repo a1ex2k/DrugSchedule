@@ -81,7 +81,7 @@ public class TokenService : ITokenService
     public async Task<OneOf<TokenModel, InvalidInput>> CreateTokensAsync(TokenCreateParams parameters, CancellationToken cancellationToken = default)
     {
         var newTokenModel = await CreateTokensInternalAsync(parameters, cancellationToken);
-        return newTokenModel;
+        return newTokenModel!;
     }
 
     private async Task<TokenModel?> CreateTokensInternalAsync(TokenCreateParams parameters, CancellationToken cancellationToken = default)
