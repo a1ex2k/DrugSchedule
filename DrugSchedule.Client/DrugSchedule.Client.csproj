@@ -1,0 +1,46 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Layout\MainLayout.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\aot.pubxml" />
+    <_WebToolingArtifacts Remove="Properties\PublishProfiles\default.pubxml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Layout\MainLayout.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.4.0" />
+    <PackageReference Include="Blazorise" Version="1.4.2" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.4.2" />
+    <PackageReference Include="Blazorise.Components" Version="1.4.2" />
+    <PackageReference Include="Blazorise.DataGrid" Version="1.4.2" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.4.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot\js\service-worker.js" PublishedContent="wwwroot\js\service-worker.published.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\User\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
