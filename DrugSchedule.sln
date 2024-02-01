@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api.Shared", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Mapper\Mapper.csproj", "{942D7686-35E4-401F-905C-D1A15FEBECC4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Client", "DrugSchedule.Client\DrugSchedule.Client.csproj", "{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,6 +11,8 @@ using DrugSchedule.StorageContract.Abstractions;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,14 +23,12 @@ builder.Configuration.AddJsonFile("appsettings.local.json", true);
 
 #region Services
 
-// web api
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMapster();
 builder.Services.AddScoped<IFileAccessService, FileAccessService>();
 builder.Services.AddScoped<CurrentUserMiddleware>();
 
-// repositories
 builder.Services.AddScoped<IFileInfoRepository, FileInfoRepository>();
 builder.Services.AddScoped<IFileStorage, FileStorageService>();
 builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
@@ -36,7 +36,6 @@ builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IReadonlyDrugRepository, DrugRepository>();
 
-// business logic
 builder.Services.AddScoped<ICurrentUserIdentifier, CurrentUserIdentifier>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
@@ -142,6 +141,7 @@ builder.Services.AddSwaggerGen(options =>
 
 
 #endregion
+
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
