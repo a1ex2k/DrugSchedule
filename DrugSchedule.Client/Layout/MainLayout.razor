@@ -1,0 +1,38 @@
+﻿@inherits LayoutComponentBase
+@inject IJSRuntime JsRuntime
+
+<div class="viewport-box">
+
+    <div class="title-bar shadow">
+        <div class="width-limit edge-padding  d-flex justify-content-between align-items-center h-100">
+            <div class="fw-bold fs-4">DrugSchedule</div>
+            <div>
+                <button class="btn btn-dark border-0" id="btnThemeSwitch"><i class="fa-solid fa-circle-half-stroke"></i></button>
+            </div>
+        </div>
+
+    </div>
+    <div class="container-box">
+        <div class="spacer"></div>
+        <div class="nav-bar">
+            <NavMenu />
+        </div>
+        <div class="main-box">
+            <div class="article">
+                @Body
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JsRuntime.InvokeVoidAsync("setThemeToggler", "btnThemeSwitch");
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    }
