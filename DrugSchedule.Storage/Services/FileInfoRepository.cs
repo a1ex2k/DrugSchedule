@@ -22,8 +22,9 @@ public class FileInfoRepository : IFileInfoRepository
     {
         var info = await _dbContext.FileInfos
             .AsNoTracking()
+            .Select(EntityMapExpressions.ToFileInfo)
             .FirstOrDefaultAsync(i => i.Guid == fileGuid, cancellationToken);
-        return info?.ToContractModel();
+        return info;
     }
 
     public async Task<List<Contract.FileInfo>> GetFileInfosAsync(List<Guid> guids, CancellationToken cancellationToken = default)
@@ -31,7 +32,7 @@ public class FileInfoRepository : IFileInfoRepository
         var infoList = await _dbContext.FileInfos
             .AsNoTracking()
             .Where(i => guids.Contains(i.Guid))
-            .Select(i => i.ToContractModel())
+            .Select(EntityMapExpressions.ToFileInfo)
             .ToListAsync(cancellationToken);
         return infoList;
     }

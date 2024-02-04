@@ -21,7 +21,7 @@ public class FilesController : ControllerBase
 
 
     [HttpGet]
-    public async Task<IActionResult> Download([FromRoute] Guid fileGuid, CancellationToken cancellationToken)
+    public async Task<IActionResult> DownloadPublic([FromRoute] Guid fileGuid, CancellationToken cancellationToken)
     {
         var fileResult = await _fileService.GetFileDataAsync(fileGuid, CancellationToken.None);
         if (fileResult.IsT1)
@@ -40,7 +40,7 @@ public class FilesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Download([FromRoute] Guid fileGuid, [FromQuery] string accessKey,
+    public async Task<IActionResult> DownloadPrivate([FromRoute] Guid fileGuid, [FromQuery] string accessKey,
         [FromQuery] int expiry, [FromQuery] string signature, CancellationToken cancellationToken)
     {
         var accessParams = new FileAccessParams

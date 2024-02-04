@@ -1,66 +1,89 @@
-﻿using System.Linq.Expressions;
-using DrugSchedule.StorageContract.Data.Common;
+﻿using System.Linq;
+using System.Linq.Expressions;
+
 
 namespace DrugSchedule.Storage.Extensions;
 
 public static class IQueryableExtensions
 {
+    private static Expression<Func<TEntity, bool>> GetStringFilterExpression<TEntity>(Expression<Func<TEntity, string?>> propertySelector, Contract.StringFilter stringFilter)
+    {
+        Expression<Func<string, bool>> containsExpression = stringFilter.StringSearchType switch
+        {
+            Contract.StringSearch.StartsWith => x => x.StartsWith(stringFilter.SubString),
+            Contract.StringSearch.Contains => x => x.Contains(stringFilter.SubString),
+            Contract.StringSearch.EndsWith => x => x.EndsWith(stringFilter.SubString),
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        var parameter = propertySelector.Parameters[0];
+        var propertyAccess = Expression.Invoke(propertySelector, parameter);
+        var containsCall = Expression.Invoke(containsExpression, propertyAccess);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(containsCall, propertySelector.Parameters[0]);
+        return lambda;
+    }
+
+
     public static IQueryable<TEntity> WithFilter<TEntity, TProperty>(this IQueryable<TEntity> query, Expression<Func<TEntity, TProperty>> propertySelector, List<TProperty>? inList)
     {
-        ArgumentNullException.ThrowIfNull(propertySelector, nameof(propertySelector));
-        ArgumentNullException.ThrowIfNull(query, nameof(query));
-
         if (inList is null || inList.Count == 0)
         {
             return query;
         }
 
-        var containsMethod = typeof(List<TProperty>).GetMethod("Contains") ??
-                             throw new InvalidOperationException("Contains method not found.");
-
-        var containsCall = Expression.Call(Expression.Constant(inList), containsMethod, propertySelector.Body);
-        var predicate = Expression.Lambda<Func<TEntity, bool>>(containsCall, propertySelector.Parameters);
-
-        var compiledPredicate = predicate.Compile();
-
-        return query.Where(compiledPredicate).AsQueryable();
-    }
-
-    public static IQueryable<TEntity> WithFilter<TEntity, TProperty>(this IQueryable<TEntity> query, Expression<Func<TEntity, TProperty>> propertySelector, Contract.StringFilter? stringFilter)
-    {
         ArgumentNullException.ThrowIfNull(propertySelector, nameof(propertySelector));
         ArgumentNullException.ThrowIfNull(query, nameof(query));
 
+        Expression<Func<TProperty, bool>> containsExpression = x => inList.Contains(x);
+        var parameter = propertySelector.Parameters[0];
+        var propertyAccess = Expression.Invoke(propertySelector, parameter);
+        var containsCall = Expression.Invoke(containsExpression, propertyAccess);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(containsCall, propertySelector.Parameters[0]);
+        return query.Where(lambda);
+    }
+
+
+    public static IQueryable<TEntity> WithFilter<TEntity>(this IQueryable<TEntity> query, Expression<Func<TEntity, string>> propertySelector, Contract.StringFilter? stringFilter)
+    {
         if (string.IsNullOrEmpty(stringFilter?.SubString))
         {
             return query;
         }
 
-        var containsMethodName = stringFilter.StringSearchType switch
-        {
-            Contract.StringSearch.StartsWith => "StartsWith",
-            Contract.StringSearch.Contains => "Contains",
-            Contract.StringSearch.EndsWith => "EndsWith",
-            _ => "Contains"
-        };
+        ArgumentNullException.ThrowIfNull(propertySelector, nameof(propertySelector));
+        ArgumentNullException.ThrowIfNull(query, nameof(query));
 
-        var containsMethod = typeof(String).GetMethod(containsMethodName) ??
-                             throw new InvalidOperationException($"Method {containsMethodName}() not found.");
-
-        var containsCall = Expression.Call(Expression.Constant(stringFilter.SubString), containsMethod, propertySelector.Body);
-        var predicate = Expression.Lambda<Func<TEntity, bool>>(containsCall, propertySelector.Parameters);
-
-        var compiledPredicate = predicate.Compile();
-
-        return query.Where(compiledPredicate).AsQueryable();
+        var resultExpression = GetStringFilterExpression(propertySelector!, stringFilter);
+        return query.Where(resultExpression);
     }
 
-    public static IQueryable<TEntity> WithPaging<TEntity>(this IQueryable<TEntity> query, FilterBase filter)
+
+    public static IQueryable<TEntity> WithFilterOrIfNull<TEntity>(this IQueryable<TEntity> query, Expression<Func<TEntity, string?>> propertySelectorFirst, Expression<Func<TEntity, string>> propertySelectorSecond, Contract.StringFilter? stringFilter)
     {
-        if (filter == null)
+        if (string.IsNullOrEmpty(stringFilter?.SubString))
         {
             return query;
         }
+
+        ArgumentNullException.ThrowIfNull(propertySelectorFirst, nameof(propertySelectorFirst));
+        ArgumentNullException.ThrowIfNull(propertySelectorSecond, nameof(propertySelectorSecond));
+        ArgumentNullException.ThrowIfNull(query, nameof(query));
+
+        var resultExpression = Expression.Lambda<Func<TEntity, bool>>(
+            Expression.Or(
+                    Expression.And(
+                        Expression.NotEqual(propertySelectorFirst, Expression.Constant(null)), 
+                        Expression.Invoke(propertySelectorFirst, GetStringFilterExpression(propertySelectorFirst, stringFilter))
+                        ), 
+                GetStringFilterExpression(propertySelectorSecond!, stringFilter)));
+
+        return query.Where(resultExpression);
+    }
+
+
+    public static IQueryable<TEntity> WithPaging<TEntity>(this IQueryable<TEntity> query, Contract.FilterBase filter)
+    {
+        ArgumentNullException.ThrowIfNull(filter, nameof(filter));
 
         var modifiedQuery = query;
 

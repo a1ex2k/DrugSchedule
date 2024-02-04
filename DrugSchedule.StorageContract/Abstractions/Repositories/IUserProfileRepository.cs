@@ -16,7 +16,7 @@ public interface IUserProfileRepository
 
     public Task<List<UserProfile>> GetUserProfilesAsync(List<Guid> identityGuids, bool withAvatar, CancellationToken cancellationToken = default);
 
-    public Task<UserProfile> CreateUserProfileAsync(UserProfile userProfile, CancellationToken cancellationToken = default);
+    public Task<UserProfile?> CreateUserProfileAsync(UserProfile userProfile, CancellationToken cancellationToken = default);
 
     public Task<UserProfile?> UpdateUserProfileAsync(UserProfile userProfile, UserProfileUpdateFlags updateFlags, CancellationToken cancellationToken = default);
 
@@ -25,6 +25,4 @@ public interface IUserProfileRepository
     public Task<UserContact?> AddOrUpdateContactAsync(UserContact userContact, CancellationToken cancellationToken = default);
 
     public Task<bool> RemoveContactAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default);
-
-    public Task<List<FileInfo>> GetUserAvatarsInfo(List<Guid> filesGuids, CancellationToken cancellationToken = default);
 }

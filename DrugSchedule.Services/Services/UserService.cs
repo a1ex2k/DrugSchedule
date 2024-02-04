@@ -402,21 +402,4 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         return new True();
     }
 
-    public async Task<FileCollection> GetAvatarsAsync(FileIdCollection fileIdCollection, CancellationToken cancellationToken = default)
-    {
-        if (fileIdCollection?.FilesGuids is null || fileIdCollection.FilesGuids.Count == 0)
-        {
-            return new()
-            {
-                Files = new()
-            };
-        }
-        var avatarsInfo =
-            await _profileRepository.GetUserAvatarsInfo(fileIdCollection.FilesGuids, cancellationToken);
-        var model = new FileCollection
-        {
-            Files = _downloadableFileConverter.ToDownloadableFiles(avatarsInfo, true)
-        };
-        return model;
-    }
 }
