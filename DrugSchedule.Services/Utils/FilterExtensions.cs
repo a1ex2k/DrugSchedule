@@ -1,4 +1,4 @@
-﻿using DrugSchedule.StorageContract.Data.Common;
+﻿using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.BusinessLogic.Utils;
 

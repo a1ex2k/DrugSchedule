@@ -31,8 +31,8 @@ public class RefreshTokenRepository : IRefreshTokenRepository
         };
 
         await _dbContext.RefreshTokens.AddAsync(entry, cancellationToken);
-        await _dbContext.SaveChangesAsync(cancellationToken);
-        return entry.ToContractModel();
+        var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
+        return saved ? entry.ToContractModel() : null;
     }
 
 

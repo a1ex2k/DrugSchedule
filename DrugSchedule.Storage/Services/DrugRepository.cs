@@ -24,15 +24,15 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var medicaments = await _dbContext.Medicaments
             .AsNoTracking()
-            .WithFilter(m => m.Id, filter.IdFilter)
-            .WithFilter(m => m.Name, filter.NameFilter)
-            .WithFilter(m => m.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
-            .WithFilter(m => m.Manufacturer!.Name, filter.ManufacturerFilter?.NameFilter)
-            .WithFilter(m => m.ReleaseFormId, filter.MedicamentReleaseFormFilter?.IdFilter)
-            .WithFilter(m => m.ReleaseForm!.Name, filter.MedicamentReleaseFormFilter?.NameFilter)
+            .WithFilter(m1 => m1.Id, filter.IdFilter)
+            .WithFilter(m2 => m2.Name, filter.NameFilter)
+            .WithFilter(m3 => m3.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
+            .WithFilter(m4 => m4.Manufacturer!.Name, filter.ManufacturerFilter?.NameFilter)
+            .WithFilter(m5 => m5.ReleaseFormId, filter.MedicamentReleaseFormFilter?.IdFilter)
+            .WithFilter(m6 => m6.ReleaseForm!.Name, filter.MedicamentReleaseFormFilter?.NameFilter)
             .OrderBy(m => m.Name)
             .WithPaging(filter)
-            .Select(m => m.ToContractModel(withImages))
+            .Select(EntityMapExpressions.ToMedicamentExtended(withImages))
             .ToListAsync(cancellationToken);
 
         return medicaments;
@@ -43,13 +43,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var medicament = await _dbContext.Medicaments
             .AsNoTracking()
-            .Select(m => new MedicamentSimple
-            {
-                Id = m.Id,
-                Name = m.Name,
-                ReleaseForm = m.ReleaseForm!.Name,
-                Manufacturer = m.ManufacturerId != null ? m.Manufacturer!.Name : null,
-            })
+            .Select(EntityMapExpressions.ToMedicamentSimple)
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
         return medicament;
     }
@@ -59,11 +53,11 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var manufacturers = await _dbContext.Manufacturers
             .AsNoTracking()
-            .WithFilter(m => m.Id, filter.IdFilter)
-            .WithFilter(m => m.Name, filter.NameFilter)
+            .WithFilter(m1 => m1.Id, filter.IdFilter)
+            .WithFilter(m2 => m2.Name, filter.NameFilter)
             .OrderBy(m => m.Name)
             .WithPaging(filter)
-            .Select(m => m.ToContractModel())
+            .Select(EntityMapExpressions.ToManufacturer)
             .ToListAsync(cancellationToken);
 
         return manufacturers;
@@ -74,11 +68,11 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var releaseForms = await _dbContext.ReleaseForms
             .AsNoTracking()
-            .WithFilter(m => m.Id, filter.IdFilter)
-            .WithFilter(m => m.Name, filter.NameFilter)
+            .WithFilter(m1 => m1.Id, filter.IdFilter)
+            .WithFilter(m2 => m2.Name, filter.NameFilter)
             .OrderBy(m => m.Name)
             .WithPaging(filter)
-            .Select(m => m.ToContractModel())
+            .Select(EntityMapExpressions.ToMedicamentReleaseForm)
             .ToListAsync(cancellationToken);
 
         return releaseForms;
@@ -89,7 +83,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var medicament = await _dbContext.Medicaments
             .AsNoTracking()
-            .Select(m => m.ToContractModel(withImages))
+            .Select(EntityMapExpressions.ToMedicamentExtended(withImages))
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
         return medicament;
@@ -99,21 +93,15 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var medicaments = await _dbContext.Medicaments
             .AsNoTracking()
-            .WithFilter(m => m.Id, filter.IdFilter)
-            .WithFilter(m => m.Name, filter.NameFilter)
-            .WithFilter(m => m.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
-            .WithFilter(m => m.Manufacturer!.Name, filter.ManufacturerFilter?.NameFilter)
-            .WithFilter(m => m.ReleaseFormId, filter.MedicamentReleaseFormFilter?.IdFilter)
-            .WithFilter(m => m.ReleaseForm!.Name, filter.MedicamentReleaseFormFilter?.NameFilter)
+            .WithFilter(m1 => m1.Id, filter.IdFilter)
+            .WithFilter(m2 => m2.Name, filter.NameFilter)
+            .WithFilter(m3 => m3.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
+            .WithFilter(m4 => m4.Manufacturer!.Name, filter.ManufacturerFilter?.NameFilter)
+            .WithFilter(m5 => m5.ReleaseFormId, filter.MedicamentReleaseFormFilter?.IdFilter)
+            .WithFilter(m6 => m6.ReleaseForm!.Name, filter.MedicamentReleaseFormFilter?.NameFilter)
             .OrderBy(m => m.Name)
             .WithPaging(filter)
-            .Select(m => new MedicamentSimple
-            {
-                Id = m.Id,
-                Name = m.Name,
-                ReleaseForm = m.ReleaseForm!.Name,
-                Manufacturer = m.ManufacturerId != null ? m.Manufacturer!.Name : null,
-            })
+            .Select(EntityMapExpressions.ToMedicamentSimple)
             .ToListAsync(cancellationToken);
         return medicaments;
     }
@@ -185,8 +173,9 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var manufacturer = await _dbContext.Manufacturers
             .AsNoTracking()
+            .Select(EntityMapExpressions.ToManufacturer)
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
-        return manufacturer?.ToContractModel();
+        return manufacturer;
     }
 
     public async Task<Contract.Manufacturer?> UpdateManufacturerAsync(Contract.Manufacturer manufacturer, ManufacturerUpdateFlags updateFlags,
@@ -218,9 +207,10 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     {
         var releaseForm = await _dbContext.ReleaseForms
             .AsNoTracking()
+            .Select(EntityMapExpressions.ToMedicamentReleaseForm)
             .FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
 
-        return releaseForm?.ToContractModel();
+        return releaseForm;
     }
 
     public async Task<Contract.MedicamentReleaseForm?> UpdateMedicamentReleaseFormAsync(Contract.MedicamentReleaseForm releaseForm, MedicamentReleaseFormUpdateFlags updateFlags,

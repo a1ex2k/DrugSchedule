@@ -8,7 +8,7 @@ public class UserMedicament
 
     public Medicament? BasedOnMedicament { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = default!;
 
     public string? Description { get; set; }
 
@@ -22,5 +22,5 @@ public class UserMedicament
 
     public UserProfile? UserProfile { get; set; }
 
-    public List<FileInfo> Images { get; set; } = new();
+    public List<UserMedicamentFile> Images { get; set; } = new();
 }
