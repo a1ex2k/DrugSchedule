@@ -12,4 +12,6 @@ public class MedicamentSimple
     public required string ReleaseForm { get; set; }
 
     public required string? Manufacturer { get; set; }
+
+    public required FileInfo? MainImage { get; set; }
 }

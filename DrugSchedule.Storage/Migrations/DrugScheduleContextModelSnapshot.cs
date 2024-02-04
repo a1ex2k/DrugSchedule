@@ -321,7 +321,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.ToTable("TakingСonfirmationFiles");
                 });
 
-            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicament", b =>
+            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicamentExtended", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -647,7 +647,7 @@ namespace DrugSchedule.Storage.Migrations
                         .WithMany("Images")
                         .HasForeignKey("TakingСonfirmationId");
 
-                    b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicament", null)
+                    b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicamentExtended", null)
                         .WithMany("Images")
                         .HasForeignKey("UserMedicamentId");
                 });
@@ -690,7 +690,7 @@ namespace DrugSchedule.Storage.Migrations
 
             modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.MedicamentTakingSchedule", b =>
                 {
-                    b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicament", "UserMedicament")
+                    b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicamentExtended", "UserMedicamentExtended")
                         .WithMany()
                         .HasForeignKey("UserMedicamentId");
 
@@ -700,7 +700,7 @@ namespace DrugSchedule.Storage.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("UserMedicament");
+                    b.Navigation("UserMedicamentExtended");
 
                     b.Navigation("UserProfile");
                 });
@@ -780,7 +780,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.Navigation("TakingСonfirmation");
                 });
 
-            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicament", b =>
+            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicamentExtended", b =>
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.MedicamentSimple", "BasedOnMedicament")
                         .WithMany()
@@ -805,7 +805,7 @@ namespace DrugSchedule.Storage.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicament", "UserMedicament")
+                    b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicamentExtended", "UserMedicamentExtended")
                         .WithMany()
                         .HasForeignKey("UserMedicamentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -813,7 +813,7 @@ namespace DrugSchedule.Storage.Migrations
 
                     b.Navigation("FileInfo");
 
-                    b.Navigation("UserMedicament");
+                    b.Navigation("UserMedicamentExtended");
                 });
 
             modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserProfile", b =>
@@ -914,7 +914,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.Navigation("Images");
                 });
 
-            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicament", b =>
+            modelBuilder.Entity("DrugSchedule.Storage.Data.Entities.UserMedicamentExtended", b =>
                 {
                     b.Navigation("Images");
                 });
