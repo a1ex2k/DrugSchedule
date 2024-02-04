@@ -19,7 +19,7 @@ public class FileUrlProvider : IFileUrlProvider
     public string GetPrivateFileUri(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var accessParams = _accessService.Generate(fileGuid);
-        var link = _linkGenerator.GetPathByAction(controller: "Files", action: "Download", 
+        var link = _linkGenerator.GetPathByAction(controller: "Files", action: "DownloadPrivate", 
             values: new
             {
                 fileGuid = accessParams.FileGuid,
@@ -33,7 +33,7 @@ public class FileUrlProvider : IFileUrlProvider
     public string GetPublicFileUri(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var link = _linkGenerator.GetPathByAction(
-            action: "Download", // Action name
+            action: "DownloadPublic", // Action name
             controller: "Files", // Controller name
             values: new { fileGuid = fileGuid.ToString() } // Route parameter
         );

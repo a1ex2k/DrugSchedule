@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.StorageContract.Data.Common;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public abstract class FilterBase
 {

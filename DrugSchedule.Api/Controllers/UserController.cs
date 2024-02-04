@@ -116,10 +116,4 @@ public class UserController : ControllerBase
             notFound => NotFound(notFound));
     }
 
-    [HttpPost]
-    public async Task<IActionResult> GetAvatarInfos(FileIdCollectionDto dto, CancellationToken cancellationToken)
-    {
-        var filesInfo = await _userService.GetAvatarsAsync(dto.Adapt<FileIdCollection>(), cancellationToken);
-        return Ok(filesInfo.Adapt<FileCollectionDto>());
-    }
 }
