@@ -20,4 +20,6 @@ public interface IDrugLibraryService
     public Task<ManufacturerCollection> GetManufacturersAsync(ManufacturerFilter filter, CancellationToken cancellationToken = default);
 
     public Task<OneOf<Manufacturer, NotFound>> GetManufacturerAsync(int id, CancellationToken cancellationToken = default);
+    
+    public Task<bool> DoesMedicamentExistAsync(int id, CancellationToken cancellationToken = default);
 }

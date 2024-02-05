@@ -12,5 +12,11 @@ public class UserContactDto
 
     public required string? RealName { get; set; }
 
+    public bool IsCommon { get; set; }
+
+    public bool HasSharedWith { get; set; }
+
+    public bool HasSharedBy { get; set; }
+
     public DownloadableFileDto? Avatar { get; set; }
 }
