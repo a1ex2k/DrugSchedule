@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace DrugSchedule.BusinessLogic.Models;
 
-namespace DrugSchedule.StorageContract.Data;
-
-public class MedicamentSimple
+public class MedicamentSimpleModel
 {
     public int Id { get; set; }
 
@@ -13,5 +10,5 @@ public class MedicamentSimple
 
     public string? ManufacturerName { get; set; }
 
-    public required FileInfo? MainImage { get; set; }
+    public required DownloadableFile? MainImage { get; set; }
 }

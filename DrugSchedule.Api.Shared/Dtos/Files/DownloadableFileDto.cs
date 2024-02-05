@@ -6,7 +6,7 @@ public class DownloadableFileDto
 {
     public required Guid Guid { get; set; }
 
-    public long DownloadId { get; set; }
+    public required string DownloadUrl { get; set; }
     
     public required string NameWithExtension { get; set; }
 

@@ -1,6 +1,8 @@
-﻿namespace DrugSchedule.StorageContract.Data;
+﻿using DrugSchedule.StorageContract.Data;
 
-public class UserMedicamentSimple
+namespace DrugSchedule.BusinessLogic.Models;
+
+public class UserMedicamentSimpleModel
 {
     public long Id { get; set; }
 
@@ -10,5 +12,5 @@ public class UserMedicamentSimple
 
     public string? ManufacturerName { get; set; }
 
-    public FileInfo? MainImage { get; set; }
+    public DownloadableFile? MainImage { get; set; }
 }

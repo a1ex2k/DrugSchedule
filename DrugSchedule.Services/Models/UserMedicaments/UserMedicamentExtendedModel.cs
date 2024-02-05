@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace DrugSchedule.BusinessLogic.Models;
 
-namespace DrugSchedule.StorageContract.Data;
-
-public class UserMedicamentExtended
+public class UserMedicamentExtendedModel
 {
     public long Id { get; set; }
 
@@ -18,5 +16,5 @@ public class UserMedicamentExtended
 
     public string? ManufacturerName { get; set; }
 
-    public List<FileInfo>? Images { get; set; }
+    public required FileCollection Images { get; set; } 
 }
