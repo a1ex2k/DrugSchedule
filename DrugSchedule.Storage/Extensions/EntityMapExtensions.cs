@@ -1,4 +1,6 @@
-﻿namespace DrugSchedule.Storage.Extensions;
+﻿using DrugSchedule.StorageContract.Data;
+
+namespace DrugSchedule.Storage.Extensions;
 
 public static class EntityMapExtensions
 {
@@ -91,6 +93,20 @@ public static class EntityMapExtensions
             UserProfileId = userProfileContact.UserProfileId,
             Profile = userProfileContact.ContactProfile!.ToContractModel(withAvatar),
             CustomName = userProfileContact.Name
+        };
+    }
+
+    public static Contract.UserMedicament ToContractModel(this Entities.UserMedicament userMedicament)
+    {
+        return new Contract.UserMedicament
+        {
+            BasicMedicamentId = userMedicament.BasedOnMedicamentId,
+            Name = userMedicament.Name,
+            Description = userMedicament.Description,
+            Composition = userMedicament.Composition,
+            ReleaseForm = userMedicament.ReleaseForm,
+            ManufacturerName = userMedicament.ManufacturerName,
+            UserProfileId = userMedicament.UserProfileId,
         };
     }
 }

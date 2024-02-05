@@ -4,7 +4,7 @@ public class UserMedicamentFile
 {
     public long Id { get; set; }
 
-    public required long UserMedicamentId { get; set; }
+    public long UserMedicamentId { get; set; }
 
     public UserMedicament? UserMedicament { get; set; }
 

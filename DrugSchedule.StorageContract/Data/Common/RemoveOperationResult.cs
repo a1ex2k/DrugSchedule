@@ -2,7 +2,7 @@
 
 public enum RemoveOperationResult
 {
-    SuccessfullyRemoved = 1,
+    Removed = 1,
     NotFound = 2,
     Used = 3
 }

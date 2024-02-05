@@ -1,8 +1,6 @@
-﻿using DrugSchedule.StorageContract.Data;
-
-namespace DrugSchedule.BusinessLogic.Models;
+﻿namespace DrugSchedule.BusinessLogic.Models;
 
 public class MedicamentSimpleCollection
 {
-    public required List<MedicamentSimple> Medicaments { get; set; }
+    public required List<MedicamentSimpleModel> Medicaments { get; set; }
 }

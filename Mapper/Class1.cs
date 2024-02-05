@@ -12,19 +12,13 @@ public class MyRegister : ICodeGenerationRegister
     public void Register(CodeGenerationConfig config)
     {
         config.AdaptTo("[name]Dto")
-            .ForTypes(typeof(ManufacturerCollection),
-                      typeof(Manufacturer),
-                      typeof(MedicamentSimple),
+            .ForTypes(typeof(NewUserMedicament),
+                      typeof(UserMedicamentExtendedModel),
+                      typeof(UserMedicamentSimpleModel),
                       typeof(MedicamentSimpleCollection),
-                      typeof(MedicamentExtended),
-                      typeof(MedicamentReleaseForm),
-                      typeof(ReleaseFormCollection),
-                      typeof(MedicamentExtendedCollection),
-                      typeof(MedicamentFilter),
-                      typeof(MedicamentReleaseFormFilter),
-                      typeof(StringFilter),
-                      typeof(ManufacturerFilter),
-                      typeof(MedicamentExtendedCollection)
+                      typeof(UserMedicamentExtendedCollection),
+                      typeof(UserMedicamentUpdate),
+                      typeof(UserMedicamentFilter)
                 );
     }
 
