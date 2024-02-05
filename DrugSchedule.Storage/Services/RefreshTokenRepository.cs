@@ -42,7 +42,7 @@ public class RefreshTokenRepository : IRefreshTokenRepository
                                            .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
                                            .Where(rte => rte.RefreshToken == refreshToken)
                                            .ExecuteDeleteAsync(cancellationToken);
-        return result > 0 ? Contract.RemoveOperationResult.SuccessfullyRemoved : Contract.RemoveOperationResult.NotFound;
+        return result > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
     }
 
 

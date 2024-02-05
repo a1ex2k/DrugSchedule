@@ -11,7 +11,7 @@ public interface IDrugLibraryService
 
     public Task<MedicamentSimpleCollection> GetMedicamentsAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
 
-    public Task<OneOf<MedicamentSimple, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default);
+    public Task<OneOf<MedicamentSimpleModel, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default);
 
     public Task<MedicamentExtendedCollection> GetMedicamentsExtendedAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
 

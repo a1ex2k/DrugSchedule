@@ -42,18 +42,18 @@ public class DrugLibraryService : IDrugLibraryService
         var medicaments = await _repository.GetMedicamentsSimpleAsync(filter, cancellationToken);
         return new MedicamentSimpleCollection
         {
-            Medicaments = medicaments
+            Medicaments = medicaments.ConvertAll(ToModel)
         };
     }
 
-    public async Task<OneOf<MedicamentSimple, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<OneOf<MedicamentSimpleModel, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default)
     {
         var medicament = await _repository.GetMedicamentSimpleByIdAsync(id, cancellationToken);
         if (medicament == null)
         {
             return new NotFound($"Medicament with ID={id} not found");
         }
-        return medicament;
+        return ToModel(medicament);
     }
 
     public async Task<MedicamentExtendedCollection> GetMedicamentsExtendedAsync(MedicamentFilter filter, CancellationToken cancellationToken = default)
@@ -108,9 +108,25 @@ public class DrugLibraryService : IDrugLibraryService
             Description = medicament.Description,
             ReleaseForm = medicament.ReleaseForm,
             Manufacturer = medicament.Manufacturer,
-            Images = _downloadableFileConverter.ToDownloadableFiles(medicament.Images!, true)
+            Images = 
+                new FileCollection
+                {
+                    Files = _downloadableFileConverter.ToDownloadableFiles(medicament.Images!, true)
+                }
         };
         return model;
     }
 
+    private MedicamentSimpleModel ToModel(MedicamentSimple medicament)
+    {
+        var model = new MedicamentSimpleModel
+        {
+            Id = medicament.Id,
+            Name = medicament.Name,
+            ReleaseForm = medicament.ReleaseForm,
+            ManufacturerName = medicament.ManufacturerName,
+            MainImage = medicament.MainImage == null ? null : _downloadableFileConverter.ToDownloadableFile(medicament.MainImage, true) 
+        };
+        return model;
+    }
 }
