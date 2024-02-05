@@ -4,7 +4,7 @@ using DrugSchedule.StorageContract.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using UserProfile = DrugSchedule.Storage.Data.Entities.UserProfile;
-using DrugSchedule.StorageContract.Data;
+using System.Linq;
 
 
 namespace DrugSchedule.Storage.Services;
@@ -113,43 +113,6 @@ public class UserProfileRepository : IUserProfileRepository
 
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return saved ? existingUserProfile.ToContractModel(false) : null;
-    }
-
-    public async Task<List<UserContact>> GetContactsAsync(long userProfileId, bool withAvatar, CancellationToken cancellationToken = default)
-    {
-        var contacts = await _dbContext.UserProfileContacts
-            .AsNoTracking()
-            .Include(c => c.ContactProfile)
-            .Where(c => c.UserProfileId == userProfileId)
-            .Select(EntityMapExpressions.ToUserContact(withAvatar))
-            .ToListAsync(cancellationToken);
-
-        return contacts;
-    }
-
-    public async Task<UserContact?> AddOrUpdateContactAsync(Contract.UserContact userContact, CancellationToken cancellationToken = default)
-    {
-        var contact = await _dbContext.UserProfileContacts
-            .FirstOrDefaultAsync(c => c.UserProfileId == userContact.UserProfileId && c.ContactProfileId == userContact.Profile.UserProfileId, cancellationToken);
-
-        contact ??= new Entities.UserProfileContact
-        {
-            UserProfileId = userContact.UserProfileId,
-            ContactProfileId = userContact.Profile.UserProfileId,
-            Name = userContact.CustomName
-        };
-        contact.Name = userContact.CustomName;
-
-        var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return saved ? contact.ToContractModel(false) : null;
-    }
-
-    public async Task<bool> RemoveContactAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default)
-    {
-        var deleted = await _dbContext.UserProfileContacts
-            .Where(c => c.UserProfileId == userProfileId && c.ContactProfileId == contactProfileId)
-            .ExecuteDeleteAsync(cancellationToken);
-        return deleted > 0;
     }
 
 }
