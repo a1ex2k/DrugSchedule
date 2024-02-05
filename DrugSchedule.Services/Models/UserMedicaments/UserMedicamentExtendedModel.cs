@@ -1,10 +1,12 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿using DrugSchedule.StorageContract.Data;
+
+namespace DrugSchedule.BusinessLogic.Models;
 
 public class UserMedicamentExtendedModel
 {
     public long Id { get; set; }
 
-    public int? BasicMedicamentId { get; set; }
+    public MedicamentExtendedModel? BasicMedicament { get; set; }
 
     public string Name { get; set; } = default!;
 

@@ -12,21 +12,22 @@ public class UserDrugLibrary : IUserDrugLibrary
 {
     private readonly ICurrentUserIdentifier _currentUserIdentifier;
     private readonly IUserDrugRepository _userDrugRepository;
-    private readonly IReadonlyDrugRepository _drugRepository;
+    private readonly IDrugLibraryService _drugLibrary;
     private readonly IFileService _fileService;
     private readonly IDownloadableFileConverter _downloadableFileConverter;
 
-    public UserDrugLibrary(IFileService fileService, IReadonlyDrugRepository drugRepository, ICurrentUserIdentifier currentUserIdentifier, IUserDrugRepository userDrugRepository, IDownloadableFileConverter downloadableFileConverter)
+    public UserDrugLibrary(IFileService fileService, ICurrentUserIdentifier currentUserIdentifier, IUserDrugRepository userDrugRepository, IDownloadableFileConverter downloadableFileConverter, IDrugLibraryService drugLibrary)
     {
         _fileService = fileService;
-        _drugRepository = drugRepository;
         _currentUserIdentifier = currentUserIdentifier;
         _userDrugRepository = userDrugRepository;
         _downloadableFileConverter = downloadableFileConverter;
+        _drugLibrary = drugLibrary;
     }
 
 
-    public async Task<OneOf<UserMedicamentExtendedModel, NotFound>> GetMedicamentExtendedAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<OneOf<UserMedicamentExtendedModel, NotFound>> GetMedicamentExtendedAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var medicament = await _userDrugRepository.GetMedicamentExtendedAsync(_currentUserIdentifier.UserProfileId, id,
             true, true, cancellationToken);
@@ -36,16 +37,40 @@ public class UserDrugLibrary : IUserDrugLibrary
             return new NotFound($"Current user doesn't have custom medicament with ID={id}");
         }
 
-        return ToModel(medicament);
+        if (medicament.BasicMedicamentId == null)
+        {
+            return ToModel(medicament, null);
+        }
+
+        var result =
+            await _drugLibrary.GetMedicamentExtendedAsync(medicament.BasicMedicamentId.Value, cancellationToken);
+               
+        var globalMedicament = result.IsT0 ? result.AsT0 : null;
+        return ToModel(medicament, globalMedicament);
     }
 
     public async Task<UserMedicamentExtendedCollection> GetMedicamentsExtendedAsync(UserMedicamentFilter filter, CancellationToken cancellationToken = default)
     {
         var medicaments = await _userDrugRepository.GetMedicamentsExtendedAsync(_currentUserIdentifier.UserProfileId, filter,
             true, true, cancellationToken);
+
+        var basicIds = medicaments
+            .Where(m => m.BasicMedicamentId != null)
+            .Select(m => m.BasicMedicamentId!.Value)
+            .ToList();
+
+        var globalMedicaments = await _drugLibrary.GetMedicamentsExtendedAsync(
+            new MedicamentFilter { IdFilter = basicIds }, cancellationToken);
+
         return new UserMedicamentExtendedCollection
         {
-            Medicaments = medicaments.ConvertAll(ToModel)
+            Medicaments = medicaments.ConvertAll(m =>
+            {
+                var gm = m.BasicMedicamentId == null
+                    ? null
+                    : globalMedicaments.Medicaments.Find(x => x.Id == m.BasicMedicamentId.Value);
+                return ToModel(m, gm);
+            })
         };
     }
 
@@ -74,7 +99,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         var invalidInput = new InvalidInput();
         if (model.BasicMedicamentId != null)
         {
-            var exists = await _drugRepository.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
+            var exists = await _drugLibrary.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
                 invalidInput.Add($"Base medicament with ID={model.BasicMedicamentId} not found");
@@ -119,7 +144,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         var invalidInput = new InvalidInput();
         if (model.BasicMedicamentId != null && model.BasicMedicamentId != 0)
         {
-            var exists = await _drugRepository.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
+            var exists = await _drugLibrary.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
                 invalidInput.Add($"Base medicament with ID={model.BasicMedicamentId} not found. To remove, set BasicMedicamentId=0");
@@ -156,6 +181,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);
         return CreateUpdateResultModel(savedMedicament!);
     }
+
 
     public async Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddImageAsync(long medicamentId, InputFile inputFile, CancellationToken cancellationToken = default)
     {
@@ -224,20 +250,21 @@ public class UserDrugLibrary : IUserDrugLibrary
         };
     }
 
-    private UserMedicamentExtendedModel ToModel(UserMedicamentExtended medicament)
+    private UserMedicamentExtendedModel ToModel(UserMedicamentExtended userMedicament, MedicamentExtendedModel? globalMedicament)
     {
         var model = new UserMedicamentExtendedModel
         {
-            Id = medicament.Id,
-            Name = medicament.Name,
-            Composition = medicament.Composition,
-            Description = medicament.Description,
-            ReleaseForm = medicament.ReleaseForm,
-            ManufacturerName = medicament.ManufacturerName,
+            Id = userMedicament.Id,
+            Name = userMedicament.Name,
+            Composition = userMedicament.Composition,
+            Description = userMedicament.Description,
+            ReleaseForm = userMedicament.ReleaseForm,
+            ManufacturerName = userMedicament.ManufacturerName,
+            BasicMedicament = globalMedicament,
             Images =
                 new FileCollection
                 {
-                    Files = _downloadableFileConverter.ToDownloadableFiles(medicament.Images!, true)
+                    Files = _downloadableFileConverter.ToDownloadableFiles(userMedicament.Images!, true)
                 }
         };
         return model;

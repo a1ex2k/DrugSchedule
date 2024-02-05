@@ -71,14 +71,6 @@ public static class EntityMapExpressions
         };
 
 
-    public static Expression<Func<Entities.UserProfileContact, Contract.UserContact>> ToUserContact(bool withAvatar) => (userProfileContact) => new Contract.UserContact
-    {
-        UserProfileId = userProfileContact.UserProfileId,
-        Profile = ToUserProfile(withAvatar).Compile().Invoke(userProfileContact.ContactProfile!),
-        CustomName = userProfileContact.Name
-    };
-
-
     public static Expression<Func<Entities.UserProfile, Contract.UserProfile>> ToUserProfile(bool withAvatar) => (userProfile) => new Contract.UserProfile
     {
         UserProfileId = userProfile.Id,

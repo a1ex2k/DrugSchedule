@@ -98,6 +98,11 @@ public class DrugLibraryService : IDrugLibraryService
         return manufacturer;
     }
 
+    public async Task<bool> DoesMedicamentExistAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _repository.DoesMedicamentExistAsync(id, cancellationToken);
+    }
+
     private MedicamentExtendedModel ToModel(MedicamentExtended medicament)
     {
         var model = new MedicamentExtendedModel
