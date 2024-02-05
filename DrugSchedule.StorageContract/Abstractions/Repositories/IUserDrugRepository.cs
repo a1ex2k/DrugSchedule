@@ -8,7 +8,7 @@ namespace DrugSchedule.StorageContract.Abstractions;
 
 public interface IUserDrugRepository
 {
-    public Task<UserMedicamentExtended?> GetMedicamentsExtendedAsync(long userProfileId, long id, bool withImages, bool withBasicMedicament, CancellationToken cancellationToken = default);
+    public Task<UserMedicamentExtended?> GetMedicamentExtendedAsync(long userProfileId, long id, bool withImages, bool withBasicMedicament, CancellationToken cancellationToken = default);
 
     public Task<List<UserMedicamentExtended>> GetMedicamentsExtendedAsync(long userProfileId, UserMedicamentFilter userMedicamentFilter, bool withImages, bool withBasicMedicament, CancellationToken cancellationToken = default);
 
@@ -16,10 +16,12 @@ public interface IUserDrugRepository
 
     public Task<List<UserMedicamentSimple>> GetMedicamentsSimpleAsync(long userProfileId, UserMedicamentFilter userMedicamentFilter,  CancellationToken cancellationToken = default);
 
-    public Task<UserMedicamentExtended?> CreateMedicamentAsync(UserMedicamentExtended userMedicamentExtended, CancellationToken cancellationToken = default);
+    public Task<UserMedicament?> GetMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default);
 
-    public Task<UserMedicamentExtended?> UpdateMedicamentAsync(UserMedicamentExtended userMedicamentExtended, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default);
+    public Task<UserMedicament?> CreateMedicamentAsync(UserMedicament model, CancellationToken cancellationToken = default);
 
-    public Task<RemoveOperationResult> RemoveContactAsync(long medicamentId, CancellationToken cancellationToken = default);
+    public Task<UserMedicament?> UpdateMedicamentAsync(UserMedicament model, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default);
+
+    public Task<RemoveOperationResult> RemoveContactAsync(long userProfileId, long id, CancellationToken cancellationToken = default);
 
 }

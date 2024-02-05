@@ -16,5 +16,5 @@ public class MedicamentExtendedModel
 
     public required Manufacturer? Manufacturer { get; set; }
 
-    public required List<DownloadableFile> Images { get; set; }
+    public required FileCollection Images { get; set; }
 }

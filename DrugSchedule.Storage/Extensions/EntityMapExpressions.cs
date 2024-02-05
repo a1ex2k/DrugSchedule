@@ -49,7 +49,7 @@ public static class EntityMapExpressions
         Id = medicament.Id,
         Name = medicament.Name,
         ReleaseForm = medicament.ReleaseForm!.Name,
-        Manufacturer = medicament.ManufacturerId != null ? medicament.Manufacturer!.Name : null,
+        ManufacturerName = medicament.ManufacturerId == null ? null : medicament.Manufacturer!.Name,
         MainImage = medicament.Images.Any() ? medicament.Images
             .AsQueryable()
             .Select(f => f.FileInfo!)
@@ -101,13 +101,10 @@ public static class EntityMapExpressions
             .Select(i => i.FileInfo!)
             .Select(ToFileInfo)
             .FirstOrDefault(),
-        BasicMedicament = userMedicament.BasedOnMedicamentId != null
-            ? ToMedicamentSimple.Compile().Invoke(userMedicament.BasedOnMedicament!)
-            : null
     };
 
 
-    public static Expression<Func<Entities.UserMedicament, Contract.UserMedicamentExtended>> ToUserMedicamentExtended(bool withBasic, bool withImages) => (userMedicament) => new Contract.UserMedicamentExtended
+    public static Expression<Func<Entities.UserMedicament, Contract.UserMedicamentExtended>> ToUserMedicamentExtended(bool withImages) => (userMedicament) => new Contract.UserMedicamentExtended
     {
         Id = userMedicament.Id,
         Name = userMedicament.Name,
@@ -121,9 +118,21 @@ public static class EntityMapExpressions
             .Select(ToFileInfo)
             .ToList()
             : null,
-        BasicMedicament = userMedicament.BasedOnMedicamentId != null
-        ? ToMedicamentExtended(withImages).Compile().Invoke(userMedicament.BasedOnMedicament!)
-        : null
+        BasicMedicamentId = userMedicament.BasedOnMedicamentId
     };
+
+
+    public static Expression<Func<Entities.UserMedicament, Contract.UserMedicament>> ToUserMedicament
+        => userMedicament => new Contract.UserMedicament
+        {
+            BasicMedicamentId = userMedicament.BasedOnMedicamentId,
+            Name = userMedicament.Name,
+            Description = userMedicament.Description,
+            Composition = userMedicament.Composition,
+            ReleaseForm = userMedicament.ReleaseForm,
+            ManufacturerName = userMedicament.ManufacturerName,
+            UserProfileId = userMedicament.UserProfileId,
+            ImageGuids = userMedicament.Images.Select(f => f.FileGuid).ToList(),
+        };
 
 }

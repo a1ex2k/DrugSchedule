@@ -125,6 +125,6 @@ public class FileService : IFileService
 
         var infoRemoveResult = await _fileInfoRepository.RemoveFileByGuidAsync(fileGuid, cancellationToken);
         
-        return wasRemovedFromStorage && infoRemoveResult == RemoveOperationResult.SuccessfullyRemoved;
+        return wasRemovedFromStorage && infoRemoveResult == RemoveOperationResult.Removed;
     }
 }

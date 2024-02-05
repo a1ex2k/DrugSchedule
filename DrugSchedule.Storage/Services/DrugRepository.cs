@@ -48,6 +48,12 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         return medicament;
     }
 
+    public async Task<bool> DoesMedicamentExistAsync(int id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.Medicaments
+            .AnyAsync(m => m.Id == id, cancellationToken);
+    }
+
 
     public async Task<List<Contract.Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, CancellationToken cancellationToken = default)
     {
@@ -318,7 +324,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
 
         _dbContext.Medicaments.Remove(medicament);
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return saved ? RemoveOperationResult.SuccessfullyRemoved : RemoveOperationResult.Used;
+        return saved ? RemoveOperationResult.Removed : RemoveOperationResult.Used;
     }
 
     public async Task<bool> AddMedicamentImageGuidAsync(int medicamentId, Guid imageGuid, CancellationToken cancellationToken = default)
@@ -353,10 +359,10 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         {
             return RemoveOperationResult.NotFound;
         }
-
+        
         _dbContext.Manufacturers.Remove(manufacturer);
         var removed = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return removed ? RemoveOperationResult.SuccessfullyRemoved : RemoveOperationResult.Used;
+        return removed ? RemoveOperationResult.Removed : RemoveOperationResult.Used;
     }
 
 
@@ -372,6 +378,6 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
 
         _dbContext.Remove(releaseForm);
         var removed = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return removed ? RemoveOperationResult.SuccessfullyRemoved : RemoveOperationResult.Used;
+        return removed ? RemoveOperationResult.Removed : RemoveOperationResult.Used;
     }
 }

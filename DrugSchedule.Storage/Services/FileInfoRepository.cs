@@ -66,6 +66,6 @@ public class FileInfoRepository : IFileInfoRepository
         _dbContext.FileInfos.Remove(info);
 
         var removed = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
-        return removed ? Contract.RemoveOperationResult.SuccessfullyRemoved : Contract.RemoveOperationResult.Used;
+        return removed ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.Used;
     }
 }

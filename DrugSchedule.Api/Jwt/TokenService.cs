@@ -103,7 +103,7 @@ public class TokenService : ITokenService
     public async Task<bool> RevokeRefreshTokenAsync(Guid userGuid, string refreshToken, CancellationToken cancellationToken = default)
     {
         var removeResult = await _tokenRepository.RemoveRefreshTokenAsync(userGuid, refreshToken, cancellationToken);
-        return removeResult == RemoveOperationResult.SuccessfullyRemoved;
+        return removeResult == RemoveOperationResult.Removed;
     }
 
 

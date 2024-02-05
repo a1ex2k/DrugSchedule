@@ -1,4 +1,6 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace DrugSchedule.BusinessLogic.Models;
 
 public class InputFile 
 {
