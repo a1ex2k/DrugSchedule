@@ -1,8 +1,8 @@
 namespace DrugSchedule.Api.Shared.Dtos
 {
-    public partial class StringFilterDto
+    public class StringFilterDto
     {
-        public string SubString { get; set; }
+        public required string SubString { get; set; }
         public StringSearchDto StringSearchType { get; set; }
     }
 }

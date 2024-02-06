@@ -6,11 +6,10 @@ using DrugSchedule.StorageContract.Data;
 using DrugSchedule.StorageContract.Data.UserStorage;
 using OneOf.Types;
 using NewUserIdentity = DrugSchedule.BusinessLogic.Models.NewUserIdentity;
-using UserContact = DrugSchedule.BusinessLogic.Models.UserContact;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
-public class UserService : IIdentityService, IUserService, IUserContactsService
+public class UserService : IIdentityService, IUserService
 {
     private readonly IFileService _fileService;
     private readonly IDownloadableFileConverter _downloadableFileConverter;
@@ -237,31 +236,6 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
     }
 
 
-    public async Task<UserContactsCollection> GetUserContactsAsync(CancellationToken cancellationToken = default)
-    {
-        var contacts = await _profileRepository.GetContactsAsync(_currentUserIdentifier.UserProfileId, true, cancellationToken);
-        var identities = await _identityRepository.GetUserIdentitiesAsync(new UserIdentityFilter { GuidsFilter = contacts.Select(c => c.Profile.UserIdentityGuid).ToList() }, cancellationToken);
-
-        var contactModelList = (
-             from c in contacts
-             join i in identities on c.Profile.UserIdentityGuid equals i.Guid
-             select new UserContact()
-             {
-                 Id = c.Profile.UserProfileId,
-                 Username = i.Username!,
-                 СontactName = c.CustomName,
-                 RealName = c.Profile.RealName,
-                 Avatar = c.Profile.Avatar is null ? null : _downloadableFileConverter.ToDownloadableFile(c.Profile.Avatar, true)
-             })
-             .ToList();
-        return new UserContactsCollection
-        {
-            UserId = _currentUserIdentifier.UserProfileId,
-            Contacts = contactModelList
-        };
-    }
-
-
     public async Task<OneOf<UserPublicCollection, InvalidInput>> FindUsersAsync(UserSearch search, CancellationToken cancellationToken = default)
     {
         var usernamePart = search.UsernameSubstring;
@@ -298,55 +272,6 @@ public class UserService : IIdentityService, IUserService, IUserContactsService
         {
             Users = usersList
         };
-    }
-
-
-    public async Task<OneOf<True, InvalidInput, NotFound>> AddUserContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default)
-    {
-        if (newContact.UserProfileId == _currentUserIdentifier.UserProfileId)
-        {
-            return new InvalidInput($"Current user itself cannot be added to contacts");
-        }
-
-        var userProfile = await _profileRepository.GetUserProfileAsync(newContact.UserProfileId, false, cancellationToken);
-        if (userProfile == null)
-        {
-            return new NotFound($"User with Id={newContact.UserProfileId} not found");
-        }
-
-        var customName = newContact.CustomName;
-        if (string.IsNullOrWhiteSpace(customName))
-        {
-            customName = userProfile.RealName;
-        }
-
-        if (string.IsNullOrWhiteSpace(customName))
-        {
-            var identity = await _identityRepository.GetUserIdentityAsync(userProfile.UserIdentityGuid, cancellationToken);
-            customName = identity!.Username;
-        }
-
-        var userContact = new StorageContract.Data.UserContact
-        {
-            UserProfileId = _currentUserIdentifier.UserProfileId,
-            Profile = userProfile,
-            CustomName = customName ?? "user" + userProfile.UserProfileId,
-        };
-        var addedContact = await _profileRepository.AddOrUpdateContactAsync(userContact, cancellationToken);
-        return new True();
-    }
-
-
-    public async Task<OneOf<True, NotFound>> RemoveUserContactAsync(UserId userId, CancellationToken cancellationToken = default)
-    {
-        var contactRemoved = await
-            _profileRepository.RemoveContactAsync(_currentUserIdentifier.UserProfileId, userId.UserProfileId, cancellationToken);
-        if (!contactRemoved)
-        {
-            return new NotFound("No contact with such ID found");
-        }
-
-        return new True();
     }
 
 
