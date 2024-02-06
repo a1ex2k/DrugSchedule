@@ -1,9 +1,8 @@
 using System.Collections.Generic;
-using DrugSchedule.Api.Shared.Dtos;
 
 namespace DrugSchedule.Api.Shared.Dtos
 {
-    public partial class ManufacturerFilterDto
+    public class ManufacturerFilterDto
     {
         public List<int>? IdFilter { get; set; }
         public StringFilterDto? NameFilter { get; set; }

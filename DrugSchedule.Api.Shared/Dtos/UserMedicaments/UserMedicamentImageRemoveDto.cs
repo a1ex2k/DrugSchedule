@@ -1,10 +1,9 @@
-#nullable disable
 using System;
 
 namespace DrugSchedule.Api.Shared.Dtos;
 
-public partial class UserMedicamentImageRemoveDto
+public class UserMedicamentImageRemoveDto
 {
-    public long MedicamentId { get; set; }
-    public FileIdDto ImageId { get; set; }
+    public long UserMedicamentId { get; set; }
+    public Guid FileGuid { get; set; }
 }

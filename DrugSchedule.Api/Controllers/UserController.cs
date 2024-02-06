@@ -1,4 +1,5 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.Api.Utils;
 using DrugSchedule.BusinessLogic.Models;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
@@ -13,12 +14,10 @@ namespace DrugSchedule.Api.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
-    private readonly IUserContactsService _userContactsService;
 
-    public UserController(IUserService userService, IUserContactsService userContactsService)
+    public UserController(IUserService userService)
     {
         _userService = userService;
-        _userContactsService = userContactsService;
     }
 
 
@@ -34,48 +33,19 @@ public class UserController : ControllerBase
     public async Task<IActionResult> SearchForUsers(UserSearchDto dto, CancellationToken cancellationToken)
     {
         var searchResult = await _userService.FindUsersAsync(dto.Adapt<UserSearch>(), cancellationToken);
-        return searchResult.Match(
-            users => (IActionResult)Ok(users.Adapt<UserPublicCollectionDto>()),
-            error => (IActionResult)BadRequest(error));
+        return searchResult.Match<IActionResult>(
+            users => Ok(users.Adapt<UserPublicCollectionDto>()),
+            error => BadRequest(error.ToDto()));
     }
 
 
-    [HttpPost]
-    public async Task<IActionResult> GetContacts(CancellationToken cancellationToken)
-    {
-        var contacts = await _userContactsService.GetUserContactsAsync(cancellationToken);
-        return Ok(contacts.Adapt<UserContactDto>());
-    }
-
-
-    [HttpPost]
-    public async Task<IActionResult> AddContact(NewUserContactDto dto, CancellationToken cancellationToken)
-    {
-        var contactAddResult = await _userContactsService.AddUserContactAsync(dto.Adapt<NewUserContact>(), cancellationToken);
-        return contactAddResult.Match(
-            ok => (IActionResult)Ok(),
-            errorInput => BadRequest(errorInput),
-            notFound => NotFound(notFound));
-    }
-
-
-    [HttpPost]
-    public async Task<IActionResult> RemoveContact(UserIdDto dto, CancellationToken cancellationToken)
-    {
-        var contactRemoveResult = await _userContactsService.RemoveUserContactAsync(dto.Adapt<UserId>(), cancellationToken);
-        return contactRemoveResult.Match(
-            ok => (IActionResult)Ok(),
-            notFound => NotFound(notFound));
-    }
-
-    
     [HttpPost]
     public async Task<IActionResult> UpdateProfile(UserUpdateDto dto, CancellationToken cancellationToken)
     {
         var updateResult = await _userService.UpdateProfileAsync(dto.Adapt<UserUpdate>(), cancellationToken);
-        return updateResult.Match(
-            userModel => (IActionResult)Ok(userModel),
-            errorInput => BadRequest(errorInput));
+        return updateResult.Match<IActionResult>(
+            userModel => Ok(userModel.Adapt<UserUpdateDto>()),
+            errorInput => BadRequest(errorInput.ToDto()));
     }
 
 
@@ -83,9 +53,9 @@ public class UserController : ControllerBase
     public async Task<IActionResult> ChangePassword(NewPasswordDto dto, CancellationToken cancellationToken)
     {
         var changePasswordResult = await _userService.UpdatePasswordAsync(dto.Adapt<NewPasswordModel>(), cancellationToken);
-        return changePasswordResult.Match(
-            ok => (IActionResult)Ok(),
-            errorInput => BadRequest(errorInput));
+        return changePasswordResult.Match<IActionResult>(
+            ok => Ok("Password changed successfully"),
+            errorInput => BadRequest(errorInput.ToDto()));
     }
 
 
@@ -101,9 +71,9 @@ public class UserController : ControllerBase
 
         var setAvatarResult = await _userService.SetAvatarAsync(fileModel, cancellationToken);
 
-        return setAvatarResult.Match(
-            fileInfo => (IActionResult)Ok(fileInfo),
-            errorInput => BadRequest(errorInput));
+        return setAvatarResult.Match<IActionResult>(
+            file => Ok(file.Adapt<DownloadableFileDto>()),
+            errorInput => BadRequest(errorInput.ToDto()));
     }
 
 
@@ -111,9 +81,9 @@ public class UserController : ControllerBase
     public async Task<IActionResult> RemoveAvatar(FileIdDto dto, CancellationToken cancellationToken)
     {
         var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileId>(), cancellationToken);
-        return removeAvatarResult.Match(
-            ok => (IActionResult)Ok(),
-            notFound => NotFound(notFound));
+        return removeAvatarResult.Match<IActionResult>(
+            ok => Ok("Avatar removed successfully"),
+            notFound => NotFound(notFound.ToDto()));
     }
 
 }

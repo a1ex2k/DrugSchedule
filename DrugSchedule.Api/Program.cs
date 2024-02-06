@@ -11,8 +11,6 @@ using DrugSchedule.StorageContract.Abstractions;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -35,15 +33,19 @@ builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IReadonlyDrugRepository, DrugRepository>();
+builder.Services.AddScoped<IUserDrugRepository, UserDrugRepository>();
+builder.Services.AddScoped<IUserContactRepository, UserContactRepository>();
 
 builder.Services.AddScoped<ICurrentUserIdentifier, CurrentUserIdentifier>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserContactsService, UserService>();
+builder.Services.AddScoped<IUserContactsService, UserContactsService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFileUrlProvider, FileUrlProvider>();
 builder.Services.AddScoped<IDownloadableFileConverter, DownloadableFileConverter>();
+builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
+builder.Services.AddScoped<IUserDrugLibrary, UserDrugLibrary>();
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 
 

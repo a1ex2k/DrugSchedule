@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DrugSchedule.Api.Shared.Dtos
 {
-    public partial class UserMedicamentFilterDto
+    public class UserMedicamentFilterDto
     {
         public List<long>? IdFilter { get; set; }
         public StringFilterDto? NameFilter { get; set; }

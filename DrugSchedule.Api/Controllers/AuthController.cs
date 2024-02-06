@@ -1,4 +1,5 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
@@ -41,7 +42,7 @@ public class AuthController : ControllerBase
             return BadRequest(tokensResult.AsT1);
         }
 
-        return Ok(tokensResult.AsT0);
+        return Ok(tokensResult.AsT0.Adapt<TokenDto>());
     }
 
 
@@ -49,9 +50,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterDto dto, CancellationToken cancellationToken)
     {
         var registerResult = await _identityService.RegisterUserAsync(dto.Adapt<RegisterModel>(), cancellationToken);
-        return registerResult.Match(
-            yes => (IActionResult)Ok("User created successfully!"),
-            error => (IActionResult)BadRequest(error));
+        return registerResult.Match<IActionResult>(
+            identity => Ok("User created successfully!"),
+            error => BadRequest(error.ToDto()));
     }
         
 
@@ -59,9 +60,9 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> RefreshToken(TokenDto tokenDto, CancellationToken cancellationToken)
     {
         var newTokenModel = await _tokenService.RefreshTokensAsync(tokenDto.Adapt<TokenModel>(), cancellationToken);
-        return newTokenModel.Match(
-            tokenModel => (IActionResult)Ok(tokenModel.Adapt<TokenDto>()),
-            error => (IActionResult)BadRequest(error));
+        return newTokenModel.Match<IActionResult>(
+            tokenModel => Ok(tokenModel.Adapt<TokenDto>()),
+            error => BadRequest(error.ToDto()));
     }
 
 
