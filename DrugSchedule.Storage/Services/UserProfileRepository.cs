@@ -30,6 +30,12 @@ public class UserProfileRepository : IUserProfileRepository
         return profile;
     }
 
+    public async Task<bool> DoesUserProfileExistsAsync(long id, CancellationToken cancellationToken = default)
+    {
+        return await _dbContext.UserProfiles
+            .AnyAsync(u => u.Id == id, cancellationToken);
+    }
+
     public async Task<List<Contract.UserProfile>> GetUserProfilesAsync(List<long> ids, bool withAvatar, CancellationToken cancellationToken = default)
     {
         var profiles = await _dbContext.UserProfiles

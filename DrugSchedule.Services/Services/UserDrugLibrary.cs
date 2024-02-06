@@ -231,7 +231,10 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         medicament.ImageGuids.Remove(fileId.FileGuid);
         var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);
-
+        if (savedMedicament != null)
+        {
+            await _fileService.RemoveFileAsync(fileId.FileGuid, cancellationToken);
+        }
         return new True();
     }
 

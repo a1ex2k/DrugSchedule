@@ -114,7 +114,7 @@ public class FileService : IFileService
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("DownloadableFile info not found");
+            return new NotFound("File info not found");
         }
 
         var wasRemovedFromStorage = await _fileStorage.RemoveFileAsync(fileInfo, cancellationToken);

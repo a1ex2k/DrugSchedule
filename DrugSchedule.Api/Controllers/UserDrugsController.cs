@@ -1,8 +1,8 @@
 ﻿using DrugSchedule.Api.ServerOnlyDtos;
 using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Mapster;
@@ -27,9 +27,9 @@ public class UserDrugsController : ControllerBase
     public async Task<IActionResult> GetMedicament([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
     {
         var medicamentResult = await _drugLibraryService.GetMedicamentSimpleAsync(dto.UserMedicamentId, cancellationToken);
-        return medicamentResult.Match(
-            m => (IActionResult)Ok(medicamentResult.Adapt<UserMedicamentSimpleDto>()),
-            error => (IActionResult)NotFound(error.Message));
+        return medicamentResult.Match<IActionResult>(
+            m => Ok(medicamentResult.Adapt<UserMedicamentSimpleDto>()),
+            error => NotFound(error.ToDto()));
     }
 
 
@@ -37,9 +37,9 @@ public class UserDrugsController : ControllerBase
     public async Task<IActionResult> GetMedicamentExtended([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
     {
         var medicamentResult = await _drugLibraryService.GetMedicamentExtendedAsync(dto.UserMedicamentId, cancellationToken);
-        return medicamentResult.Match(
-            m => (IActionResult)Ok(medicamentResult.Adapt<UserMedicamentExtendedDto>()),
-            error => (IActionResult)NotFound(error.Message));
+        return medicamentResult.Match<IActionResult>(
+            m => Ok(medicamentResult.Adapt<UserMedicamentExtendedDto>()),
+            error => NotFound(error.ToDto()));
     }
 
 
@@ -74,10 +74,10 @@ public class UserDrugsController : ControllerBase
 
         var addResult =
             await _drugLibraryService.AddImageAsync(dto.UserMedicamentId.UserMedicamentId, inputFile, cancellationToken);
-        return addResult.Match(
-            f => (IActionResult)Ok(f.Adapt<DownloadableFileDto>()),
-            error => (IActionResult)NotFound(error.Message),
-            invalid => BadRequest(invalid.ErrorsList));
+        return addResult.Match<IActionResult>(
+            f => Ok(f.Adapt<DownloadableFileDto>()),
+            error => NotFound(error.ToDto()),
+            invalid => BadRequest(invalid.ToDto()));
     }
 
 
@@ -85,9 +85,9 @@ public class UserDrugsController : ControllerBase
     public async Task<IActionResult> RemoveMedicamentImage([FromBody] UserMedicamentImageRemoveDto dto, CancellationToken cancellationToken)
     {
         var removeResult =
-            await _drugLibraryService.RemoveImageAsync(dto.MedicamentId, dto.ImageId.Adapt<FileId>(), cancellationToken);
-        return removeResult.Match(
-            ok => (IActionResult)Ok(),
-            error => (IActionResult)NotFound(error.Message));
+            await _drugLibraryService.RemoveImageAsync(dto.UserMedicamentId, new FileId {FileGuid = dto.FileGuid}, cancellationToken);
+        return removeResult.Match<IActionResult>(
+            ok => Ok("Image removed successfully"),
+            error => NotFound(error.ToDto()));
     }
 }

@@ -1,6 +1,6 @@
 namespace DrugSchedule.Api.Shared.Dtos
 {
-    public partial class UserMedicamentUpdateDto
+    public class UserMedicamentUpdateDto
     {
         public long Id { get; set; }
         public int? BasicMedicamentId { get; set; }

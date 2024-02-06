@@ -10,6 +10,8 @@ public interface IUserProfileRepository
 {
     public Task<UserProfile?> GetUserProfileAsync(long id, bool withAvatar, CancellationToken cancellationToken = default);
 
+    public Task<bool> DoesUserProfileExistsAsync(long id, CancellationToken cancellationToken = default);
+
     public Task<List<UserProfile>> GetUserProfilesAsync(List<long> ids, bool withAvatar, CancellationToken cancellationToken = default);
 
     public Task<UserProfile?> GetUserProfileAsync(Guid identityGuid, bool withAvatar, CancellationToken cancellationToken = default);

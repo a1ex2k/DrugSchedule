@@ -1,6 +1,8 @@
-﻿using DrugSchedule.Storage.Data;
+﻿using System.Linq.Expressions;
+using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Extensions;
 using DrugSchedule.StorageContract.Abstractions;
+using DrugSchedule.StorageContract.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
@@ -18,65 +20,103 @@ public class UserContactRepository : IUserContactRepository
     }
 
 
-    public Task<List<Contract.UserContact>> GetContactAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default)
+    public async Task<UserContact?> GetContactAsync(long userProfileId, long contactProfileId,
+        CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var contact = await _dbContext.UserProfileContacts
+            .AsNoTracking()
+            .Where(c => c.UserProfileId == userProfileId && c.ContactProfileId == contactProfileId)
+            .Select(ContactProjection)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return contact;
     }
 
-    public async Task<List<Contract.UserContact>> GetContactsAsync(long userProfileId, Contract.UserContactFilter filter, CancellationToken cancellationToken = default)
+
+    public async Task<List<UserContact>> GetContactsAsync(long userProfileId,
+        UserContactFilter filter, CancellationToken cancellationToken = default)
     {
         var contacts = await _dbContext.UserProfileContacts
             .AsNoTracking()
             .Where(c => c.UserProfileId == userProfileId)
             .WithFilter(c1 => c1.ContactProfileId, filter.ContactProfileIdFilter)
-            .WithFilter(c2 => c2.Name, filter.ContactNameFilter)
-            .Select(c => new Contract.UserContact
-            {
-                Profile = EntityMapExpressions.ToUserProfile(true).Compile().Invoke(c.ContactProfile!),
-                CustomName = c.Name,
-                IsCommon = _dbContext.UserProfileContacts
-                    .Any(c2 => c2.UserProfileId == c.ContactProfileId
-                               && c2.ContactProfileId == c.UserProfileId),
-                HasSharedWith = c.SharedSchedules.Any(),
-                HasSharedBy = _dbContext.ScheduleShare
-                    .Any(s => s.MedicamentTakingSchedule!.UserProfileId == c.ContactProfileId
-                              && s.ShareWithContactId == c.UserProfileId)
-
-            })
+            .WithFilter(c2 => c2.CustomName, filter.ContactNameFilter)
+            .Select(ContactProjection)
             .ToListAsync(cancellationToken);
 
         return contacts;
     }
 
-    public Task<List<Contract.UserContact>> GetContactsSimpleAsync(long userProfileId, CancellationToken cancellationToken = default)
+
+    public async Task<List<UserContactSimple>> GetContactsSimpleAsync(long userProfileId, bool commonOnly, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var contactsQuery = _dbContext.UserProfileContacts
+            .AsNoTracking()
+            .Where(c => c.UserProfileId == userProfileId)
+            .Select(c => new Contract.UserContactSimple
+            {
+                ContactProfileId = c.ContactProfileId,
+                CustomName = c.CustomName,
+                Avatar = c.ContactProfile!.AvatarGuid == null
+                    ? null
+                    : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
+                IsCommon = _dbContext.UserProfileContacts
+                    .Any(c2 => c2.UserProfileId == c.ContactProfileId
+                               && c2.ContactProfileId == c.UserProfileId)
+            });
+
+        if (commonOnly)
+        {
+            contactsQuery = contactsQuery.Where(c => c.IsCommon);
+        }
+
+        var contacts = await contactsQuery.ToListAsync(cancellationToken);
+        return contacts;
     }
 
 
-    public async Task<Contract.UserContactSimple?> AddOrUpdateContactAsync(long userProfileId, Contract.UserContactSimple userContact, CancellationToken cancellationToken = default)
+    public async Task<UserContactSimple?> AddOrUpdateContactAsync(long userProfileId,
+        UserContactSimple userContact, CancellationToken cancellationToken = default)
     {
         var contact = await _dbContext.UserProfileContacts
-            .FirstOrDefaultAsync(c => c.UserProfileId == userProfileId
-                                      && c.ContactProfileId == userContact.ContactProfileId, cancellationToken);
+            .FirstOrDefaultAsync(c => c.UserProfileId == userProfileId && c.ContactProfileId == userContact.ContactProfileId, cancellationToken);
 
         contact ??= new Entities.UserProfileContact
         {
             UserProfileId = userProfileId,
             ContactProfileId = userContact.ContactProfileId,
-            Name = userContact.CustomName
+            CustomName = userContact.CustomName
         };
-        contact.Name = userContact.CustomName;
+        contact.CustomName = userContact.CustomName;
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
 
-        var isCommon = await _dbContext.UserProfileContacts
-            .AnyAsync(c2 => c2.UserProfileId == contact.ContactProfileId
-                            && c2.ContactProfileId == contact.UserProfileId, cancellationToken);
+        var additionalData = await _dbContext.UserProfileContacts
+            .AsNoTracking()
+            .Select(c => new
+            {
+                AvatarInfo = c.ContactProfile!.AvatarGuid == null
+                    ? null
+                    : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
+                IsCommon = _dbContext.UserProfileContacts
+                    .Any(c2 => c2.UserProfileId == contact.ContactProfileId
+                               && c2.ContactProfileId == contact.UserProfileId)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
 
-        return saved ? contact.ToContractModel(false) : null;
+        return saved
+            ? new Contract.UserContactSimple
+            {
+                ContactProfileId = contact.ContactProfileId,
+                CustomName = contact.CustomName,
+                IsCommon = additionalData?.IsCommon ?? false,
+                Avatar = additionalData?.AvatarInfo
+            }
+            : null;
     }
 
-    public async Task<bool> RemoveContactAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default)
+
+    public async Task<bool> RemoveContactAsync(long userProfileId, long contactProfileId,
+        CancellationToken cancellationToken = default)
     {
         var deleted = await _dbContext.UserProfileContacts
             .Where(c => c.UserProfileId == userProfileId && c.ContactProfileId == contactProfileId)
@@ -84,4 +124,18 @@ public class UserContactRepository : IUserContactRepository
         return deleted > 0;
     }
 
+
+    private Expression<Func<Entities.UserProfileContact, UserContact>> ContactProjection
+        => (c) => new Contract.UserContact
+        {
+            Profile = EntityMapExpressions.ToUserProfile(true).Compile().Invoke(c.ContactProfile!),
+            CustomName = c.CustomName,
+            IsCommon = _dbContext.UserProfileContacts
+                .Any(c2 => c2.UserProfileId == c.ContactProfileId
+                           && c2.ContactProfileId == c.UserProfileId),
+            HasSharedWith = c.SharedSchedules.Any(),
+            HasSharedBy = _dbContext.ScheduleShare
+                .Any(s => s.MedicamentTakingSchedule!.UserProfileId == c.ContactProfileId
+                          && s.ShareWithContactId == c.UserProfileId),
+        };
 }
