@@ -1,4 +1,5 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
@@ -22,20 +23,20 @@ public class DrugLibraryController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> GetMedicament([FromBody] MedicamentIdDto dto, CancellationToken cancellationToken)
     {
-        var medicamentResult = await _drugLibraryService.GetMedicamentAsync(dto.Id, cancellationToken);
-        return medicamentResult.Match(
-            m => (IActionResult)Ok(medicamentResult.Adapt<MedicamentSimpleDto>()),
-            error => (IActionResult)NotFound(error.Message));
+        var medicamentResult = await _drugLibraryService.GetMedicamentAsync(dto.MedicamentId, cancellationToken);
+        return medicamentResult.Match<IActionResult>(
+            m => Ok(medicamentResult.Adapt<MedicamentSimpleDto>()),
+            error => NotFound(error.ToDto()));
     }
 
 
     [HttpPost]
     public async Task<IActionResult> GetMedicamentExtended([FromBody] MedicamentIdDto dto, CancellationToken cancellationToken)
     {
-        var medicamentResult = await _drugLibraryService.GetMedicamentExtendedAsync(dto.Id, cancellationToken);
-        return medicamentResult.Match(
-            m => (IActionResult)Ok(medicamentResult.Adapt<MedicamentExtendedDto>()),
-            error => (IActionResult)NotFound(error.Message));
+        var medicamentResult = await _drugLibraryService.GetMedicamentExtendedAsync(dto.MedicamentId, cancellationToken);
+        return medicamentResult.Match<IActionResult>(
+            m => Ok(medicamentResult.Adapt<MedicamentExtendedDto>()),
+            error => NotFound(error.ToDto()));
     }
 
 
@@ -62,10 +63,10 @@ public class DrugLibraryController : ControllerBase
     public async Task<IActionResult> GetManufacturer([FromBody] ManufacturerIdDto dto, CancellationToken cancellationToken)
     {
         var manufacturerResult =
-            await _drugLibraryService.GetManufacturerAsync(dto.Id, cancellationToken);
-        return manufacturerResult.Match(
-            m => (IActionResult)Ok(m.Adapt<ManufacturerDto>()),
-            error => (IActionResult)NotFound(error.Message));
+            await _drugLibraryService.GetManufacturerAsync(dto.ManufacturerId, cancellationToken);
+        return manufacturerResult.Match<IActionResult>(
+            m => Ok(m.Adapt<ManufacturerDto>()),
+            error => NotFound(error.ToDto()));
     }
 
 

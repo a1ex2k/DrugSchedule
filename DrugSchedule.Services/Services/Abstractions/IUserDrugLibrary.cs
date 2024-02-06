@@ -2,7 +2,6 @@
 using DrugSchedule.BusinessLogic.Utils;
 using DrugSchedule.StorageContract.Data;
 using OneOf.Types;
-using UserContact = DrugSchedule.BusinessLogic.Models.UserContact;
 
 namespace DrugSchedule.BusinessLogic.Services.Abstractions;
 

@@ -12,7 +12,7 @@ public class UserProfileContact
 
     public UserProfile? ContactProfile { get; set; }
 
-    public required string Name { get; set; }
+    public required string CustomName { get; set; }
 
     public List<MedicamentTakingSchedule> SharedSchedules { get; set; } = new();
 }

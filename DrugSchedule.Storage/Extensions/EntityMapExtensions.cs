@@ -86,15 +86,6 @@ public static class EntityMapExtensions
         };
     }
 
-    public static Contract.UserContact ToContractModel(this Entities.UserProfileContact userProfileContact, bool withAvatar)
-    {
-        return new Contract.UserContact
-        {
-            UserProfileId = userProfileContact.UserProfileId,
-            Profile = userProfileContact.ContactProfile!.ToContractModel(withAvatar),
-            CustomName = userProfileContact.Name
-        };
-    }
 
     public static Contract.UserMedicament ToContractModel(this Entities.UserMedicament userMedicament)
     {

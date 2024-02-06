@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace DrugSchedule.Api.Shared.Dtos
 {
-    public partial class MedicamentExtendedDto
+    public class MedicamentExtendedDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
