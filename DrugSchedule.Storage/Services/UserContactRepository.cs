@@ -133,7 +133,7 @@ public class UserContactRepository : IUserContactRepository
             IsCommon = _dbContext.UserProfileContacts
                 .Any(c2 => c2.UserProfileId == c.ContactProfileId
                            && c2.ContactProfileId == c.UserProfileId),
-            HasSharedWith = c.SharedSchedules.Any(),
+            HasSharedWith = c.ScheduleShares.Any(),
             HasSharedBy = _dbContext.ScheduleShare
                 .Any(s => s.MedicamentTakingSchedule!.UserProfileId == c.ContactProfileId
                           && s.ShareWithContactId == c.UserProfileId),

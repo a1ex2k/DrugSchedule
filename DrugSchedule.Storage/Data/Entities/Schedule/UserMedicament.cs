@@ -22,5 +22,5 @@ public class UserMedicament
 
     public UserProfile? UserProfile { get; set; }
 
-    public List<UserMedicamentFile> Images { get; set; } = new();
+    public List<UserMedicamentFile> Files { get; set; } = new();
 }

@@ -18,5 +18,5 @@ public class Medicament
 
     public Manufacturer? Manufacturer { get; set; }
 
-    public List<MedicamentFile> Images { get; set; } = new();
+    public List<MedicamentFile> Files { get; set; } = new();
 }
