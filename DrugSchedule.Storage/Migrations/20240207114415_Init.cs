@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DrugSchedule.Storage.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,6 +51,23 @@ namespace DrugSchedule.Storage.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "FileInfos",
+                columns: table => new
+                {
+                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    OriginalName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Extension = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileCategory = table.Column<int>(type: "int", nullable: false),
+                    MediaType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Size = table.Column<long>(type: "bigint", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FileInfos", x => x.Guid);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Manufacturers",
                 columns: table => new
                 {
@@ -78,19 +95,6 @@ namespace DrugSchedule.Storage.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TakingRules",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Text = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TakingRules", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -108,7 +112,7 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -129,7 +133,7 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -149,7 +153,7 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -167,13 +171,13 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.RoleId,
                         principalTable: "AspNetRoles",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_AspNetUserRoles_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -193,7 +197,7 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -216,6 +220,35 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.IdentityUserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserProfiles",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdentityGuid = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RealName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
+                    Sex = table.Column<int>(type: "int", nullable: false),
+                    AvatarGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AvatarInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserProfiles_AspNetUsers_IdentityGuid",
+                        column: x => x.IdentityGuid,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserProfiles_FileInfos_AvatarInfoGuid",
+                        column: x => x.AvatarInfoGuid,
+                        principalTable: "FileInfos",
+                        principalColumn: "Guid");
                 });
 
             migrationBuilder.CreateTable(
@@ -247,22 +280,30 @@ namespace DrugSchedule.Storage.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "FileInfos",
+                name: "UserProfileContacts",
                 columns: table => new
                 {
-                    Guid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    OriginalName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Extension = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FileCategory = table.Column<int>(type: "int", nullable: false),
-                    MediaType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Size = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TakingСonfirmationId = table.Column<long>(type: "bigint", nullable: true),
-                    UserMedicamentId = table.Column<long>(type: "bigint", nullable: true)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserProfileId = table.Column<long>(type: "bigint", nullable: false),
+                    ContactProfileId = table.Column<long>(type: "bigint", nullable: false),
+                    CustomName = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FileInfos", x => x.Guid);
+                    table.PrimaryKey("PK_UserProfileContacts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_UserProfileContacts_UserProfiles_ContactProfileId",
+                        column: x => x.ContactProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_UserProfileContacts_UserProfiles_UserProfileId",
+                        column: x => x.UserProfileId,
+                        principalTable: "UserProfiles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -272,51 +313,23 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MedicamentId = table.Column<int>(type: "int", nullable: false),
-                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicamentFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MedicamentFiles_FileInfos_FileGuid",
-                        column: x => x.FileGuid,
+                        name: "FK_MedicamentFiles_FileInfos_FileInfoGuid",
+                        column: x => x.FileInfoGuid,
                         principalTable: "FileInfos",
-                        principalColumn: "Guid",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Guid");
                     table.ForeignKey(
                         name: "FK_MedicamentFiles_Medicaments_MedicamentId",
                         column: x => x.MedicamentId,
                         principalTable: "Medicaments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserProfiles",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdentityGuid = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RealName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
-                    Sex = table.Column<int>(type: "int", nullable: false),
-                    AvatarGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserProfiles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserProfiles_AspNetUsers_IdentityGuid",
-                        column: x => x.IdentityGuid,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserProfiles_FileInfos_AvatarGuid",
-                        column: x => x.AvatarGuid,
-                        principalTable: "FileInfos",
-                        principalColumn: "Guid");
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -326,10 +339,10 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BasedOnMedicamentId = table.Column<int>(type: "int", nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReleaseForm = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Composition = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ReleaseForm = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ManufacturerName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserProfileId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -350,53 +363,33 @@ namespace DrugSchedule.Storage.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserProfileContacts",
+                name: "MedicamentTakingSchedules",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserProfileId = table.Column<long>(type: "bigint", nullable: false),
-                    ContactProfileId = table.Column<long>(type: "bigint", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserProfileContacts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_UserProfileContacts_UserProfiles_ContactProfileId",
-                        column: x => x.ContactProfileId,
-                        principalTable: "UserProfiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_UserProfileContacts_UserProfiles_UserProfileId",
-                        column: x => x.UserProfileId,
-                        principalTable: "UserProfiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MedicamentTakingSchedule",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserProfileId = table.Column<long>(type: "bigint", nullable: false),
+                    GlobalMedicamentId = table.Column<int>(type: "int", nullable: true),
                     UserMedicamentId = table.Column<long>(type: "bigint", nullable: true),
                     Information = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreationTime = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Enabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MedicamentTakingSchedule", x => x.Id);
+                    table.PrimaryKey("PK_MedicamentTakingSchedules", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MedicamentTakingSchedule_UserMedicaments_UserMedicamentId",
+                        name: "FK_MedicamentTakingSchedules_Medicaments_GlobalMedicamentId",
+                        column: x => x.GlobalMedicamentId,
+                        principalTable: "Medicaments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_MedicamentTakingSchedules_UserMedicaments_UserMedicamentId",
                         column: x => x.UserMedicamentId,
                         principalTable: "UserMedicaments",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_MedicamentTakingSchedule_UserProfiles_UserProfileId",
+                        name: "FK_MedicamentTakingSchedules_UserProfiles_UserProfileId",
                         column: x => x.UserProfileId,
                         principalTable: "UserProfiles",
                         principalColumn: "Id",
@@ -410,78 +403,81 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserMedicamentId = table.Column<long>(type: "bigint", nullable: false),
-                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserMedicamentFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserMedicamentFiles_FileInfos_FileGuid",
-                        column: x => x.FileGuid,
+                        name: "FK_UserMedicamentFiles_FileInfos_FileInfoGuid",
+                        column: x => x.FileInfoGuid,
                         principalTable: "FileInfos",
-                        principalColumn: "Guid",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Guid");
                     table.ForeignKey(
                         name: "FK_UserMedicamentFiles_UserMedicaments_UserMedicamentId",
                         column: x => x.UserMedicamentId,
                         principalTable: "UserMedicaments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Repeats",
+                name: "ScheduleRepeat",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserProfileId = table.Column<long>(type: "bigint", nullable: false),
                     BeginDate = table.Column<DateOnly>(type: "date", nullable: false),
                     Time = table.Column<TimeOnly>(type: "time", nullable: false),
                     TimeOfDay = table.Column<int>(type: "int", nullable: false),
                     RepeatDayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    EndDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    MedicamentTakingScheduleId = table.Column<long>(type: "bigint", nullable: false)
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    MedicamentTakingScheduleId = table.Column<long>(type: "bigint", nullable: false),
+                    TakingRule = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserProfileId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Repeats", x => x.Id);
+                    table.PrimaryKey("PK_ScheduleRepeat", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Repeats_MedicamentTakingSchedule_MedicamentTakingScheduleId",
+                        name: "FK_ScheduleRepeat_MedicamentTakingSchedules_MedicamentTakingScheduleId",
                         column: x => x.MedicamentTakingScheduleId,
-                        principalTable: "MedicamentTakingSchedule",
+                        principalTable: "MedicamentTakingSchedules",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Repeats_UserProfiles_UserProfileId",
+                        name: "FK_ScheduleRepeat_UserProfiles_UserProfileId",
                         column: x => x.UserProfileId,
                         principalTable: "UserProfiles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
                 name: "ScheduleShare",
                 columns: table => new
                 {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     MedicamentTakingScheduleId = table.Column<long>(type: "bigint", nullable: false),
-                    ShareWithContactId = table.Column<long>(type: "bigint", nullable: false)
+                    ShareWithContactId = table.Column<long>(type: "bigint", nullable: false),
+                    Comment = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ScheduleShare", x => new { x.MedicamentTakingScheduleId, x.ShareWithContactId });
+                    table.PrimaryKey("PK_ScheduleShare", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ScheduleShare_MedicamentTakingSchedule_MedicamentTakingScheduleId",
+                        name: "FK_ScheduleShare_MedicamentTakingSchedules_MedicamentTakingScheduleId",
                         column: x => x.MedicamentTakingScheduleId,
-                        principalTable: "MedicamentTakingSchedule",
+                        principalTable: "MedicamentTakingSchedules",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_ScheduleShare_UserProfileContacts_ShareWithContactId",
                         column: x => x.ShareWithContactId,
                         principalTable: "UserProfileContacts",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -490,18 +486,19 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ScheduleRepeatId = table.Column<long>(type: "bigint", nullable: true)
+                    ScheduleRepeatId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TakingСonfirmations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TakingСonfirmations_Repeats_ScheduleRepeatId",
+                        name: "FK_TakingСonfirmations_ScheduleRepeat_ScheduleRepeatId",
                         column: x => x.ScheduleRepeatId,
-                        principalTable: "Repeats",
-                        principalColumn: "Id");
+                        principalTable: "ScheduleRepeat",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -511,23 +508,23 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TakingСonfirmationId = table.Column<long>(type: "bigint", nullable: false),
-                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FileInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TakingСonfirmationFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TakingСonfirmationFiles_FileInfos_FileGuid",
-                        column: x => x.FileGuid,
+                        name: "FK_TakingСonfirmationFiles_FileInfos_FileInfoGuid",
+                        column: x => x.FileInfoGuid,
                         principalTable: "FileInfos",
-                        principalColumn: "Guid",
-                        onDelete: ReferentialAction.Restrict);
+                        principalColumn: "Guid");
                     table.ForeignKey(
                         name: "FK_TakingСonfirmationFiles_TakingСonfirmations_TakingСonfirmationId",
                         column: x => x.TakingСonfirmationId,
                         principalTable: "TakingСonfirmations",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -570,19 +567,9 @@ namespace DrugSchedule.Storage.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_FileInfos_TakingСonfirmationId",
-                table: "FileInfos",
-                column: "TakingСonfirmationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_FileInfos_UserMedicamentId",
-                table: "FileInfos",
-                column: "UserMedicamentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MedicamentFiles_FileGuid",
+                name: "IX_MedicamentFiles_FileInfoGuid",
                 table: "MedicamentFiles",
-                column: "FileGuid");
+                column: "FileInfoGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicamentFiles_MedicamentId",
@@ -600,13 +587,18 @@ namespace DrugSchedule.Storage.Migrations
                 column: "ReleaseFormId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MedicamentTakingSchedule_UserMedicamentId",
-                table: "MedicamentTakingSchedule",
+                name: "IX_MedicamentTakingSchedules_GlobalMedicamentId",
+                table: "MedicamentTakingSchedules",
+                column: "GlobalMedicamentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MedicamentTakingSchedules_UserMedicamentId",
+                table: "MedicamentTakingSchedules",
                 column: "UserMedicamentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MedicamentTakingSchedule_UserProfileId",
-                table: "MedicamentTakingSchedule",
+                name: "IX_MedicamentTakingSchedules_UserProfileId",
+                table: "MedicamentTakingSchedules",
                 column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
@@ -615,14 +607,19 @@ namespace DrugSchedule.Storage.Migrations
                 column: "IdentityUserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Repeats_MedicamentTakingScheduleId",
-                table: "Repeats",
+                name: "IX_ScheduleRepeat_MedicamentTakingScheduleId",
+                table: "ScheduleRepeat",
                 column: "MedicamentTakingScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Repeats_UserProfileId",
-                table: "Repeats",
+                name: "IX_ScheduleRepeat_UserProfileId",
+                table: "ScheduleRepeat",
                 column: "UserProfileId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleShare_MedicamentTakingScheduleId",
+                table: "ScheduleShare",
+                column: "MedicamentTakingScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleShare_ShareWithContactId",
@@ -630,9 +627,9 @@ namespace DrugSchedule.Storage.Migrations
                 column: "ShareWithContactId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TakingСonfirmationFiles_FileGuid",
+                name: "IX_TakingСonfirmationFiles_FileInfoGuid",
                 table: "TakingСonfirmationFiles",
-                column: "FileGuid");
+                column: "FileInfoGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TakingСonfirmationFiles_TakingСonfirmationId",
@@ -645,9 +642,9 @@ namespace DrugSchedule.Storage.Migrations
                 column: "ScheduleRepeatId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserMedicamentFiles_FileGuid",
+                name: "IX_UserMedicamentFiles_FileInfoGuid",
                 table: "UserMedicamentFiles",
-                column: "FileGuid");
+                column: "FileInfoGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserMedicamentFiles_UserMedicamentId",
@@ -675,46 +672,20 @@ namespace DrugSchedule.Storage.Migrations
                 column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_AvatarGuid",
+                name: "IX_UserProfiles_AvatarInfoGuid",
                 table: "UserProfiles",
-                column: "AvatarGuid");
+                column: "AvatarInfoGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfiles_IdentityGuid",
                 table: "UserProfiles",
                 column: "IdentityGuid",
                 unique: true);
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_FileInfos_TakingСonfirmations_TakingСonfirmationId",
-                table: "FileInfos",
-                column: "TakingСonfirmationId",
-                principalTable: "TakingСonfirmations",
-                principalColumn: "Id");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_FileInfos_UserMedicaments_UserMedicamentId",
-                table: "FileInfos",
-                column: "UserMedicamentId",
-                principalTable: "UserMedicaments",
-                principalColumn: "Id");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_UserProfiles_AspNetUsers_IdentityGuid",
-                table: "UserProfiles");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_FileInfos_TakingСonfirmations_TakingСonfirmationId",
-                table: "FileInfos");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_FileInfos_UserMedicaments_UserMedicamentId",
-                table: "FileInfos");
-
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 
@@ -740,9 +711,6 @@ namespace DrugSchedule.Storage.Migrations
                 name: "ScheduleShare");
 
             migrationBuilder.DropTable(
-                name: "TakingRules");
-
-            migrationBuilder.DropTable(
                 name: "TakingСonfirmationFiles");
 
             migrationBuilder.DropTable(
@@ -755,16 +723,13 @@ namespace DrugSchedule.Storage.Migrations
                 name: "UserProfileContacts");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
                 name: "TakingСonfirmations");
 
             migrationBuilder.DropTable(
-                name: "Repeats");
+                name: "ScheduleRepeat");
 
             migrationBuilder.DropTable(
-                name: "MedicamentTakingSchedule");
+                name: "MedicamentTakingSchedules");
 
             migrationBuilder.DropTable(
                 name: "UserMedicaments");
@@ -780,6 +745,9 @@ namespace DrugSchedule.Storage.Migrations
 
             migrationBuilder.DropTable(
                 name: "ReleaseForms");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "FileInfos");

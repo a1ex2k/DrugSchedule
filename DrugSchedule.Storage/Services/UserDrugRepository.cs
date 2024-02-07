@@ -104,7 +104,7 @@ public class UserDrugRepository : IUserDrugRepository
 
         if (!model.ImageGuids.IsNullOrEmpty())
         {
-            entity.Images = model.ImageGuids!.ConvertAll(g => new Entities.UserMedicamentFile { FileGuid = g });
+            entity.Files = model.ImageGuids!.ConvertAll(g => new Entities.UserMedicamentFile { FileGuid = g });
         }
 
         await _dbContext.UserMedicaments.AddAsync(entity, cancellationToken);
@@ -131,7 +131,7 @@ public class UserDrugRepository : IUserDrugRepository
         
         if (updateFlags.Images)
         {
-            entity.Images = model.ImageGuids?
+            entity.Files = model.ImageGuids?
                 .ConvertAll(g => new Entities.UserMedicamentFile { FileGuid = g }) 
                             ?? new();
         }

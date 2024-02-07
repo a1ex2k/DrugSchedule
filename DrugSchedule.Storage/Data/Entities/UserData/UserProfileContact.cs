@@ -14,5 +14,5 @@ public class UserProfileContact
 
     public required string CustomName { get; set; }
 
-    public List<MedicamentTakingSchedule> SharedSchedules { get; set; } = new();
+    public List<ScheduleShare> ScheduleShares { get; set; } = new();
 }
