@@ -115,7 +115,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     public async Task<MedicamentExtended?> UpdateMedicamentAsync(MedicamentExtended medicamentSimple, MedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var existingMedicament = await _dbContext.Medicaments
-            .Include(m => m.Images)
+            .Include(m => m.Files)
             .FirstOrDefaultAsync(m => m.Id == medicamentSimple.Id, cancellationToken);
         if (existingMedicament is null)
         {
@@ -158,7 +158,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
 
         if (updateFlags.ImagesGuids)
         {
-            existingMedicament.Images.Clear();
+            existingMedicament.Files.Clear();
             var newGuids = medicamentSimple?.Images?.Select(i => i.Guid);
             if (newGuids != null)
             {
@@ -166,7 +166,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
                 {
                     FileGuid = guid
                 });
-                existingMedicament.Images.AddRange(newMedicamentFilesEntities);
+                existingMedicament.Files.AddRange(newMedicamentFilesEntities);
             }
         }
 
@@ -274,7 +274,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         });
         if (newMedicamentFilesEntities != null)
         {
-            medicamentEntity.Images.AddRange(newMedicamentFilesEntities);
+            medicamentEntity.Files.AddRange(newMedicamentFilesEntities);
         }
 
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);

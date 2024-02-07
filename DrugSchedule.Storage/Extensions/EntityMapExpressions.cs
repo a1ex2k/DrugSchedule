@@ -34,7 +34,7 @@ public static class EntityMapExpressions
         ReleaseForm = ToMedicamentReleaseForm.Compile().Invoke(medicament.ReleaseForm!),
         Manufacturer = medicament.ManufacturerId != null ? ToManufacturer.Compile().Invoke(medicament.Manufacturer!) : null,
         Images = withImages
-            ? medicament.Images
+            ? medicament.Files
                 .AsQueryable()
                 .Select(f => f.FileInfo!)
                 .Select(ToFileInfo)
@@ -50,7 +50,7 @@ public static class EntityMapExpressions
         Name = medicament.Name,
         ReleaseForm = medicament.ReleaseForm!.Name,
         ManufacturerName = medicament.ManufacturerId == null ? null : medicament.Manufacturer!.Name,
-        MainImage = medicament.Images.Any() ? medicament.Images
+        MainImage = medicament.Files.Any() ? medicament.Files
             .AsQueryable()
             .Select(f => f.FileInfo!)
             .Select(ToFileInfo)
@@ -88,7 +88,7 @@ public static class EntityMapExpressions
         Name = userMedicament.Name,
         ReleaseForm = userMedicament.ReleaseForm,
         ManufacturerName = userMedicament.ManufacturerName,
-        MainImage = userMedicament.Images
+        MainImage = userMedicament.Files
             .AsQueryable()
             .Select(i => i.FileInfo!)
             .Select(ToFileInfo)
@@ -104,7 +104,7 @@ public static class EntityMapExpressions
         ManufacturerName = userMedicament.Name,
         Description = userMedicament.Description,
         Composition = userMedicament.Composition,
-        Images = withImages ? userMedicament.Images
+        Images = withImages ? userMedicament.Files
             .AsQueryable()
             .Select(i => i.FileInfo!)
             .Select(ToFileInfo)
@@ -124,7 +124,7 @@ public static class EntityMapExpressions
             ReleaseForm = userMedicament.ReleaseForm,
             ManufacturerName = userMedicament.ManufacturerName,
             UserProfileId = userMedicament.UserProfileId,
-            ImageGuids = userMedicament.Images.Select(f => f.FileGuid).ToList(),
+            ImageGuids = userMedicament.Files.Select(f => f.FileGuid).ToList(),
         };
 
 }

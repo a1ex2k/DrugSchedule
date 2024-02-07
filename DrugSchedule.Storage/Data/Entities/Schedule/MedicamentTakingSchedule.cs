@@ -8,15 +8,21 @@ public class MedicamentTakingSchedule
 
     public UserProfile? UserProfile { get; set; }
 
+    public int? GlobalMedicamentId { get; set; }
+
+    public Medicament? GlobalMedicament { get; set; }
+
     public long? UserMedicamentId { get; set; }
 
     public UserMedicament? UserMedicament { get; set; }
 
     public string? Information { get; set; }
 
-    public required DateTime CreationTime { get; set; }
+    public required DateTime CreatedAt { get; set; }
+
+    public required bool Enabled { get; set; }
 
     public List<ScheduleRepeat> RepeatSchedules { get; set; } = new();
 
-    public List<UserProfileContact> SharedWith { get; set; } = new();
+    public List<ScheduleShare> ScheduleShares { get; set; } = new();
 }

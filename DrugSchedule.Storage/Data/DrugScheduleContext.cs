@@ -6,6 +6,7 @@ using FileInfo = DrugSchedule.Storage.Data.Entities.FileInfo;
 
 namespace DrugSchedule.Storage.Data;
 
+#nullable disable
 public class DrugScheduleContext : IdentityDbContext
 {
     public DrugScheduleContext()
@@ -28,61 +29,65 @@ public class DrugScheduleContext : IdentityDbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var cascadeFKs = modelBuilder.Model.GetEntityTypes()
+            .SelectMany(t => t.GetForeignKeys())
+            .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+        foreach (var fk in cascadeFKs)
+        {
+            fk.DeleteBehavior = DeleteBehavior.Restrict;
+        }
+
+        modelBuilder.Entity<FileInfo>()
+            .HasKey(e => e.Guid);
+
         modelBuilder.Entity<UserProfile>()
             .HasOne<IdentityUser>()
             .WithOne()
             .HasForeignKey<UserProfile>(up => up.IdentityGuid)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<FileInfo>()
-            .HasKey(u => u.Guid);
-
-        modelBuilder.Entity<MedicamentFile>()
-            .HasOne(mf => mf.FileInfo)
-            .WithMany()
-            .HasForeignKey(mf => mf.FileGuid)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<TakingСonfirmationFile>()
-            .HasOne<FileInfo>(tcf => tcf.FileInfo)
-            .WithMany()
-            .HasForeignKey(tcf => tcf.FileGuid)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<UserMedicamentFile>()
-            .HasOne<FileInfo>(umf => umf.FileInfo)
-            .WithMany()
-            .HasForeignKey(umf => umf.FileGuid)
+        modelBuilder.Entity<UserProfile>()
+            .HasMany(e=> e.Contacts)
+            .WithOne(e => e.UserProfile)
+            .HasForeignKey(e => e.UserProfileId)
             .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<UserProfile>()
-            .HasOne(u => u.AvatarInfo)
-            .WithMany()
-            .HasForeignKey(up => up.AvatarGuid)
+            .HasMany<UserProfileContact>()
+            .WithOne(e => e.ContactProfile)
+            .HasForeignKey(e => e.ContactProfileId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        modelBuilder.Entity<UserProfile>()
-            .HasMany(u => u.Contacts)
-            .WithOne(c => c.UserProfile)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<UserProfileContact>()
-            .HasOne(x => x.UserProfile)
-            .WithMany(x => x.Contacts)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        modelBuilder.Entity<UserProfileContact>()
-            .HasOne(x => x.ContactProfile);
-
-        modelBuilder.Entity<MedicamentTakingSchedule>()
-            .HasMany(s => s.SharedWith)
-            .WithMany(c => c.SharedSchedules)
-            .UsingEntity<ScheduleShare>();
+        modelBuilder.Entity<Medicament>()
+            .HasMany(e => e.Files)
+            .WithOne(e => e.Medicament)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<UserMedicament>()
-            .HasOne(m => m.BasedOnMedicament)
-            .WithMany()
-            .OnDelete(DeleteBehavior.ClientSetNull);
+            .HasMany(e => e.Files)
+            .WithOne(e => e.UserMedicament)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TakingСonfirmation>()
+            .HasMany(e => e.Files)
+            .WithOne(e => e.TakingСonfirmation)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MedicamentTakingSchedule>()
+            .HasMany(e => e.RepeatSchedules)
+            .WithOne(e => e.MedicamentTakingSchedule)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<MedicamentTakingSchedule>()
+            .HasMany(e => e.ScheduleShares)
+            .WithOne(e => e.MedicamentTakingSchedule)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<UserProfileContact>()
+            .HasMany(e => e.ScheduleShares)
+            .WithOne(e => e.ShareWithContact)
+            .OnDelete(DeleteBehavior.Cascade);
 
         base.OnModelCreating(modelBuilder);
     }
@@ -96,11 +101,11 @@ public class DrugScheduleContext : IdentityDbContext
 
     public DbSet<MedicamentReleaseForm> ReleaseForms { get; set; }
 
-    public DbSet<MedicamentTakingSchedule> MedicamentTakingSchedule { get; set; }
+    public DbSet<MedicamentTakingSchedule> MedicamentTakingSchedules { get; set; }
 
     public DbSet<ScheduleShare> ScheduleShare { get; set; }
 
-    public DbSet<ScheduleRepeat> Repeats { get; set; }
+    public DbSet<ScheduleRepeat> ScheduleRepeat { get; set; }
 
     public DbSet<TakingСonfirmation> TakingСonfirmations { get; set; }
 
