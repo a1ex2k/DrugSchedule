@@ -71,7 +71,7 @@ public static class EntityMapExtensions
             Description = medicament.Description,
             ReleaseForm = medicament.ReleaseForm!.ToContractModel(),
             Manufacturer = medicament.Manufacturer!.ToContractModel(),
-            Images = withImages ? medicament.Images.Select(f => f.FileInfo!.ToContractModel()).ToList() : null,
+            Images = withImages ? medicament.Files.Select(f => f.FileInfo!.ToContractModel()).ToList() : null,
         };
     }
 

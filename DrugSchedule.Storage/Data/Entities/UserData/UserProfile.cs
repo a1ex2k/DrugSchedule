@@ -20,7 +20,7 @@ public class UserProfile
 
     public List<MedicamentTakingSchedule> MedicamentTakingSchedules { get; set; } = new();
 
-    public List<ScheduleRepeat> TakingRepeats { get; set; } = new();
+    public List<ScheduleRepeat> ScheduleRepeats { get; set; } = new();
 
     public List<UserProfileContact> Contacts { get; set; } = new();
 }
