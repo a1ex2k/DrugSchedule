@@ -13,9 +13,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.BusinessLogic"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api.Shared", "DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj", "{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Mapper\Mapper.csproj", "{942D7686-35E4-401F-905C-D1A15FEBECC4}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Client", "DrugSchedule.Client\DrugSchedule.Client.csproj", "{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugScheduleFill", "Utils\DrugScheduleFill\DrugScheduleFill.csproj", "{EDE01785-795C-4E26-8147-6F7104033E5F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mapper", "Utils\Mapper\Mapper.csproj", "{C2666937-D5E9-4FBB-B81A-2250D1A05F36}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utils", "Utils", "{CFB74123-3C9F-4F09-A4BD-0E9D82E58496}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,17 +47,25 @@ Global
 		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{942D7686-35E4-401F-905C-D1A15FEBECC4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75E1C8A7-4A4C-43F0-A57D-ABCAEC915818}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EDE01785-795C-4E26-8147-6F7104033E5F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EDE01785-795C-4E26-8147-6F7104033E5F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EDE01785-795C-4E26-8147-6F7104033E5F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EDE01785-795C-4E26-8147-6F7104033E5F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2666937-D5E9-4FBB-B81A-2250D1A05F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2666937-D5E9-4FBB-B81A-2250D1A05F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2666937-D5E9-4FBB-B81A-2250D1A05F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2666937-D5E9-4FBB-B81A-2250D1A05F36}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EDE01785-795C-4E26-8147-6F7104033E5F} = {CFB74123-3C9F-4F09-A4BD-0E9D82E58496}
+		{C2666937-D5E9-4FBB-B81A-2250D1A05F36} = {CFB74123-3C9F-4F09-A4BD-0E9D82E58496}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {AAA99217-685C-4073-B81E-E7D0DCF77676}
