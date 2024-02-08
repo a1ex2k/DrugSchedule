@@ -27,7 +27,7 @@ public class AuthController : ControllerBase
         var loginResult = await _identityService.LogUserInAsync(dto.Adapt<LoginModel>(), cancellationToken);
         if (loginResult.IsT1)
         {
-            return BadRequest(loginResult.AsT1);
+            return BadRequest(loginResult.AsT1.ToDto());
         }
  
         var tokenParams = new TokenCreateParams
@@ -39,7 +39,7 @@ public class AuthController : ControllerBase
         var tokensResult = await _tokenService.CreateTokensAsync(tokenParams, cancellationToken);
         if (tokensResult.IsT1)
         {
-            return BadRequest(tokensResult.AsT1);
+            return BadRequest(tokensResult.AsT1.ToDto());
         }
 
         return Ok(tokensResult.AsT0.Adapt<TokenDto>());

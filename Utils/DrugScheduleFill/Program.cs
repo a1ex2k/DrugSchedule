@@ -21,26 +21,25 @@ await using var transaction = await context.Database.BeginTransactionAsync();
 
 try
 {
-    
     var fileInfos = await JsonSerializer.DeserializeAsync<List<DrugScheduleFill.FileInfo>>(fileInfosStream);
     await context.AddRangeAsync(fileInfos!);
-    await ClearTableAndSaveAsync(context, nameof(context.FileInfos));
+    await SaveAsync(context, nameof(context.FileInfos), false);
 
     var forms = await JsonSerializer.DeserializeAsync<List<MedicamentReleaseForm>>(formStream);
     await context.AddRangeAsync(forms!);
-    await ClearTableAndSaveAsync(context, nameof(context.ReleaseForms));
+    await SaveAsync(context, nameof(context.ReleaseForms));
 
     var manufacturers = await JsonSerializer.DeserializeAsync<List<Manufacturer>>(manufacturersStream);
     await context.AddRangeAsync(manufacturers!);
-    await ClearTableAndSaveAsync(context, nameof(context.Manufacturers));
+    await SaveAsync(context, nameof(context.Manufacturers));
 
     var medicaments = await JsonSerializer.DeserializeAsync<List<Medicament>>(medicamentsStream);
     await context.AddRangeAsync(medicaments!);
-    await ClearTableAndSaveAsync(context, nameof(context.Medicaments));
+    await SaveAsync(context, nameof(context.Medicaments));
 
     var medicamentFiles = await JsonSerializer.DeserializeAsync<List<MedicamentFile>>(medicamentFilesStream);
     await context.AddRangeAsync(medicamentFiles!);
-    await ClearTableAndSaveAsync(context, nameof(context.MedicamentFiles));
+    await SaveAsync(context, nameof(context.MedicamentFiles));
 
     transaction.Commit();
 }
@@ -52,14 +51,21 @@ catch
 
 
 
-async Task ClearTableAndSaveAsync(DbContext context, string table)
+async Task SaveAsync(DbContext context, string table, bool hasIdentity = true)
 {
     var databaseName = context.Database.GetDbConnection().Database;
-    FormattableString command1 = $"SET IDENTITY_INSERT {databaseName}.{table} ON;";
-    await context.Database.ExecuteSqlAsync(command1);
-    FormattableString command2 = $"delete from {databaseName}.{table};";
-    await context.Database.ExecuteSqlAsync(command2);
+
+    if (hasIdentity)
+    {
+        var command1 = $"SET IDENTITY_INSERT [{databaseName}].dbo.[{table}] ON;";
+        await context.Database.ExecuteSqlRawAsync(command1);
+    }
+   
     await context.SaveChangesAsync();
-    FormattableString command3 = $"SET IDENTITY_INSERT {databaseName}.{table} OFF;";
-    await context.Database.ExecuteSqlAsync(command3);
+
+    if (hasIdentity)
+    {
+        var command3 = $"SET IDENTITY_INSERT [{databaseName}].dbo.[{table}] OFF;";
+        await context.Database.ExecuteSqlRawAsync(command3);
+    }
 }

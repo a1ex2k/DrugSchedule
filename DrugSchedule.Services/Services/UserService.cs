@@ -196,6 +196,11 @@ public class UserService : IIdentityService, IUserService
             error.Add("Invalid RealName: empty string to reset, up to 20 characters");
         }
 
+        if (error.HasMessages)
+        {
+            return error;
+        }
+
         var userProfile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
@@ -229,7 +234,7 @@ public class UserService : IIdentityService, IUserService
             RealName = userProfile.RealName,
             DateOfBirth = userProfile.DateOfBirth,
             Sex = userProfile.Sex,
-            Avatar = userProfile.Avatar != null ? _downloadableFileConverter.ToDownloadableFile(userProfile.Avatar, true) : null,
+            Avatar = userProfile.Avatar != null ? _downloadableFileConverter.ToDownloadableFile(userProfile.Avatar, FileCategory.UserAvatar.IsPublic()) : null,
         };
 
         return userModel;
@@ -265,7 +270,7 @@ public class UserService : IIdentityService, IUserService
                     Id = p.UserProfileId,
                     Username = i.Username!,
                     RealName = p.RealName,
-                    Avatar = p is null ? null : _downloadableFileConverter.ToDownloadableFile(p.Avatar, true)
+                    Avatar = p.Avatar is null ? null : _downloadableFileConverter.ToDownloadableFile(p.Avatar, FileCategory.UserAvatar.IsPublic())
                 })
             .ToList();
         return new UserPublicCollection
@@ -277,14 +282,10 @@ public class UserService : IIdentityService, IUserService
 
     public async Task<OneOf<DownloadableFile, InvalidInput>> SetAvatarAsync(InputFile inputAvatar, CancellationToken cancellationToken = default)
     {
-        var newFile = new NewCategorizedFile
-        {
-            NameWithExtension = inputAvatar.NameWithExtension,
-            Category = FileCategory.UserAvatar,
-            MediaType = inputAvatar.MediaType,
-            Stream = inputAvatar.Stream,
-        };
-        var fileServiceResult = await _fileService.CreateAsync(newFile, cancellationToken);
+        var fileServiceResult = await _fileService.CreateAsync(inputAvatar,
+            FileCategory.UserAvatar.GetAwaitableParams(),
+            FileCategory.UserAvatar,
+            cancellationToken);
 
         if (fileServiceResult.IsT1)
         {
@@ -301,13 +302,19 @@ public class UserService : IIdentityService, IUserService
             AvatarGuid = true
         };
         var updateResult = await _profileRepository.UpdateUserProfileAsync(profile, updateFlags, cancellationToken);
-        var file = _downloadableFileConverter.ToDownloadableFile(fileServiceResult.AsT0, true);
+        var file = _downloadableFileConverter.ToDownloadableFile(fileServiceResult.AsT0, FileCategory.UserAvatar.IsPublic());
         return file;
     }
 
 
     public async Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileId fileId, CancellationToken cancellationToken = default)
     {
+        var user = await _profileRepository.GetUserProfileAsync(_currentUserIdentifier.UserProfileId, true);
+        if (user?.Avatar?.Guid != fileId.FileGuid)
+        {
+            return new NotFound("Avatar with such Guid not found avatar");
+        }
+        
         var profile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
@@ -324,6 +331,7 @@ public class UserService : IIdentityService, IUserService
             return new NotFound("Cannot remove avatar");
         }
 
+        var removeResult = await _fileService.RemoveFileAsync(fileId.FileGuid, cancellationToken);
         return new True();
     }
 

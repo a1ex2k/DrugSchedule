@@ -44,7 +44,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         var result =
             await _drugLibrary.GetMedicamentExtendedAsync(medicament.BasicMedicamentId.Value, cancellationToken);
-               
+
         var globalMedicament = result.IsT0 ? result.AsT0 : null;
         return ToModel(medicament, globalMedicament);
     }
@@ -193,13 +193,10 @@ public class UserDrugLibrary : IUserDrugLibrary
         }
 
         var addResult = await _fileService.CreateAsync(
-            new NewCategorizedFile
-            {
-                NameWithExtension = inputFile.NameWithExtension,
-                Category = FileCategory.UserMedicamentImage,
-                MediaType = inputFile.MediaType,
-                Stream = inputFile.Stream
-            }, cancellationToken);
+            inputFile,
+            FileCategory.UserMedicamentImage.GetAwaitableParams(),
+            FileCategory.UserMedicamentImage,
+            cancellationToken);
 
         if (addResult.IsT1)
         {
@@ -267,7 +264,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             Images =
                 new FileCollection
                 {
-                    Files = _downloadableFileConverter.ToDownloadableFiles(userMedicament.Images!, true)
+                    Files = _downloadableFileConverter.ToDownloadableFiles(userMedicament.Images!, FileCategory.UserMedicamentImage.IsPublic())
                 }
         };
         return model;
@@ -281,7 +278,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             Name = medicament.Name,
             ReleaseForm = medicament.ReleaseForm,
             ManufacturerName = medicament.ManufacturerName,
-            MainImage = medicament.MainImage == null ? null : _downloadableFileConverter.ToDownloadableFile(medicament.MainImage, true)
+            MainImage = medicament.MainImage == null ? null : _downloadableFileConverter.ToDownloadableFile(medicament.MainImage, FileCategory.UserMedicamentImage.IsPublic())
         };
         return model;
     }

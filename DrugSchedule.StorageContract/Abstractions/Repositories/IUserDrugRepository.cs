@@ -22,6 +22,4 @@ public interface IUserDrugRepository
 
     public Task<UserMedicament?> UpdateMedicamentAsync(UserMedicament model, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default);
 
-    public Task<RemoveOperationResult> RemoveContactAsync(long userProfileId, long id, CancellationToken cancellationToken = default);
-
 }

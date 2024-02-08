@@ -1,5 +1,6 @@
 ﻿using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.BusinessLogic.Utils;
+using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
@@ -11,7 +12,7 @@ public interface IFileService
 
     Task<OneOf<FileData, NotFound>> GetFileDataAsync(Guid fileGuid, CancellationToken cancellationToken = default);
     
-    Task<OneOf<FileInfo, InvalidInput>> CreateAsync(NewCategorizedFile newCategorizedFileInfoModel, CancellationToken cancellationToken = default);
+    Task<OneOf<FileInfo, InvalidInput>> CreateAsync(InputFile inputFile, AwaitableFileParams awaitableFileParams, FileCategory category, CancellationToken cancellationToken = default);
 
     Task<OneOf<bool, NotFound>> RemoveFileAsync(Guid fileGuid, CancellationToken cancellationToken = default);
 }

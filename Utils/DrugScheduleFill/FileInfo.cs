@@ -1,9 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace DrugScheduleFill;
 
 public class FileInfo
 {
+    [Key]
     public required Guid Guid { get; set; }
 
     public required string OriginalName { get; set; }

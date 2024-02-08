@@ -1,5 +1,6 @@
 ﻿using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
+using DrugSchedule.BusinessLogic.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 
@@ -116,7 +117,7 @@ public class DrugLibraryService : IDrugLibraryService
             Images = 
                 new FileCollection
                 {
-                    Files = _downloadableFileConverter.ToDownloadableFiles(medicament.Images!, true)
+                    Files = _downloadableFileConverter.ToDownloadableFiles(medicament.Images!, FileCategory.MedicamentImage.IsPublic())
                 }
         };
         return model;
@@ -130,7 +131,7 @@ public class DrugLibraryService : IDrugLibraryService
             Name = medicament.Name,
             ReleaseForm = medicament.ReleaseForm,
             ManufacturerName = medicament.ManufacturerName,
-            MainImage = medicament.MainImage == null ? null : _downloadableFileConverter.ToDownloadableFile(medicament.MainImage, true) 
+            MainImage = medicament.MainImage == null ? null : _downloadableFileConverter.ToDownloadableFile(medicament.MainImage, FileCategory.MedicamentImage.IsPublic()) 
         };
         return model;
     }

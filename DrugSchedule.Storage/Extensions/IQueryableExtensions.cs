@@ -36,6 +36,7 @@ public static class IQueryableExtensions
 
         Expression<Func<TProperty, bool>> containsExpression = x => inList.Contains(x);
         var parameter = propertySelector.Parameters[0];
+        var parameterForContains = Expression.Parameter(typeof(TProperty), null);
         var propertyAccess = Expression.Invoke(propertySelector, parameter);
         var containsCall = Expression.Invoke(containsExpression, propertyAccess);
         var lambda = Expression.Lambda<Func<TEntity, bool>>(containsCall, propertySelector.Parameters[0]);
