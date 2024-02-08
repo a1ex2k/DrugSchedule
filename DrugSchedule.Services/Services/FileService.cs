@@ -10,13 +10,13 @@ public class FileService : IFileService
 {
     private readonly IFileInfoRepository _fileInfoRepository;
     private readonly IFileStorage _fileStorage;
-    private readonly IFileUrlProvider _fileUrlProvider;
+    private readonly IFileChecker _fileChecker;
 
-    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage, IFileUrlProvider fileUrlProvider)
+    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage, IFileChecker fileChecker)
     {
         _fileInfoRepository = fileInfoRepository;
         _fileStorage = fileStorage;
-        _fileUrlProvider = fileUrlProvider;
+        _fileChecker = fileChecker;
     }
 
     public async Task<OneOf<FileInfo, NotFound>> GetFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -69,42 +69,27 @@ public class FileService : IFileService
         return fileData;
     }
 
-    public async Task<OneOf<FileInfo, InvalidInput>> CreateAsync(NewCategorizedFile newCategorizedFile, CancellationToken cancellationToken = default)
+    public async Task<OneOf<FileInfo, InvalidInput>> CreateAsync(InputFile inputFile, AwaitableFileParams awaitableFileParams, FileCategory category, CancellationToken cancellationToken = default)
     {
-        var error = new InvalidInput();
-        if (string.IsNullOrWhiteSpace(newCategorizedFile.MediaType))
+        var checkErrors = _fileChecker.GetInputFileErrors(inputFile, awaitableFileParams);
+        if (checkErrors == null)
         {
-            error.Add("Media type (a.k.a. mime type) not set");
+            return checkErrors;
         }
-
-        if (string.IsNullOrWhiteSpace(newCategorizedFile.NameWithExtension))
-        {
-            error.Add("Original filename not set");
-        }
-
-        if (newCategorizedFile.Stream == null || !newCategorizedFile.Stream.CanRead || newCategorizedFile.Stream.Length == 0)
-        {
-            error.Add("Input data stream cannot be read");
-        }
-
-        if (error.HasMessages)
-        {
-            return error;
-        }
-
-        var fileName = Path.GetFileNameWithoutExtension(newCategorizedFile.NameWithExtension);
-        var extension = newCategorizedFile.NameWithExtension.Substring(fileName.Length);
+        
+        var fileName = Path.GetFileNameWithoutExtension(inputFile.NameWithExtension);
+        var extension = inputFile.NameWithExtension.Substring(fileName.Length + 1);
         var fileInfo = new FileInfo
         {
             Guid = Guid.NewGuid(),
             OriginalName = fileName ?? Path.GetRandomFileName(),
             FileExtension = string.IsNullOrWhiteSpace(fileName) ? string.Empty : extension,
-            Category = newCategorizedFile.Category,
-            MediaType = newCategorizedFile.MediaType,
-            Size = newCategorizedFile.Stream!.Length,
+            Category = category,
+            MediaType = inputFile.MediaType,
+            Size = inputFile.Stream.Length,
             CreatedAt = DateTime.UtcNow
         };
-        var dataWritten = await _fileStorage.WriteFileAsync(fileInfo, newCategorizedFile.Stream!, cancellationToken);
+        var dataWritten = await _fileStorage.WriteFileAsync(fileInfo, inputFile.Stream!, cancellationToken);
         var fileInfoSaved = await _fileInfoRepository.AddFileInfoAsync(fileInfo, cancellationToken);
         return fileInfo;
     }

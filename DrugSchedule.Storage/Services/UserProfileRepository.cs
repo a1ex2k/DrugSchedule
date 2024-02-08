@@ -50,10 +50,12 @@ public class UserProfileRepository : IUserProfileRepository
     public async Task<Contract.UserProfile?> GetUserProfileAsync(Guid guid, bool withAvatar,
         CancellationToken cancellationToken = default)
     {
+        var guidString = guid.ToString();
         var profile = await _dbContext.UserProfiles
             .AsNoTracking()
+            .Where(u => u.IdentityGuid == guidString)
             .Select(EntityMapExpressions.ToUserProfile(withAvatar))
-            .FirstOrDefaultAsync(up => up.UserIdentityGuid == guid, cancellationToken);
+            .FirstOrDefaultAsync(cancellationToken);
 
         return profile;
     }

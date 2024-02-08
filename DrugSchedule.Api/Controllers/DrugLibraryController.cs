@@ -5,11 +5,13 @@ using DrugSchedule.BusinessLogic.Models;
 using DrugSchedule.BusinessLogic.Services.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DrugSchedule.Api.Controllers;
 
 [Route("api/[controller]/[action]")]
 [ApiController]
+[Authorize]
 public class DrugLibraryController : ControllerBase
 {
     private readonly IDrugLibraryService _drugLibraryService;

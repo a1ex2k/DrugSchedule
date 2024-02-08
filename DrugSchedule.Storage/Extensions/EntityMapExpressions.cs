@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using DrugSchedule.Storage.Data.Entities;
 using DrugSchedule.StorageContract.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DrugSchedule.Storage.Extensions;
@@ -36,7 +37,7 @@ public static class EntityMapExpressions
         Images = withImages
             ? medicament.Files
                 .AsQueryable()
-                .Select(f => f.FileInfo!)
+                .Select(medicamentFile => medicamentFile.FileInfo!)
                 .Select(ToFileInfo)
                 .ToList()
             : null,
@@ -52,7 +53,7 @@ public static class EntityMapExpressions
         ManufacturerName = medicament.ManufacturerId == null ? null : medicament.Manufacturer!.Name,
         MainImage = medicament.Files.Any() ? medicament.Files
             .AsQueryable()
-            .Select(f => f.FileInfo!)
+            .Select(medicamentFile => medicamentFile.FileInfo!)
             .Select(ToFileInfo)
             .FirstOrDefault() : null
     };
@@ -90,7 +91,7 @@ public static class EntityMapExpressions
         ManufacturerName = userMedicament.ManufacturerName,
         MainImage = userMedicament.Files
             .AsQueryable()
-            .Select(i => i.FileInfo!)
+            .Select(userMedicamentFile => userMedicamentFile.FileInfo!)
             .Select(ToFileInfo)
             .FirstOrDefault(),
     };
@@ -106,7 +107,7 @@ public static class EntityMapExpressions
         Composition = userMedicament.Composition,
         Images = withImages ? userMedicament.Files
             .AsQueryable()
-            .Select(i => i.FileInfo!)
+            .Select(userMedicamentFile => userMedicamentFile.FileInfo!)
             .Select(ToFileInfo)
             .ToList()
             : null,
@@ -124,7 +125,15 @@ public static class EntityMapExpressions
             ReleaseForm = userMedicament.ReleaseForm,
             ManufacturerName = userMedicament.ManufacturerName,
             UserProfileId = userMedicament.UserProfileId,
-            ImageGuids = userMedicament.Files.Select(f => f.FileGuid).ToList(),
+            ImageGuids = userMedicament.Files.Select(userMedicamentFile => userMedicamentFile.FileGuid).ToList(),
         };
 
+    public static Expression<Func<IdentityUser, Contract.UserIdentity>> ToIdentity
+        => identityUser => new Contract.UserIdentity()
+        {
+            Guid = Guid.Parse(identityUser.Id),
+            Username = identityUser.UserName,
+            Email = identityUser.Email,
+            IsEmailConfirmed = identityUser.EmailConfirmed
+        };
 }

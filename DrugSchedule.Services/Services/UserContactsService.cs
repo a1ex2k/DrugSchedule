@@ -67,7 +67,7 @@ public class UserContactsService : IUserContactsService
                 UserProfileId = c.ContactProfileId,
                 СontactName = c.CustomName,
                 IsCommon = c.IsCommon,
-                Avatar = c.Avatar == null ? null : _downloadableFileConverter.ToDownloadableFile(c.Avatar, true)
+                Avatar = c.Avatar == null ? null : _downloadableFileConverter.ToDownloadableFile(c.Avatar, FileCategory.UserAvatar.IsPublic())
             })
         };
         return model;
@@ -131,7 +131,7 @@ public class UserContactsService : IUserContactsService
         Avatar = contact.Profile.Avatar is null
             ? null
             : _downloadableFileConverter.ToDownloadableFile(contact.Profile.Avatar,
-                true),
+                FileCategory.UserMedicamentImage.IsPublic()),
         DateOfBirth = contact.IsCommon ? contact.Profile.DateOfBirth : null,
         Sex = contact.IsCommon ? contact.Profile.Sex : null
     };

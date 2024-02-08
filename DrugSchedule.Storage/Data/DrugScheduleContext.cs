@@ -41,6 +41,26 @@ public class DrugScheduleContext : IdentityDbContext
         modelBuilder.Entity<FileInfo>()
             .HasKey(e => e.Guid);
 
+        modelBuilder.Entity<MedicamentFile>()
+            .HasOne(e => e.FileInfo)
+            .WithMany()
+            .HasForeignKey(e => e.FileGuid);
+
+        modelBuilder.Entity<UserProfile>()
+            .HasOne(e => e.AvatarInfo)
+            .WithMany()
+            .HasForeignKey(e => e.AvatarGuid);
+
+        modelBuilder.Entity<UserMedicamentFile>()
+            .HasOne(e => e.FileInfo)
+            .WithMany()
+            .HasForeignKey(e => e.FileGuid);
+
+        modelBuilder.Entity<TakingСonfirmationFile>()
+            .HasOne(e => e.FileInfo)
+            .WithMany()
+            .HasForeignKey(e => e.FileGuid);
+
         modelBuilder.Entity<UserProfile>()
             .HasOne<IdentityUser>()
             .WithOne()
