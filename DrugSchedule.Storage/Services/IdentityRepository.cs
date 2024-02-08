@@ -5,6 +5,7 @@ using DrugSchedule.StorageContract.Data;
 using DrugSchedule.StorageContract.Data.UserStorage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace DrugSchedule.Storage.Services;
 
@@ -53,11 +54,11 @@ public class IdentityRepository : IIdentityRepository
 
         var identityUsers = await _dbContext.Users
             .AsNoTracking()
-            .WithFilter(i => i.Id, guids)
-            .WithFilter(i => i.UserName, filter.UsernameFilter)
+            .WithFilter(identity2 => identity2.Id, guids)
+            .WithFilter(identity1 => identity1.UserName!, filter.UsernameFilter)
             .WithPaging(filter)
-            .Select(u => u.ToContractModel())
-            .OrderBy(i => i.Username)
+            .Select(EntityMapExpressions.ToIdentity)
+            .OrderBy(identity3 => identity3.Username)
             .ToListAsync(cancellationToken);
         return identityUsers;
     }
@@ -67,7 +68,7 @@ public class IdentityRepository : IIdentityRepository
         var identityUsers = await _dbContext.Users
             .AsNoTracking()
             .Where(i => i.UserName != null && i.UserName.Contains(usernameSearchString))
-            .Select(u => u.ToContractModel())
+            .Select(EntityMapExpressions.ToIdentity)
             .ToListAsync(cancellationToken);
         return identityUsers;
     }

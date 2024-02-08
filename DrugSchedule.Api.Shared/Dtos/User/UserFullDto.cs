@@ -12,7 +12,7 @@ public class UserFullDto
 
     public string? RealName { get; set; }
 
-    public SexDto SexDto { get; set; }
+    public SexDto Sex { get; set; }
 
     public DateOnly? DateOfBirth { get; set; }
 
