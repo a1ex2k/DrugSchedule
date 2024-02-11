@@ -365,3 +365,5 @@ FodyWeavers.xsd
 *.local.json
 ./Data/
 /Data
+/DrugSchedule.Storage/migration-tool.exe
+/DrugSchedule.Storage/migration-tool.exe
