@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿namespace DrugSchedule.Services.Models;
 
 public class DownloadableFile
 {
@@ -11,4 +11,6 @@ public class DownloadableFile
     public required long Size { get; set; }
 
     public required string DownloadUrl { get; set; }
+
+    public required string? ThumbnailUrl { get; set; }
 }

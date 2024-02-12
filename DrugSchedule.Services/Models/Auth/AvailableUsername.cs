@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DrugSchedule.BusinessLogic.Models;
+namespace DrugSchedule.Services.Models;
 
 public class AvailableUsername
 {

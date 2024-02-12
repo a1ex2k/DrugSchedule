@@ -1,12 +1,11 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
-using DrugSchedule.BusinessLogic.Utils;
-using DrugSchedule.StorageContract.Abstractions;
+﻿using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
-using System.Reflection;
+using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using OneOf.Types;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class UserDrugLibrary : IUserDrugLibrary
 {
@@ -203,7 +202,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             return addResult.AsT1;
         }
 
-        return _downloadableFileConverter.ToDownloadableFile(addResult.AsT0, true);
+        return _downloadableFileConverter.ToFileModel(addResult.AsT0, true)!;
     }
 
     public async Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, Guid fileGuid, CancellationToken cancellationToken = default)
@@ -264,7 +263,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             Images =
                 new FileCollection
                 {
-                    Files = _downloadableFileConverter.ToDownloadableFiles(userMedicament.Images!, FileCategory.UserMedicamentImage.IsPublic())
+                    Files = _downloadableFileConverter.ToFilesModels(userMedicament.Images!, FileCategory.UserMedicamentImage.IsPublic())
                 }
         };
         return model;
@@ -278,7 +277,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             Name = medicament.Name,
             ReleaseForm = medicament.ReleaseForm,
             ManufacturerName = medicament.ManufacturerName,
-            MainImage = medicament.MainImage == null ? null : _downloadableFileConverter.ToDownloadableFile(medicament.MainImage, FileCategory.UserMedicamentImage.IsPublic())
+            ThumbnailUrl = _downloadableFileConverter.ToThumbLink(medicament.MainImage, FileCategory.UserMedicamentImage.IsPublic())
         };
         return model;
     }

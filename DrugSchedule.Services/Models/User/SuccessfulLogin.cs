@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿namespace DrugSchedule.Services.Models;
 
 public class SuccessfulLogin
 {

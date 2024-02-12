@@ -1,9 +1,9 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Utils;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Utils;
 using OneOf;
 using OneOf.Types;
 
-namespace DrugSchedule.BusinessLogic.Services.Abstractions;
+namespace DrugSchedule.Services.Services.Abstractions;
 
 public interface ITokenService
 {

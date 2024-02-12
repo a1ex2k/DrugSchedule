@@ -10,5 +10,5 @@ public class PublicUserDto
 
     public string? RealName { get; set; }
 
-    public DownloadableFileDto? Avatar { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

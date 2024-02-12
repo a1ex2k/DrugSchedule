@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Storage", "Dru
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.StorageContract", "DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj", "{08FB3C6E-0DC9-4DB0-B370-9BE4A5E6BA14}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.BusinessLogic", "DrugSchedule.Services\DrugSchedule.BusinessLogic.csproj", "{2599A001-8AF7-482B-ACA1-5CFE70166687}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Services", "DrugSchedule.Services\DrugSchedule.Services.csproj", "{2599A001-8AF7-482B-ACA1-5CFE70166687}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DrugSchedule.Api.Shared", "DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj", "{BB946A52-B29E-475E-9EEE-9BD5FEFDF1D3}"
 EndProject

@@ -7,6 +7,8 @@ public class DownloadableFileDto
     public required Guid Guid { get; set; }
 
     public required string DownloadUrl { get; set; }
+
+    public required string? ThumbnailUrl { get; set; }
     
     public required string Name { get; set; }
 

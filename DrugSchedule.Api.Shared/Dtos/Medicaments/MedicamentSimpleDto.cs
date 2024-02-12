@@ -9,6 +9,6 @@ namespace DrugSchedule.Api.Shared.Dtos
 
         public string? ManufacturerName { get; set; }
 
-        public string? DownloadUrl { get; set; }
+        public string? ThumbnailUrl { get; set; }
     }
 }

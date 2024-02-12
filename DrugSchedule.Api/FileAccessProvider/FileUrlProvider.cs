@@ -1,4 +1,4 @@
-﻿using DrugSchedule.BusinessLogic.Services.Abstractions;
+﻿using DrugSchedule.Services.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 
@@ -43,24 +43,23 @@ public class FileUrlProvider : IFileUrlProvider
     public string GetPrivateFileThumbnailUri(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var accessParams = _accessService.Generate(fileGuid);
-        var link = _linkGenerator.GetPathByAction(controller: "Files", action: "DownloadPrivate",
+        var link = _linkGenerator.GetPathByAction(controller: "Files", action: "DownloadPrivateThumbnail",
             values: new
             {
                 fileGuid = accessParams.FileGuid,
                 accessKey = accessParams.AccessKey,
                 expiry = accessParams.ExpiryTime,
                 signature = accessParams.Signature,
-                thumb = true
-            });
+  });
         return link!;
     }
 
     public string GetPublicFileThumbnailUri(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var link = _linkGenerator.GetPathByAction(
-            action: "DownloadPublic",
+            action: "DownloadPublicThumbnail",
             controller: "Files",
-            values: new { fileGuid = fileGuid.ToString(), thumb = true }
+            values: new { fileGuid = fileGuid.ToString() }
         );
         return link!;
     }

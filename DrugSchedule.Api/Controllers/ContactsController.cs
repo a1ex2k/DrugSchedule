@@ -1,10 +1,10 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
-using DrugSchedule.BusinessLogic.Models;
+using DrugSchedule.Services.Models;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
+using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.Api.Controllers;

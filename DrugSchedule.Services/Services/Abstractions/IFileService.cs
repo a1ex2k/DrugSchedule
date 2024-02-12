@@ -1,8 +1,8 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Utils;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public interface IFileService
 {

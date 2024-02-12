@@ -1,6 +1,6 @@
-﻿using DrugSchedule.BusinessLogic.Services.Abstractions;
+﻿using DrugSchedule.Services.Services.Abstractions;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class CurrentUserIdentifier : ICurrentUserIdentifier
 {

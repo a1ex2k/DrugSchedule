@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DrugSchedule.Storage.Migrations
 {
     [DbContext(typeof(DrugScheduleContext))]
-    [Migration("20240208145944_Init")]
+    [Migration("20240212160109_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -40,6 +40,9 @@ namespace DrugSchedule.Storage.Migrations
 
                     b.Property<int>("FileCategory")
                         .HasColumnType("int");
+
+                    b.Property<bool>("HasThumbnail")
+                        .HasColumnType("bit");
 
                     b.Property<string>("MediaType")
                         .IsRequired()
@@ -121,15 +124,12 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<Guid>("FileGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FileInfoGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<int>("MedicamentId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileInfoGuid");
+                    b.HasIndex("FileGuid");
 
                     b.HasIndex("MedicamentId");
 
@@ -324,15 +324,12 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<Guid>("FileGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FileInfoGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<long>("TakingСonfirmationId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileInfoGuid");
+                    b.HasIndex("FileGuid");
 
                     b.HasIndex("TakingСonfirmationId");
 
@@ -390,15 +387,12 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<Guid>("FileGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FileInfoGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<long>("UserMedicamentId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FileInfoGuid");
+                    b.HasIndex("FileGuid");
 
                     b.HasIndex("UserMedicamentId");
 
@@ -416,9 +410,6 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<Guid?>("AvatarGuid")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AvatarInfoGuid")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateOnly?>("DateOfBirth")
                         .HasColumnType("date");
 
@@ -434,7 +425,7 @@ namespace DrugSchedule.Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AvatarInfoGuid");
+                    b.HasIndex("AvatarGuid");
 
                     b.HasIndex("IdentityGuid")
                         .IsUnique();
@@ -688,7 +679,9 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.FileInfo", "FileInfo")
                         .WithMany()
-                        .HasForeignKey("FileInfoGuid");
+                        .HasForeignKey("FileGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DrugSchedule.Storage.Data.Entities.Medicament", "Medicament")
                         .WithMany("Files")
@@ -782,7 +775,9 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.FileInfo", "FileInfo")
                         .WithMany()
-                        .HasForeignKey("FileInfoGuid");
+                        .HasForeignKey("FileGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DrugSchedule.Storage.Data.Entities.TakingСonfirmation", "TakingСonfirmation")
                         .WithMany("Files")
@@ -816,7 +811,9 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.FileInfo", "FileInfo")
                         .WithMany()
-                        .HasForeignKey("FileInfoGuid");
+                        .HasForeignKey("FileGuid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DrugSchedule.Storage.Data.Entities.UserMedicament", "UserMedicament")
                         .WithMany("Files")
@@ -833,7 +830,7 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.FileInfo", "AvatarInfo")
                         .WithMany()
-                        .HasForeignKey("AvatarInfoGuid");
+                        .HasForeignKey("AvatarGuid");
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
                         .WithOne()
