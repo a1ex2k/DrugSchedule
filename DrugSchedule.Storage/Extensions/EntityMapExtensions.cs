@@ -26,6 +26,7 @@ public static class EntityMapExtensions
             MediaType = fileInfo.MediaType,
             Size = fileInfo.Size,
             CreatedAt = fileInfo.CreatedAt,
+            HasThumbnail = fileInfo.HasThumbnail
         };
     }
 

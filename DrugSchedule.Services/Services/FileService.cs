@@ -10,13 +10,16 @@ public class FileService : IFileService
 {
     private readonly IFileInfoRepository _fileInfoRepository;
     private readonly IFileStorage _fileStorage;
-    private readonly IFileChecker _fileChecker;
+    private readonly IFileProcessor _fileProcessor;
+    private readonly IThumbnailService _thumbnailService;
 
-    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage, IFileChecker fileChecker)
+
+    public FileService(IFileInfoRepository fileInfoRepository, IFileStorage fileStorage, IFileProcessor fileProcessor, IThumbnailService thumbnailService)
     {
         _fileInfoRepository = fileInfoRepository;
         _fileStorage = fileStorage;
-        _fileChecker = fileChecker;
+        _fileProcessor = fileProcessor;
+        _thumbnailService = thumbnailService;
     }
 
     public async Task<OneOf<FileInfo, NotFound>> GetFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -24,7 +27,7 @@ public class FileService : IFileService
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("DownloadableFile info not found");
+            return new NotFound("File info not found");
         }
 
         return fileInfo;
@@ -37,28 +40,23 @@ public class FileService : IFileService
     }
 
 
-    public Task<List<DownloadableFile>> GetDownloadableFilesAsync(List<Guid> fileGuids, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task<OneOf<FileData, NotFound>> GetFileDataAsync(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         if (fileGuid == Guid.Empty)
         {
             return new NotFound("Empty guid");
         }
-        
+
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("DownloadableFile not found");
+            return new NotFound("File not found");
         }
-        
+
         var stream = await _fileStorage.GetReadStreamAsync(fileInfo, cancellationToken);
         if (stream == null)
         {
-            return new NotFound("DownloadableFile not found");
+            return new NotFound("File not found");
         }
 
         var fileData = new FileData
@@ -71,12 +69,12 @@ public class FileService : IFileService
 
     public async Task<OneOf<FileInfo, InvalidInput>> CreateAsync(InputFile inputFile, AwaitableFileParams awaitableFileParams, FileCategory category, CancellationToken cancellationToken = default)
     {
-        var checkErrors = _fileChecker.GetInputFileErrors(inputFile, awaitableFileParams);
+        var checkErrors = _fileProcessor.GetInputFileErrors(inputFile, awaitableFileParams);
         if (checkErrors != null)
         {
             return checkErrors;
         }
-        
+
         var fileName = Path.GetFileNameWithoutExtension(inputFile.NameWithExtension);
         var extension = inputFile.NameWithExtension.Substring(fileName.Length + 1);
         var fileInfo = new FileInfo
@@ -87,11 +85,15 @@ public class FileService : IFileService
             Category = category,
             MediaType = inputFile.MediaType,
             Size = inputFile.Stream.Length,
-            CreatedAt = DateTime.UtcNow
+            CreatedAt = DateTime.UtcNow,
+            HasThumbnail = false
         };
+        cancellationToken.ThrowIfCancellationRequested();
         var dataWritten = await _fileStorage.WriteFileAsync(fileInfo, inputFile.Stream!, cancellationToken);
+        var thumbWritten = await TryCreateThumbnailAsync(fileInfo, inputFile.Stream, awaitableFileParams, cancellationToken);
+        fileInfo.HasThumbnail = thumbWritten;
         var fileInfoSaved = await _fileInfoRepository.AddFileInfoAsync(fileInfo, cancellationToken);
-        return fileInfo;
+        return fileInfoSaved!;
     }
 
     public async Task<OneOf<bool, NotFound>> RemoveFileAsync(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -109,7 +111,29 @@ public class FileService : IFileService
         }
 
         var infoRemoveResult = await _fileInfoRepository.RemoveFileByGuidAsync(fileGuid, cancellationToken);
-        
         return wasRemovedFromStorage && infoRemoveResult == RemoveOperationResult.Removed;
+    }
+
+    private async Task<bool> TryCreateThumbnailAsync(FileInfo fileInfo, Stream stream, AwaitableFileParams awaitableFileParams, CancellationToken cancellation = default)
+    {
+        if (!awaitableFileParams.TryCreateThumbnail)
+        {
+            return false;
+        }
+
+        try
+        {
+            using var thumbStream = await _thumbnailService.CreateJpgThumbnail(stream, fileInfo.MediaType, awaitableFileParams.CropThumbnail, cancellation);
+            if (thumbStream != null)
+            {
+                var thumbWritten = await _fileStorage.WriteThumbnailAsync(fileInfo, thumbStream, cancellation);
+                return thumbWritten;
+            }
+        }
+        catch
+        {
+            return false;
+        }
+        return true;
     }
 }

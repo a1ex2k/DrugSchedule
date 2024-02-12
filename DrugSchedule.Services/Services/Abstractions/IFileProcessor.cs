@@ -6,7 +6,7 @@ using System.IO;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
-public interface IFileChecker
+public interface IFileProcessor
 {
     public InvalidInput? GetInputFileErrors(InputFile inputFile, AwaitableFileParams awaitableFileParams);
 }

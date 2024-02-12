@@ -11,7 +11,9 @@ public interface IFileService
     Task<List<FileInfo>> GetFileInfosAsync(List<Guid> fileGuids, CancellationToken cancellationToken = default);
 
     Task<OneOf<FileData, NotFound>> GetFileDataAsync(Guid fileGuid, CancellationToken cancellationToken = default);
-    
+
+    Task<OneOf<FileData, NotFound>> GetThumbnailAsync(Guid fileGuid, CancellationToken cancellationToken = default);
+            
     Task<OneOf<FileInfo, InvalidInput>> CreateAsync(InputFile inputFile, AwaitableFileParams awaitableFileParams, FileCategory category, CancellationToken cancellationToken = default);
 
     Task<OneOf<bool, NotFound>> RemoveFileAsync(Guid fileGuid, CancellationToken cancellationToken = default);

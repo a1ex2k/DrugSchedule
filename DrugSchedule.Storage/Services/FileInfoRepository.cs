@@ -47,7 +47,8 @@ public class FileInfoRepository : IFileInfoRepository
             FileCategory = fileInfo.Category,
             MediaType = fileInfo.MediaType,
             Size = fileInfo.Size,
-            CreatedAt = fileInfo.CreatedAt
+            CreatedAt = fileInfo.CreatedAt,
+            HasThumbnail = fileInfo.HasThumbnail
         };
 
         await _dbContext.FileInfos.AddAsync(newFileInfo, cancellationToken);

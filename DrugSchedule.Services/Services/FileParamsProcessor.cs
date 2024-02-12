@@ -4,18 +4,13 @@ using MimeDetective;
 
 namespace DrugSchedule.BusinessLogic.Services;
 
-public class FileParamsChecker : IFileChecker
+public class FileParamsProcessor : IFileProcessor
 {
     private readonly ContentInspector _inspector = new ContentInspectorBuilder()
     {
         Definitions = MimeDetective.Definitions.Default.All()
     }.Build();
 
-
-    public InputFile? TryFixFileInfo(InputFile inputFile)
-    {
-        throw new NotImplementedException();
-    }
 
     public InvalidInput? GetInputFileErrors(InputFile inputFile, AwaitableFileParams awaitableFileParams)
     {

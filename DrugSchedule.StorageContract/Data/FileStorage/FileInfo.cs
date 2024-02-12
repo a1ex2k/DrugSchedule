@@ -17,4 +17,6 @@ public class FileInfo
     public required long Size { get; set; }
 
     public required DateTime CreatedAt { get; set; }
+
+    public required bool HasThumbnail { get; set; }
 }

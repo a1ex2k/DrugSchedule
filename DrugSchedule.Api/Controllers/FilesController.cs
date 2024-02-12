@@ -22,9 +22,12 @@ public class FilesController : ControllerBase
 
     [HttpGet]
     [Route("{fileGuid}")]
-    public async Task<IActionResult> DownloadPublic([FromRoute] Guid fileGuid, CancellationToken cancellationToken)
+    public async Task<IActionResult> DownloadPublic([FromRoute] Guid fileGuid, [FromQuery] bool thumb = false, CancellationToken cancellationToken = default)
     {
-        var fileResult = await _fileService.GetFileDataAsync(fileGuid, CancellationToken.None);
+        var fileResult = thumb ?
+            await _fileService.GetFileDataAsync(fileGuid, cancellationToken)
+        : await _fileService.GetThumbnailAsync(fileGuid, cancellationToken);
+
         if (fileResult.IsT1)
         {
             return NotFound(fileResult.AsT1);
@@ -37,14 +40,14 @@ public class FilesController : ControllerBase
             return Unauthorized("A valid access key is required to download the file");
         }
 
-        return CreateFileResult(fileData);
+        return CreateFileResult(fileData, thumb);
     }
 
 
     [HttpGet]
     [Route("{fileGuid}")]
     public async Task<IActionResult> DownloadPrivate([FromRoute] Guid fileGuid, [FromQuery] string accessKey,
-        [FromQuery] int expiry, [FromQuery] string signature, CancellationToken cancellationToken)
+        [FromQuery] int expiry, [FromQuery] string signature, [FromQuery] bool thumb = false, CancellationToken cancellationToken = default)
     {
         var accessParams = new FileAccessParams
         {
@@ -60,21 +63,32 @@ public class FilesController : ControllerBase
             return Unauthorized("A valid access key is required to download the file");
         }
 
-        var fileResult = await _fileService.GetFileDataAsync(fileGuid, CancellationToken.None);
+        var fileResult = thumb ?
+            await _fileService.GetFileDataAsync(fileGuid, cancellationToken)
+            : await _fileService.GetThumbnailAsync(fileGuid, cancellationToken);
+
         if (fileResult.IsT1)
         {
             return NotFound(fileResult.AsT1);
         }
 
         var fileData = fileResult.AsT0;
-        return CreateFileResult(fileData);
+        return CreateFileResult(fileData, thumb);
     }
 
-    private FileStreamResult CreateFileResult(FileData fileData)
+    private FileStreamResult CreateFileResult(FileData fileData, bool thumb)
     {
-        var result = new FileStreamResult(fileData.Stream, fileData.FileInfo.MediaType)
+        var result = thumb ?
+            new FileStreamResult(fileData.Stream, "image/jpeg")
+            {
+                FileDownloadName = $"{fileData.FileInfo.OriginalName}.thumb.jpg",
+                LastModified = fileData.FileInfo.CreatedAt,
+            }
+            :
+        new FileStreamResult(fileData.Stream, fileData.FileInfo.MediaType)
         {
-            FileDownloadName = fileData.FileInfo.OriginalName + fileData.FileInfo.FileExtension
+            FileDownloadName = $"{fileData.FileInfo.OriginalName}.{fileData.FileInfo.FileExtension}",
+            LastModified = fileData.FileInfo.CreatedAt,
         };
         return result;
     }
