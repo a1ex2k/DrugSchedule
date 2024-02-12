@@ -8,25 +8,38 @@ public static class FileAvailability
     private static AwaitableFileParams UserAvatarFileParams => new AwaitableFileParams
     {
         MaxSize = 2 * 1024 * 1024,
-        FileExtensions = new[] { ".jpeg", ".jpg", ".png" }
+        FileExtensions = new[]
+        {
+            ".jpeg",
+            ".jpg",
+            ".png"
+        },
+        TryCreateThumbnail = true,
+        CropThumbnail = true,
     };
 
     private static AwaitableFileParams UserMedicamentFileParams => new AwaitableFileParams
     {
-        MaxSize = 2 * 1024 * 1024,
-        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" }
+        MaxSize = 5 * 1024 * 1024,
+        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
+        TryCreateThumbnail = true,
+        CropThumbnail = false,
     };
 
     private static AwaitableFileParams TakingConfirmationFileParams => new AwaitableFileParams
     {
         MaxSize = 7 * 1024 * 1024,
-        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" }
+        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
+        TryCreateThumbnail = true,
+        CropThumbnail = true,
     };
 
     private static AwaitableFileParams MedicamentImageFileParams => new AwaitableFileParams
     {
-        MaxSize = 800 * 1024,
-        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" }
+        MaxSize = 1024 * 1024,
+        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
+        TryCreateThumbnail = true,
+        CropThumbnail = false,
     };
 
 

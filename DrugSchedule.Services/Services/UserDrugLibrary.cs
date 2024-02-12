@@ -206,7 +206,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         return _downloadableFileConverter.ToDownloadableFile(addResult.AsT0, true);
     }
 
-    public async Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, FileId fileId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var medicament =
             await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, medicamentId, cancellationToken);
@@ -215,7 +215,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             return new NotFound($"Current user doesn't have custom medicament with ID={medicamentId}");
         }
 
-        if (medicament.ImageGuids == null || !medicament.ImageGuids.Contains(fileId.FileGuid))
+        if (medicament.ImageGuids == null || !medicament.ImageGuids.Contains(fileGuid))
         {
             return new NotFound($"User medicament doesn't contain any image with provided Guid");
 
@@ -226,11 +226,11 @@ public class UserDrugLibrary : IUserDrugLibrary
             Images = true
         };
 
-        medicament.ImageGuids.Remove(fileId.FileGuid);
+        medicament.ImageGuids.Remove(fileGuid);
         var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);
         if (savedMedicament != null)
         {
-            await _fileService.RemoveFileAsync(fileId.FileGuid, cancellationToken);
+            await _fileService.RemoveFileAsync(fileGuid, cancellationToken);
         }
         return new True();
     }

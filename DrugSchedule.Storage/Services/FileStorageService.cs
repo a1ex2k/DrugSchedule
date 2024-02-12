@@ -6,6 +6,8 @@ namespace DrugSchedule.Storage.Services;
 
 public class FileStorageService : IFileStorage
 {
+    private const string ThumbnailSuffix = "thumb";
+
     private readonly ILogger<FileStorageService> _logger;
     private IOptions<FileStorageOptions> _options;
     private readonly string _directoryPath;
@@ -17,58 +19,41 @@ public class FileStorageService : IFileStorage
         _directoryPath = options.Value.DirectoryPath;
     }
 
-    public Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    public async Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
     {
-        var fileName = $"{fileInfo.Guid}.{fileInfo.FileExtension}";
-        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(), fileName);
+        var filePath = GetFilePath(fileInfo);
+        var fileStream = GetReadStreamInternal(filePath);
+        return fileStream;
+    }
 
-        try
+    public async Task<Stream?> GetThumbnailStreamAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    {
+        var filePath = GetThumbnailPath(fileInfo);
+        if (!File.Exists(filePath))
         {
-            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-            return Task.FromResult((Stream?)fileStream);
+            return null;
         }
-        catch (FileNotFoundException ex)
-        {
-            _logger.LogWarning(ex, "File not found: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
-        }
-        catch (DirectoryNotFoundException ex)
-        {
-            _logger.LogWarning(ex, "Directory not found for file: Guid={Guid}, Ext={Ext}, Category={Category}", 
-                fileInfo.Guid, fileInfo.FileExtension, fileInfo.Category.ToString());
-        }
-
-        return Task.FromResult<Stream?>(null);
+        var fileStream = GetReadStreamInternal(filePath);
+        return fileStream;
     }
 
     public async Task<bool> WriteFileAsync(Contract.FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default)
     {
-        var fileName = $"{fileInfo.Guid}.{fileInfo.FileExtension}";
-        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(), fileName);
-        Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
-        var saved = false;
-        try
-        {
-            await using var fileStream = new FileStream(filePath, FileMode.CreateNew, FileAccess.Write, FileShare.None);
-            await stream.CopyToAsync(fileStream, cancellationToken);
-            saved = true;
-        }
-        catch (IOException ex)
-        {
-            _logger.LogWarning(ex, "File already exits: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
-        }
-        catch (OperationCanceledException ex)
-        {
-            _logger.LogInformation(ex, "Cancelled saving file: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
-            File.Delete(filePath);
-        }
-
+        var filePath = GetFilePath(fileInfo);
+        var saved = await WriteFileInternalAsync(filePath, stream, cancellationToken);
         return saved;
     }
 
-    public Task<bool> RemoveFileAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    public async Task<bool> WriteThumbnailAsync(Contract.FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(),
-            fileInfo.Guid + fileInfo.FileExtension);
+        var filePath = GetThumbnailPath(fileInfo);
+        var saved = await WriteFileInternalAsync(filePath, stream, cancellationToken);
+        return saved;
+    }
+
+    public async Task<bool> RemoveFileAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    {
+        var filePath = GetFilePath(fileInfo);
         var deleted = false;
         try
         {
@@ -80,6 +65,62 @@ public class FileStorageService : IFileStorage
             _logger.LogWarning(ex, "File cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
         }
 
-        return Task.FromResult(deleted);
+        return deleted;
+    }
+
+
+    private string GetFilePath(DrugSchedule.StorageContract.Data.FileInfo fileInfo)
+    {
+        return Path.Combine(_directoryPath, fileInfo.Category.ToString(),
+            $"{fileInfo.Guid}.{fileInfo.FileExtension}");
+    }
+
+    private string GetThumbnailPath(DrugSchedule.StorageContract.Data.FileInfo fileInfo)
+    {
+        return Path.Combine(_directoryPath, fileInfo.Category.ToString(),
+            $"{fileInfo.Guid}.{ThumbnailSuffix}.{fileInfo.FileExtension}");
+    }
+
+    private Stream? GetReadStreamInternal(string path)
+    {
+        FileStream? fileStream = null;
+        try
+        {
+            fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+        }
+        catch (FileNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "File not found: {Path}", path);
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            _logger.LogWarning(ex, "Directory not found for file: {Path}", path);
+        }
+
+        return fileStream;
+    }
+
+    private async Task<bool> WriteFileInternalAsync(string path, Stream stream, CancellationToken cancellationToken = default)
+    {
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var saved = false;
+        try
+        {
+            await using var fileStream = new FileStream(path, FileMode.CreateNew, FileAccess.Write, FileShare.None);
+            stream.Position = 0;
+            await stream.CopyToAsync(fileStream, cancellationToken);
+            saved = true;
+        }
+        catch (IOException ex)
+        {
+            _logger.LogWarning(ex, "File already exits: {Path}", path);
+        }
+        catch (OperationCanceledException ex)
+        {
+            _logger.LogInformation(ex, "Cancelled saving file: {Path}", path);
+            File.Delete(path);
+        }
+
+        return saved;
     }
 }

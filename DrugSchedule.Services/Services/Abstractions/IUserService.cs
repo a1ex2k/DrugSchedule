@@ -14,7 +14,7 @@ public interface IUserService
 
     Task<OneOf<DownloadableFile, InvalidInput>> SetAvatarAsync(InputFile inputFileInfo, CancellationToken cancellationToken = default);
 
-    Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileId fileId, CancellationToken cancellationToken = default);
+    Task<OneOf<True, NotFound>> RemoveAvatarAsync(Guid fileGuid, CancellationToken cancellationToken = default);
 
     Task<OneOf<UserPublicCollection, InvalidInput>> FindUsersAsync(UserSearch search,
         CancellationToken cancellationToken = default);

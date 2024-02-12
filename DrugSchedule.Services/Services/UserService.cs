@@ -307,10 +307,10 @@ public class UserService : IIdentityService, IUserService
     }
 
 
-    public async Task<OneOf<True, NotFound>> RemoveAvatarAsync(FileId fileId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveAvatarAsync(Guid fileGuid, CancellationToken cancellationToken = default)
     {
-        var user = await _profileRepository.GetUserProfileAsync(_currentUserIdentifier.UserProfileId, true);
-        if (user?.Avatar?.Guid != fileId.FileGuid)
+        var user = await _profileRepository.GetUserProfileAsync(_currentUserIdentifier.UserProfileId, true, cancellationToken);
+        if (user?.Avatar?.Guid != fileGuid)
         {
             return new NotFound("Avatar with such Guid not found avatar");
         }
@@ -331,7 +331,7 @@ public class UserService : IIdentityService, IUserService
             return new NotFound("Cannot remove avatar");
         }
 
-        var removeResult = await _fileService.RemoveFileAsync(fileId.FileGuid, cancellationToken);
+        var removeResult = await _fileService.RemoveFileAsync(fileGuid, cancellationToken);
         return new True();
     }
 

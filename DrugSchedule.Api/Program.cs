@@ -44,7 +44,7 @@ builder.Services.AddScoped<IUserContactsService, UserContactsService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IFileUrlProvider, FileUrlProvider>();
 builder.Services.AddScoped<IDownloadableFileConverter, DownloadableFileConverter>();
-builder.Services.AddScoped<IFileChecker, FileParamsChecker>();
+builder.Services.AddScoped<IFileProcessor, FileParamsProcessor>();
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 builder.Services.AddScoped<IUserDrugLibrary, UserDrugLibrary>();
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
