@@ -1,6 +1,6 @@
 ﻿using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.BusinessLogic.Models;
+namespace DrugSchedule.Services.Models;
 
 public class UserMedicamentSimpleModel
 {
@@ -12,5 +12,5 @@ public class UserMedicamentSimpleModel
 
     public string? ManufacturerName { get; set; }
 
-    public DownloadableFile? MainImage { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

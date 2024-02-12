@@ -1,13 +1,13 @@
-﻿using DrugSchedule.BusinessLogic.Models;
+﻿using DrugSchedule.Services.Models;
 using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.BusinessLogic.Utils;
+namespace DrugSchedule.Services.Utils;
 
 public static class FileAvailability
 {
     private static AwaitableFileParams UserAvatarFileParams => new AwaitableFileParams
     {
-        MaxSize = 2 * 1024 * 1024,
+        MaxSize = 3 * 1024 * 1024,
         FileExtensions = new[]
         {
             ".jpeg",
@@ -20,7 +20,7 @@ public static class FileAvailability
 
     private static AwaitableFileParams UserMedicamentFileParams => new AwaitableFileParams
     {
-        MaxSize = 5 * 1024 * 1024,
+        MaxSize = 10 * 1024 * 1024,
         FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
         TryCreateThumbnail = true,
         CropThumbnail = false,
@@ -28,8 +28,8 @@ public static class FileAvailability
 
     private static AwaitableFileParams TakingConfirmationFileParams => new AwaitableFileParams
     {
-        MaxSize = 7 * 1024 * 1024,
-        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
+        MaxSize = 10 * 1024 * 1024,
+        FileExtensions = new[] { ".jpeg", ".jpg", ".png" },
         TryCreateThumbnail = true,
         CropThumbnail = true,
     };

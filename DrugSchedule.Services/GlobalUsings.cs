@@ -1,3 +1,3 @@
 ﻿global using FileInfo = DrugSchedule.StorageContract.Data.FileInfo;
-global using NotFound = DrugSchedule.BusinessLogic.Utils.NotFound;
+global using NotFound = DrugSchedule.Services.Utils.NotFound;
 global using OneOf;

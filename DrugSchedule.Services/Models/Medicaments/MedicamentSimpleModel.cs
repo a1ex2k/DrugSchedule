@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿namespace DrugSchedule.Services.Models;
 
 public class MedicamentSimpleModel
 {
@@ -10,5 +10,5 @@ public class MedicamentSimpleModel
 
     public string? ManufacturerName { get; set; }
 
-    public required DownloadableFile? MainImage { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

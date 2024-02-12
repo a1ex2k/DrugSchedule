@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace DrugSchedule.BusinessLogic.Utils;
+namespace DrugSchedule.Services.Utils;
 
 public static class CridentialsValidator
 {

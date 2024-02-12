@@ -1,21 +1,22 @@
 ﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
 using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class ThumbnailService : IThumbnailService
 {
     private const int MaxSideSize = 256;
 
-    public async Task<MemoryStream?> CreateJpgThumbnail(Stream sourceStream, string mimeType, bool crop, CancellationToken cancellationToken = default)
+    public async Task<MemoryStream?> CreateThumbnail(Stream sourceStream, string mimeType, bool crop, CancellationToken cancellationToken = default)
     {
         if (!mimeType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }
 
-        using var image = await TryCreateAsync(sourceStream, cancellationToken);
+        using var image = await TryCreateImageAsync(sourceStream, cancellationToken);
         if (image == null)
         {
             return null;
@@ -25,12 +26,13 @@ public class ThumbnailService : IThumbnailService
         return await SaveAsync(image, cancellationToken);
     }
 
-    private async Task<Image?> TryCreateAsync(Stream stream, CancellationToken cancellationToken = default)
+    private async Task<Image?> TryCreateImageAsync(Stream stream, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(stream);
 
         try
         {
+            stream.Position = 0;
             var image = await Image.LoadAsync(stream, cancellationToken);
             return image;
         }

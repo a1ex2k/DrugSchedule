@@ -2,8 +2,8 @@
 using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
-using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
+using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
@@ -73,7 +73,7 @@ public class UserDrugsController : ControllerBase
         };
 
         var addResult =
-            await _drugLibraryService.AddImageAsync(dto.UserMedicamentId.UserMedicamentId, inputFile, cancellationToken);
+            await _drugLibraryService.AddImageAsync(dto.UserMedicamentId, inputFile, cancellationToken);
         return addResult.Match<IActionResult>(
             f => Ok(f.Adapt<DownloadableFileDto>()),
             error => NotFound(error.ToDto()),

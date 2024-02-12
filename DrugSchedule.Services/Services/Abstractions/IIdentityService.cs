@@ -1,6 +1,7 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Utils;
-namespace DrugSchedule.BusinessLogic.Services.Abstractions;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Utils;
+
+namespace DrugSchedule.Services.Services.Abstractions;
 
 public interface IIdentityService
 {

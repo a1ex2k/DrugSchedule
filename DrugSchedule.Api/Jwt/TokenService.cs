@@ -2,11 +2,11 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using DrugSchedule.BusinessLogic;
-using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Options;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
-using DrugSchedule.BusinessLogic.Utils;
+using DrugSchedule.Services;
+using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Options;
+using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Microsoft.Extensions.Options;

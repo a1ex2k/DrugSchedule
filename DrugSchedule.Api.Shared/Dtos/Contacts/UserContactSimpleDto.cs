@@ -8,5 +8,5 @@ public class UserContactSimpleDto
 
     public bool IsCommon { get; set; }
 
-    public DownloadableFileDto? Avatar { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

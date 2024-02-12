@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic;
+﻿namespace DrugSchedule.Services;
 
 public class StringConstants
 {
