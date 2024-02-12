@@ -19,12 +19,13 @@ public class FileStorageService : IFileStorage
 
     public Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(),
-            fileInfo.Guid.ToString() + fileInfo.FileExtension);
-        FileStream? fileStream = null;
+        var fileName = $"{fileInfo.Guid}.{fileInfo.FileExtension}";
+        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(), fileName);
+
         try
         {
-            fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return Task.FromResult((Stream?)fileStream);
         }
         catch (FileNotFoundException ex)
         {
@@ -36,13 +37,13 @@ public class FileStorageService : IFileStorage
                 fileInfo.Guid, fileInfo.FileExtension, fileInfo.Category.ToString());
         }
 
-        return Task.FromResult((Stream?)fileStream);
+        return Task.FromResult<Stream?>(null);
     }
 
     public async Task<bool> WriteFileAsync(Contract.FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default)
     {
-        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(),
-            fileInfo.Guid + fileInfo.FileExtension);
+        var fileName = $"{fileInfo.Guid}.{fileInfo.FileExtension}";
+        var filePath = Path.Combine(_directoryPath, fileInfo.Category.ToString(), fileName);
         Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
         var saved = false;
         try

@@ -17,7 +17,7 @@ public class DownloadableFileConverter : IDownloadableFileConverter
         var model = new DownloadableFile
         {
             Guid = fileInfo.Guid,
-            Name = fileInfo.OriginalName + fileInfo.FileExtension,
+            Name = $"{fileInfo.OriginalName}.{fileInfo.FileExtension}",
             MediaType = fileInfo.MediaType,
             Size = fileInfo.Size,
             DownloadUrl = isPublic

@@ -10,6 +10,6 @@ namespace DrugSchedule.Api.Shared.Dtos
         public string? Description { get; set; }
         public MedicamentReleaseFormDto ReleaseForm { get; set; }
         public ManufacturerDto? Manufacturer { get; set; }
-        public List<DownloadableFileDto> Images { get; set; }
+        public FileCollectionDto FileCollection { get; set; }
     }
 }
