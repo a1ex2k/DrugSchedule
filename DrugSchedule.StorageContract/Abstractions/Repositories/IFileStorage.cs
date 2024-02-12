@@ -10,7 +10,11 @@ public interface IFileStorage
 {
     Task<Stream?> GetReadStreamAsync(FileInfo fileInfo, CancellationToken cancellationToken = default);
 
+    Task<Stream?> GetThumbnailStreamAsync(FileInfo fileInfo, CancellationToken cancellationToken = default);
+
     Task<bool> WriteFileAsync(FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default);
+
+    Task<bool> WriteThumbnailAsync(FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default);
 
     Task<bool> RemoveFileAsync(FileInfo fileInfo, CancellationToken cancellationToken = default);
 }

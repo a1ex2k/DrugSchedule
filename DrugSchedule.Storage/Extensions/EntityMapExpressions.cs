@@ -69,6 +69,7 @@ public static class EntityMapExpressions
             MediaType = fileInfo.MediaType,
             Size = fileInfo.Size,
             CreatedAt = fileInfo.CreatedAt,
+            HasThumbnail = fileInfo.HasThumbnail
         };
 
 

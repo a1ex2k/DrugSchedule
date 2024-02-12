@@ -80,7 +80,7 @@ public class UserController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RemoveAvatar(FileIdDto dto, CancellationToken cancellationToken)
     {
-        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.Adapt<FileId>(), cancellationToken);
+        var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.FileGuid, cancellationToken);
         return removeAvatarResult.Match<IActionResult>(
             ok => Ok("Avatar removed successfully"),
             notFound => NotFound(notFound.ToDto()));
