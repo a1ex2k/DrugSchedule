@@ -1,13 +1,13 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
-using DrugSchedule.BusinessLogic.Utils;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
-
 using OneOf.Types;
-using UserContact = DrugSchedule.BusinessLogic.Models.UserContact;
+using Models_UserContact = DrugSchedule.Services.Models.UserContact;
+using UserContact = DrugSchedule.Services.Models.UserContact;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class UserContactsService : IUserContactsService
 {
@@ -27,7 +27,7 @@ public class UserContactsService : IUserContactsService
     }
 
 
-    public async Task<OneOf<UserContact, NotFound>> GetContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<Models_UserContact, NotFound>> GetContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
     {
         var contact = await _contactsRepository.GetContactAsync(_currentUserIdentifier.UserProfileId, contactProfileId, cancellationToken);
         if (contact == null)
@@ -67,7 +67,7 @@ public class UserContactsService : IUserContactsService
                 UserProfileId = c.ContactProfileId,
                 СontactName = c.CustomName,
                 IsCommon = c.IsCommon,
-                Avatar = c.Avatar == null ? null : _downloadableFileConverter.ToDownloadableFile(c.Avatar, FileCategory.UserAvatar.IsPublic())
+                ThumbnailUrl = _downloadableFileConverter.ToThumbLink(c.Avatar, FileCategory.UserAvatar.IsPublic())
             })
         };
         return model;
@@ -119,7 +119,7 @@ public class UserContactsService : IUserContactsService
     }
 
 
-    private Models.UserContact BuildContactModel(StorageContract.Data.UserContact contact, UserIdentity identity) => new UserContact
+    private Models.UserContact BuildContactModel(StorageContract.Data.UserContact contact, UserIdentity identity) => new Models_UserContact
     {
         IsCommon = contact.IsCommon,
         HasSharedBy = contact.HasSharedBy,
@@ -128,9 +128,7 @@ public class UserContactsService : IUserContactsService
         Username = identity!.Username!,
         СontactName = contact.CustomName,
         RealName = contact.Profile.RealName,
-        Avatar = contact.Profile.Avatar is null
-            ? null
-            : _downloadableFileConverter.ToDownloadableFile(contact.Profile.Avatar,
+        Avatar = _downloadableFileConverter.ToFileModel(contact.Profile.Avatar,
                 FileCategory.UserMedicamentImage.IsPublic()),
         DateOfBirth = contact.IsCommon ? contact.Profile.DateOfBirth : null,
         Sex = contact.IsCommon ? contact.Profile.Sex : null

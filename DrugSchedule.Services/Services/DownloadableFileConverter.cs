@@ -1,7 +1,7 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Services.Abstractions;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class DownloadableFileConverter : IDownloadableFileConverter
 {
@@ -12,7 +12,7 @@ public class DownloadableFileConverter : IDownloadableFileConverter
         _fileUrlProvider = fileUrlProvider;
     }
 
-    private DownloadableFile Convert(FileInfo fileInfo, bool isPublic)
+    private DownloadableFile ToFileModelInternal(FileInfo fileInfo, bool isPublic)
     {
         var model = new DownloadableFile
         {
@@ -22,32 +22,46 @@ public class DownloadableFileConverter : IDownloadableFileConverter
             Size = fileInfo.Size,
             DownloadUrl = isPublic
                 ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
-                : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid)
+                : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid),
+            ThumbnailUrl = ToThumbLink(fileInfo, isPublic)
         };
         return model;
     }
 
-    public DownloadableFile ToDownloadableFile(FileInfo fileInfo, bool isPublic)
+
+    public DownloadableFile? ToFileModel(FileInfo? fileInfo, bool isPublic)
     {
-        return Convert(fileInfo, isPublic);
+        return fileInfo == null ? null : ToFileModelInternal(fileInfo, isPublic);
     }
 
-    public List<DownloadableFile> ToDownloadableFiles(List<FileInfo> fileInfos, bool arePublic)
+
+    public List<DownloadableFile> ToFilesModels(List<FileInfo>? fileInfos, bool arePublic)
     {
-        return fileInfos.ConvertAll(f => Convert(f, arePublic));
+        if (fileInfos == null || fileInfos.Count == 0)
+        {
+            return new();
+        }
+
+        return fileInfos.ConvertAll(e => ToFileModelInternal(e, arePublic));
     }
 
-    public string? ToThumbnailUrl(FileInfo fileInfo, bool isPublic)
+
+    public string? ToThumbLink(FileInfo? fileInfo, bool isPublic, bool originalAsThumb = false)
     {
+        if (fileInfo is null)
+        {
+            return null;
+        }
+
+        if (originalAsThumb)
+        {
+            return isPublic
+                ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
+                : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid);
+        }
+
         return isPublic
-            ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
-            : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid);
-    }
-
-    public string? ToThumbnailUrls(List<FileInfo> fileInfos, bool arePublic)
-    {
-        return fileInfos.ConvertAll(f => isPublic
-            ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
-            : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid));
+            ? _fileUrlProvider.GetPublicFileThumbnailUri(fileInfo.Guid)
+            : _fileUrlProvider.GetPrivateFileThumbnailUri(fileInfo.Guid);
     }
 }

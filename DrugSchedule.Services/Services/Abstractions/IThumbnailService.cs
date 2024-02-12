@@ -1,9 +1,9 @@
 ﻿using SixLabors.ImageSharp.Processing.Processors;
 using System.IO;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public interface IThumbnailService
 {
-    Task<MemoryStream?> CreateJpgThumbnail(Stream stream, string mimeType, bool crop, CancellationToken cancellationToken = default);
+    Task<MemoryStream?> CreateThumbnail(Stream stream, string mimeType, bool crop, CancellationToken cancellationToken = default);
 }

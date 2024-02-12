@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿namespace DrugSchedule.Services.Models;
 
 public class PublicUser
 {
@@ -8,5 +8,5 @@ public class PublicUser
 
     public string? RealName { get; set; }
 
-    public DownloadableFile? Avatar { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }

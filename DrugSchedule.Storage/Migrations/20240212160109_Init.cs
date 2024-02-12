@@ -60,7 +60,8 @@ namespace DrugSchedule.Storage.Migrations
                     FileCategory = table.Column<int>(type: "int", nullable: false),
                     MediaType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Size = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HasThumbnail = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -232,8 +233,7 @@ namespace DrugSchedule.Storage.Migrations
                     RealName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
                     Sex = table.Column<int>(type: "int", nullable: false),
-                    AvatarGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AvatarInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    AvatarGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -245,8 +245,8 @@ namespace DrugSchedule.Storage.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserProfiles_FileInfos_AvatarInfoGuid",
-                        column: x => x.AvatarInfoGuid,
+                        name: "FK_UserProfiles_FileInfos_AvatarGuid",
+                        column: x => x.AvatarGuid,
                         principalTable: "FileInfos",
                         principalColumn: "Guid");
                 });
@@ -313,17 +313,17 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     MedicamentId = table.Column<int>(type: "int", nullable: false),
-                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicamentFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MedicamentFiles_FileInfos_FileInfoGuid",
-                        column: x => x.FileInfoGuid,
+                        name: "FK_MedicamentFiles_FileInfos_FileGuid",
+                        column: x => x.FileGuid,
                         principalTable: "FileInfos",
-                        principalColumn: "Guid");
+                        principalColumn: "Guid",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MedicamentFiles_Medicaments_MedicamentId",
                         column: x => x.MedicamentId,
@@ -403,17 +403,17 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserMedicamentId = table.Column<long>(type: "bigint", nullable: false),
-                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserMedicamentFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserMedicamentFiles_FileInfos_FileInfoGuid",
-                        column: x => x.FileInfoGuid,
+                        name: "FK_UserMedicamentFiles_FileInfos_FileGuid",
+                        column: x => x.FileGuid,
                         principalTable: "FileInfos",
-                        principalColumn: "Guid");
+                        principalColumn: "Guid",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserMedicamentFiles_UserMedicaments_UserMedicamentId",
                         column: x => x.UserMedicamentId,
@@ -508,17 +508,17 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     TakingСonfirmationId = table.Column<long>(type: "bigint", nullable: false),
-                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FileInfoGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    FileGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_TakingСonfirmationFiles", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TakingСonfirmationFiles_FileInfos_FileInfoGuid",
-                        column: x => x.FileInfoGuid,
+                        name: "FK_TakingСonfirmationFiles_FileInfos_FileGuid",
+                        column: x => x.FileGuid,
                         principalTable: "FileInfos",
-                        principalColumn: "Guid");
+                        principalColumn: "Guid",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_TakingСonfirmationFiles_TakingСonfirmations_TakingСonfirmationId",
                         column: x => x.TakingСonfirmationId,
@@ -567,9 +567,9 @@ namespace DrugSchedule.Storage.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MedicamentFiles_FileInfoGuid",
+                name: "IX_MedicamentFiles_FileGuid",
                 table: "MedicamentFiles",
-                column: "FileInfoGuid");
+                column: "FileGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MedicamentFiles_MedicamentId",
@@ -627,9 +627,9 @@ namespace DrugSchedule.Storage.Migrations
                 column: "ShareWithContactId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_TakingСonfirmationFiles_FileInfoGuid",
+                name: "IX_TakingСonfirmationFiles_FileGuid",
                 table: "TakingСonfirmationFiles",
-                column: "FileInfoGuid");
+                column: "FileGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TakingСonfirmationFiles_TakingСonfirmationId",
@@ -642,9 +642,9 @@ namespace DrugSchedule.Storage.Migrations
                 column: "ScheduleRepeatId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserMedicamentFiles_FileInfoGuid",
+                name: "IX_UserMedicamentFiles_FileGuid",
                 table: "UserMedicamentFiles",
-                column: "FileInfoGuid");
+                column: "FileGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserMedicamentFiles_UserMedicamentId",
@@ -672,9 +672,9 @@ namespace DrugSchedule.Storage.Migrations
                 column: "UserProfileId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserProfiles_AvatarInfoGuid",
+                name: "IX_UserProfiles_AvatarGuid",
                 table: "UserProfiles",
-                column: "AvatarInfoGuid");
+                column: "AvatarGuid");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserProfiles_IdentityGuid",

@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Options;
+﻿namespace DrugSchedule.Services.Options;
 
 public class JwtOptions
 {

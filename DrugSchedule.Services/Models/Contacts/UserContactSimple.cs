@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Models;
+﻿namespace DrugSchedule.Services.Models;
 
 public class UserContactSimple
 {
@@ -8,5 +8,5 @@ public class UserContactSimple
 
     public bool IsCommon { get; set; }
 
-    public DownloadableFile? Avatar { get; set; }
+    public string? ThumbnailUrl { get; set; }
 }
