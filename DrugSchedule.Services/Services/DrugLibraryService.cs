@@ -114,7 +114,7 @@ public class DrugLibraryService : IDrugLibraryService
             Description = medicament.Description,
             ReleaseForm = medicament.ReleaseForm,
             Manufacturer = medicament.Manufacturer,
-            Images = 
+            FileCollection = 
                 new FileCollection
                 {
                     Files = _downloadableFileConverter.ToDownloadableFiles(medicament.Images!, FileCategory.MedicamentImage.IsPublic())

@@ -8,7 +8,7 @@ public class DownloadableFileDto
 
     public required string DownloadUrl { get; set; }
     
-    public required string NameWithExtension { get; set; }
+    public required string Name { get; set; }
 
     public required string MediaType { get; set; }
 
