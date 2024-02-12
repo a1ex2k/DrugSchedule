@@ -59,10 +59,12 @@ builder.Services.AddOptions<JwtOptions>()
     .BindConfiguration(JwtOptions.Title)
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
 builder.Services.AddOptions<FileStorageOptions>()
     .BindConfiguration(FileStorageOptions.Title)
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
 builder.Services.AddOptions<PrivateFileAccessOptions>()
     .BindConfiguration(PrivateFileAccessOptions.Title)
     .ValidateDataAnnotations()
