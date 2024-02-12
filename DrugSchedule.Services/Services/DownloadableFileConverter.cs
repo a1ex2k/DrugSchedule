@@ -23,7 +23,7 @@ public class DownloadableFileConverter : IDownloadableFileConverter
             DownloadUrl = isPublic
                 ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
                 : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid),
-            ThumbnailUrl = ToThumbLink(fileInfo, isPublic)
+            ThumbnailUrl = ToThumbLink(fileInfo, isPublic, false)
         };
         return model;
     }
@@ -58,6 +58,11 @@ public class DownloadableFileConverter : IDownloadableFileConverter
             return isPublic
                 ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
                 : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid);
+        }
+
+        if (!fileInfo.HasThumbnail)
+        {
+            return null;
         }
 
         return isPublic
