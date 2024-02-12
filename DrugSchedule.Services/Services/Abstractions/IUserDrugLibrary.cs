@@ -21,5 +21,5 @@ public interface IUserDrugLibrary
 
     public Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddImageAsync(long medicamentId, InputFile inputFile, CancellationToken cancellationToken = default);
 
-    public Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, FileId fileId, CancellationToken cancellationToken = default);
+    public Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, Guid fileGuid, CancellationToken cancellationToken = default);
 }

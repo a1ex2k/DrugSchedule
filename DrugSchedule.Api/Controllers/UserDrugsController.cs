@@ -85,7 +85,7 @@ public class UserDrugsController : ControllerBase
     public async Task<IActionResult> RemoveMedicamentImage([FromBody] UserMedicamentImageRemoveDto dto, CancellationToken cancellationToken)
     {
         var removeResult =
-            await _drugLibraryService.RemoveImageAsync(dto.UserMedicamentId, new FileId {FileGuid = dto.FileGuid}, cancellationToken);
+            await _drugLibraryService.RemoveImageAsync(dto.UserMedicamentId, dto.FileGuid, cancellationToken);
         return removeResult.Match<IActionResult>(
             ok => Ok("Image removed successfully"),
             error => NotFound(error.ToDto()));

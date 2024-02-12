@@ -36,4 +36,18 @@ public class DownloadableFileConverter : IDownloadableFileConverter
     {
         return fileInfos.ConvertAll(f => Convert(f, arePublic));
     }
+
+    public string? ToThumbnailUrl(FileInfo fileInfo, bool isPublic)
+    {
+        return isPublic
+            ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
+            : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid);
+    }
+
+    public string? ToThumbnailUrls(List<FileInfo> fileInfos, bool arePublic)
+    {
+        return fileInfos.ConvertAll(f => isPublic
+            ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)
+            : _fileUrlProvider.GetPrivateFileUri(fileInfo.Guid));
+    }
 }
