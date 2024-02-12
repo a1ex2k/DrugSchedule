@@ -65,6 +65,19 @@ public class FileStorageService : IFileStorage
             _logger.LogWarning(ex, "File cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
         }
 
+        if (fileInfo.HasThumbnail)
+        {
+            try
+            {
+                File.Delete(filePath);
+                deleted = true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Thumbnail cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
+            }
+        }
+
         return deleted;
     }
 
@@ -87,6 +100,7 @@ public class FileStorageService : IFileStorage
         try
         {
             fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            return fileStream;
         }
         catch (FileNotFoundException ex)
         {
@@ -97,7 +111,7 @@ public class FileStorageService : IFileStorage
             _logger.LogWarning(ex, "Directory not found for file: {Path}", path);
         }
 
-        return fileStream;
+        return null;
     }
 
     private async Task<bool> WriteFileInternalAsync(string path, Stream stream, CancellationToken cancellationToken = default)

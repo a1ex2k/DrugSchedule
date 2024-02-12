@@ -25,7 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj" />
-    <ProjectReference Include="..\DrugSchedule.Services\DrugSchedule.BusinessLogic.csproj" />
+    <ProjectReference Include="..\DrugSchedule.Services\DrugSchedule.Services.csproj" />
     <ProjectReference Include="..\DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj" />
     <ProjectReference Include="..\DrugSchedule.Storage\DrugSchedule.Storage.csproj" />
   </ItemGroup>

@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Services.Abstractions;
+﻿namespace DrugSchedule.Services.Services.Abstractions;
 
 public interface IFileUrlProvider
 {

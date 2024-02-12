@@ -1,10 +1,12 @@
-﻿using DrugSchedule.BusinessLogic.Models;
+﻿using DrugSchedule.Services.Models;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public interface IDownloadableFileConverter
 {
-    DownloadableFile ToDownloadableFile(FileInfo fileInfo, bool isPublic);
+    DownloadableFile? ToFileModel(FileInfo? fileInfo, bool isPublic);
 
-    List<DownloadableFile> ToDownloadableFiles(List<FileInfo> fileInfos, bool arePublic);
+    List<DownloadableFile> ToFilesModels(List<FileInfo>? fileInfos, bool arePublic);
+
+    string? ToThumbLink(FileInfo? fileInfo, bool isPublic, bool originalAsThumb = false);
 }

@@ -1,13 +1,13 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
-using DrugSchedule.BusinessLogic.Utils;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using DrugSchedule.StorageContract.Data.UserStorage;
 using OneOf.Types;
-using NewUserIdentity = DrugSchedule.BusinessLogic.Models.NewUserIdentity;
+using NewUserIdentity = DrugSchedule.Services.Models.NewUserIdentity;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class UserService : IIdentityService, IUserService
 {
@@ -99,7 +99,7 @@ public class UserService : IIdentityService, IUserService
 
         var successfulLoginModel = new SuccessfulLogin
         {
-            UserProfileId = userProfile.UserProfileId,
+            UserProfileId = userProfile!.UserProfileId,
             UserIdentityGuid = userIdentity.Guid,
             Username = userIdentity.Username!,
             Email = userIdentity.Email!
@@ -234,7 +234,7 @@ public class UserService : IIdentityService, IUserService
             RealName = userProfile.RealName,
             DateOfBirth = userProfile.DateOfBirth,
             Sex = userProfile.Sex,
-            Avatar = userProfile.Avatar != null ? _downloadableFileConverter.ToDownloadableFile(userProfile.Avatar, FileCategory.UserAvatar.IsPublic()) : null,
+            Avatar = _downloadableFileConverter.ToFileModel(userProfile.Avatar, FileCategory.UserAvatar.IsPublic())
         };
 
         return userModel;
@@ -270,7 +270,7 @@ public class UserService : IIdentityService, IUserService
                     Id = p.UserProfileId,
                     Username = i.Username!,
                     RealName = p.RealName,
-                    Avatar = p.Avatar is null ? null : _downloadableFileConverter.ToDownloadableFile(p.Avatar, FileCategory.UserAvatar.IsPublic())
+                    ThumbnailUrl = _downloadableFileConverter.ToThumbLink(p.Avatar, FileCategory.UserAvatar.IsPublic())
                 })
             .ToList();
         return new UserPublicCollection
@@ -302,7 +302,7 @@ public class UserService : IIdentityService, IUserService
             AvatarGuid = true
         };
         var updateResult = await _profileRepository.UpdateUserProfileAsync(profile, updateFlags, cancellationToken);
-        var file = _downloadableFileConverter.ToDownloadableFile(fileServiceResult.AsT0, FileCategory.UserAvatar.IsPublic());
+        var file = _downloadableFileConverter.ToFileModel(fileServiceResult.AsT0, FileCategory.UserAvatar.IsPublic())!;
         return file;
     }
 

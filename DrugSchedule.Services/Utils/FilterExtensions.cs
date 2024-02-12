@@ -1,6 +1,6 @@
 ﻿using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.BusinessLogic.Utils;
+namespace DrugSchedule.Services.Utils;
 
 internal static class FilterExtensions
 {

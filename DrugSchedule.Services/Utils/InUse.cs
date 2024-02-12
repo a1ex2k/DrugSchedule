@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.BusinessLogic.Utils;
+﻿namespace DrugSchedule.Services.Utils;
 
 public class InUse
 {

@@ -1,10 +1,10 @@
-﻿using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Services.Abstractions;
-using DrugSchedule.BusinessLogic.Utils;
+﻿using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public class FileService : IFileService
 {
@@ -57,6 +57,33 @@ public class FileService : IFileService
         if (stream == null)
         {
             return new NotFound("File not found");
+        }
+
+        var fileData = new FileData
+        {
+            FileInfo = fileInfo,
+            Stream = stream
+        };
+        return fileData;
+    }
+
+    public async Task<OneOf<FileData, NotFound>> GetThumbnailAsync(Guid fileGuid, CancellationToken cancellationToken = default)
+    {
+        if (fileGuid == Guid.Empty)
+        {
+            return new NotFound("Empty guid");
+        }
+
+        var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
+        if (fileInfo == null)
+        {
+            return new NotFound("File not found");
+        }
+
+        var stream = await _fileStorage.GetThumbnailStreamAsync(fileInfo, cancellationToken);
+        if (stream == null)
+        {
+            return new NotFound("File thumbnail not found");
         }
 
         var fileData = new FileData
@@ -123,7 +150,8 @@ public class FileService : IFileService
 
         try
         {
-            using var thumbStream = await _thumbnailService.CreateJpgThumbnail(stream, fileInfo.MediaType, awaitableFileParams.CropThumbnail, cancellation);
+            using var thumbStream = await _thumbnailService.CreateThumbnail(stream, fileInfo.MediaType,
+                awaitableFileParams.CropThumbnail, cancellation);
             if (thumbStream != null)
             {
                 var thumbWritten = await _fileStorage.WriteThumbnailAsync(fileInfo, thumbStream, cancellation);
@@ -132,8 +160,8 @@ public class FileService : IFileService
         }
         catch
         {
-            return false;
         }
-        return true;
+
+        return false;
     }
 }

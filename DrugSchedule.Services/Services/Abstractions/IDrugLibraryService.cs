@@ -1,7 +1,7 @@
-﻿using DrugSchedule.BusinessLogic.Models;
+﻿using DrugSchedule.Services.Models;
 using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.BusinessLogic.Services.Abstractions;
+namespace DrugSchedule.Services.Services.Abstractions;
 
 public interface IDrugLibraryService
 {

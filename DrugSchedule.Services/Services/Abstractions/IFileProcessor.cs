@@ -1,10 +1,10 @@
 ﻿using System.Collections.Immutable;
-using DrugSchedule.BusinessLogic.Models;
-using DrugSchedule.BusinessLogic.Utils;
 using OneOf.Types;
 using System.IO;
+using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Utils;
 
-namespace DrugSchedule.BusinessLogic.Services;
+namespace DrugSchedule.Services.Services;
 
 public interface IFileProcessor
 {
