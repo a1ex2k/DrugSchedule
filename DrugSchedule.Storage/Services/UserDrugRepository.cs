@@ -40,12 +40,8 @@ public class UserDrugRepository : IUserDrugRepository
             .Where(m => m.UserProfileId == userProfileId)
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
-            .WithFilterOrIfNull(m => m.ReleaseForm,
-                m => m.BasedOnMedicament!.ReleaseForm!.Name,
-                filter.ReleaseFormNameFilter)
-            .WithFilterOrIfNull(m => m.ManufacturerName,
-                m => m.BasedOnMedicament!.Manufacturer!.Name,
-                filter.ManufacturerNameFilter)
+            .WithFilter(m => m.ReleaseForm, filter.ReleaseFormNameFilter)
+            .WithFilter(m => m.ManufacturerName, filter.ManufacturerNameFilter)
             .Select(EntityMapExpressions.ToUserMedicamentExtended(withImages))
             .ToListAsync(cancellationToken);
         return medicaments;
@@ -68,12 +64,8 @@ public class UserDrugRepository : IUserDrugRepository
             .Where(m => m.UserProfileId == userProfileId)
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
-            .WithFilterOrIfNull(m => m.ReleaseForm,
-                m => m.BasedOnMedicament!.ReleaseForm!.Name,
-                filter.ReleaseFormNameFilter)
-            .WithFilterOrIfNull(m => m.ManufacturerName,
-                m => m.BasedOnMedicament!.Manufacturer!.Name,
-                filter.ManufacturerNameFilter)
+            .WithFilter(m => m.ReleaseForm, filter.ReleaseFormNameFilter)
+            .WithFilter(m => m.ManufacturerName, filter.ManufacturerNameFilter)
             .Select(EntityMapExpressions.ToUserMedicamentSimple)
             .ToListAsync(cancellationToken);
         return medicaments;

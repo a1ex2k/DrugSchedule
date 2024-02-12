@@ -27,7 +27,7 @@ public class DrugLibraryController : ControllerBase
     {
         var medicamentResult = await _drugLibraryService.GetMedicamentAsync(dto.MedicamentId, cancellationToken);
         return medicamentResult.Match<IActionResult>(
-            m => Ok(medicamentResult.Adapt<MedicamentSimpleDto>()),
+            m => Ok(m.Adapt<MedicamentSimpleDto>()),
             error => NotFound(error.ToDto()));
     }
 
@@ -37,7 +37,7 @@ public class DrugLibraryController : ControllerBase
     {
         var medicamentResult = await _drugLibraryService.GetMedicamentExtendedAsync(dto.MedicamentId, cancellationToken);
         return medicamentResult.Match<IActionResult>(
-            m => Ok(medicamentResult.Adapt<MedicamentExtendedDto>()),
+            m => Ok(m.Adapt<MedicamentExtendedDto>()),
             error => NotFound(error.ToDto()));
     }
 
@@ -57,7 +57,7 @@ public class DrugLibraryController : ControllerBase
     {
         var medicamentResult =
             await _drugLibraryService.GetMedicamentsExtendedAsync(dto.Adapt<MedicamentFilter>(), cancellationToken);
-        return Ok(medicamentResult.Adapt<MedicamentSimpleCollectionDto>());
+        return Ok(medicamentResult.Adapt<MedicamentExtendedCollectionDto>());
     }
 
 
@@ -76,7 +76,7 @@ public class DrugLibraryController : ControllerBase
     public async Task<IActionResult> GetManufacturers([FromBody] ManufacturerFilterDto dto, CancellationToken cancellationToken)
     {
         var manufacturerResult =
-            await _drugLibraryService.GetMedicamentsExtendedAsync(dto.Adapt<MedicamentFilter>(), cancellationToken);
+            await _drugLibraryService.GetManufacturersAsync(dto.Adapt<ManufacturerFilter>(), cancellationToken);
         return Ok(manufacturerResult.Adapt<ManufacturerCollectionDto>());
     }
 

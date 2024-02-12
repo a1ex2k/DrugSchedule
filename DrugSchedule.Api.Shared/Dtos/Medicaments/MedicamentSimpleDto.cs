@@ -6,6 +6,9 @@ namespace DrugSchedule.Api.Shared.Dtos
         public required string Name { get; set; }
 
         public required string ReleaseForm { get; set; }
+
         public string? ManufacturerName { get; set; }
+
+        public string? DownloadUrl { get; set; }
     }
 }

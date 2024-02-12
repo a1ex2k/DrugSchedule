@@ -72,7 +72,7 @@ public class FileService : IFileService
     public async Task<OneOf<FileInfo, InvalidInput>> CreateAsync(InputFile inputFile, AwaitableFileParams awaitableFileParams, FileCategory category, CancellationToken cancellationToken = default)
     {
         var checkErrors = _fileChecker.GetInputFileErrors(inputFile, awaitableFileParams);
-        if (checkErrors == null)
+        if (checkErrors != null)
         {
             return checkErrors;
         }

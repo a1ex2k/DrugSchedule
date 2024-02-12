@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DrugSchedule.Storage.Migrations
 {
     [DbContext(typeof(DrugScheduleContext))]
-    [Migration("20240207114415_Init")]
+    [Migration("20240208145944_Init")]
     partial class Init
     {
         /// <inheritdoc />
