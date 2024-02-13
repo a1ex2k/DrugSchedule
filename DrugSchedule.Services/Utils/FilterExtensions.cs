@@ -4,7 +4,8 @@ namespace DrugSchedule.Services.Utils;
 
 internal static class FilterExtensions
 {
-    private const int MaxCount = 50;
+    private const int MaxCount = 100;
+
     public static void LimitPaging(this FilterBase filter)
     {
         if (filter.Skip < 0)

@@ -56,17 +56,17 @@ builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 #region Options
 
 builder.Services.AddOptions<JwtOptions>()
-    .BindConfiguration(JwtOptions.Title)
+    .BindConfiguration(JwtOptions.SectionName)
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
 builder.Services.AddOptions<FileStorageOptions>()
-    .BindConfiguration(FileStorageOptions.Title)
+    .BindConfiguration(FileStorageOptions.SectionName)
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
 builder.Services.AddOptions<PrivateFileAccessOptions>()
-    .BindConfiguration(PrivateFileAccessOptions.Title)
+    .BindConfiguration(PrivateFileAccessOptions.SectionName)
     .ValidateDataAnnotations()
     .ValidateOnStart();
 
@@ -99,7 +99,7 @@ builder.Services.AddAuthentication(options =>
         options.SaveToken = true;
         options.RequireHttpsMetadata = false;
         var jwtOptions = builder.Configuration
-            .GetSection(JwtOptions.Title)
+            .GetSection(JwtOptions.SectionName)
             .Get<JwtOptions>();
         options.TokenValidationParameters = new TokenValidationParameters()
         {
