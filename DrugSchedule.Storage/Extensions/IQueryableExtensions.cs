@@ -44,6 +44,46 @@ public static class IQueryableExtensions
     }
 
 
+    public static IQueryable<TEntity> WithFilter<TEntity>(this IQueryable<TEntity> query, Expression<Func<TEntity, bool>> propertySelector, bool? value)
+    {
+        if (!value.HasValue)
+        {
+            return query;
+        }
+
+        ArgumentNullException.ThrowIfNull(propertySelector, nameof(propertySelector));
+        ArgumentNullException.ThrowIfNull(query, nameof(query));
+
+        var parameter = Expression.Parameter(typeof(TEntity), null);
+        var propertyAccess = Expression.Invoke(propertySelector, parameter);
+        var equalCall = Expression.Invoke(Expression.Equal(propertyAccess, Expression.Constant(value.Value)), propertyAccess);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(equalCall, parameter);
+        return query.Where(lambda);
+    }
+
+
+    public static IQueryable<TEntity> WhereOr<TEntity>(this IQueryable<TEntity> source, Expression<Func<TEntity, bool>> predicate1, Expression<Func<TEntity, bool>> predicate2)
+    {
+        var parameter = Expression.Parameter(typeof(TEntity));
+        var combined = Expression.Or(
+            Expression.Invoke(predicate1, parameter),
+            Expression.Invoke(predicate2, parameter)
+        );
+
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(combined, parameter);
+        return source.Where(lambda);
+    }
+
+    public static IQueryable<TEntity> WhereIf<TEntity>(this IQueryable<TEntity> source, bool condition, Expression<Func<TEntity, bool>> predicate)
+    {
+        if (!condition)
+        {
+            return source;
+        }
+
+        return source.Where(predicate);
+    }
+
     public static IQueryable<TEntity> WithFilter<TEntity>(this IQueryable<TEntity> query, Expression<Func<TEntity, string>> propertySelector, Contract.StringFilter? stringFilter)
     {
         if (string.IsNullOrEmpty(stringFilter?.SubString))
