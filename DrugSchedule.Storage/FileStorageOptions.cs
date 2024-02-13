@@ -4,7 +4,7 @@ namespace DrugSchedule.Storage;
 
 public class FileStorageOptions
 {
-    public const string Title = "FileStorageOptions";
+    public const string SectionName = "FileStorageOptions";
 
     [Required]
     public string DirectoryPath { get; set; } = String.Empty;
