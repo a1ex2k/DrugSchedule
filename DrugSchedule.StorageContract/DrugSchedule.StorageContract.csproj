@@ -6,4 +6,9 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Data\Schedule\Extended\" />
+    <Folder Include="Data\Schedule\Simple\" />
+  </ItemGroup>
+
 </Project>

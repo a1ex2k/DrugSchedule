@@ -101,4 +101,33 @@ public static class EntityMapExtensions
             UserProfileId = userMedicament.UserProfileId,
         };
     }
+
+    public static Contract.TakingSchedulePlain ToContractModel(this Entities.MedicamentTakingSchedule takingSchedule)
+    {
+        return new Contract.TakingSchedulePlain
+        {
+            Id = takingSchedule.Id,
+            UserProfileId = takingSchedule.UserProfileId,
+            GlobalMedicamentId = takingSchedule.GlobalMedicamentId,
+            UserMedicamentId = takingSchedule.UserMedicamentId,
+            Information = takingSchedule.Information,
+            CreatedAt = takingSchedule.CreatedAt,
+            Enabled = takingSchedule.Enabled,
+        };
+    }
+
+    public static Contract.ScheduleRepeatPlain ToContractModel(this Entities.ScheduleRepeat scheduleRepeat)
+    {
+        return new Contract.ScheduleRepeatPlain
+        {
+            Id = scheduleRepeat.Id,
+            BeginDate = scheduleRepeat.BeginDate,
+            Time = scheduleRepeat.Time,
+            TimeOfDay = scheduleRepeat.TimeOfDay,
+            RepeatDayOfWeek = scheduleRepeat.RepeatDayOfWeek,
+            EndDate = scheduleRepeat.EndDate,
+            MedicamentTakingScheduleId = scheduleRepeat.MedicamentTakingScheduleId,
+            TakingRule = scheduleRepeat.TakingRule,
+        };
+    }
 }

@@ -9,8 +9,6 @@ namespace DrugSchedule.Storage.Extensions;
 
 public static class EntityMapExpressions
 {
-
-
     public static Expression<Func<Entities.Manufacturer, Contract.Manufacturer>> ToManufacturer => manufacturer => new Contract.Manufacturer
     {
         Id = manufacturer.Id,
@@ -136,5 +134,49 @@ public static class EntityMapExpressions
             Username = identityUser.UserName,
             Email = identityUser.Email,
             IsEmailConfirmed = identityUser.EmailConfirmed
+        };
+
+    public static Expression<Func<MedicamentTakingSchedule, Contract.TakingSchedulePlain>> ToSchedulePlain
+        => s => new Contract.TakingSchedulePlain
+        {
+            Id = s.Id,
+            UserProfileId = s.UserProfileId,
+            GlobalMedicamentId = s.GlobalMedicamentId,
+            UserMedicamentId = s.UserMedicamentId,
+            Information = s.Information,
+            CreatedAt = s.CreatedAt,
+            Enabled = s.Enabled,
+        };
+
+    public static Expression<Func<ScheduleRepeat, Contract.ScheduleRepeatPlain>> ToScheduleRepeatPlain
+        => s => new Contract.ScheduleRepeatPlain
+        {
+            Id = s.Id,
+            BeginDate = s.BeginDate,
+            Time = s.Time,
+            TimeOfDay = s.TimeOfDay,
+            RepeatDayOfWeek = s.RepeatDayOfWeek,
+            EndDate = s.EndDate,
+            MedicamentTakingScheduleId = s.MedicamentTakingScheduleId,
+            TakingRule = s.TakingRule,
+        };
+
+    public static Expression<Func<ScheduleShare, Contract.ScheduleSharePlain>> ToScheduleShare
+        => s => new Contract.ScheduleSharePlain
+        {
+            Id = s.Id,
+            MedicamentTakingScheduleId = s.MedicamentTakingScheduleId,
+            ShareUserProfileId = s.ShareWithContact!.ContactProfileId,
+            Comment = s.Comment,
+        };
+
+    public static Expression<Func<TakingСonfirmation, Contract.TakingСonfirmationPlain>> ToScheduleConfirmationPlain
+        => s => new Contract.TakingСonfirmationPlain
+        {
+            Id = s.Id,
+            CreatedAt = s.CreatedAt,
+            ImagesGuids = s.Files.Select(c => c.FileGuid).ToList(),
+            Text = s.Text,
+            ScheduleRepeatId = s.ScheduleRepeatId,
         };
 }
