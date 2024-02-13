@@ -4,7 +4,7 @@ namespace DrugSchedule.Api.FileAccessProvider;
 
 public class PrivateFileAccessOptions
 {
-    public const string Title = "PrivateFileAccess";
+    public const string SectionName = "PrivateFileAccess";
 
     [Required, Range(5, 36000)]
     public int ExpirationInSeconds { get; init; }

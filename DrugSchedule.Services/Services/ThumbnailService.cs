@@ -54,7 +54,7 @@ public class ThumbnailService : IThumbnailService
         image.Mutate(x => x.Resize(new ResizeOptions
         {
             Size = new Size(maxDimensionSize, maxDimensionSize),
-            Mode = crop ? ResizeMode.Min : ResizeMode.Max,
+            Mode = crop ? ResizeMode.BoxPad : ResizeMode.Max,
         }));
     }
 }
