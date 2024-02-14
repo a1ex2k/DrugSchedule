@@ -4,7 +4,7 @@ public class TakingСonfirmationFile
 {
     public long Id { get; set; }
 
-    public required long TakingСonfirmationId { get; set; }
+    public long TakingСonfirmationId { get; set; }
 
     public TakingСonfirmation? TakingСonfirmation { get; set; }
 

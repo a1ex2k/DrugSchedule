@@ -3,7 +3,6 @@ using DrugSchedule.Storage.Data;
 using DrugSchedule.StorageContract.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using UserProfile = DrugSchedule.Storage.Data.Entities.UserProfile;
 using DrugSchedule.StorageContract.Data;
 
 
@@ -41,7 +40,7 @@ public class UserDrugRepository : IUserDrugRepository
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .WithFilter(m => m.ReleaseForm, filter.ReleaseFormNameFilter)
-            .WithFilter(m => m.ManufacturerName, filter.ManufacturerNameFilter)
+            .WithFilter(m => m.ManufacturerName!, filter.ManufacturerNameFilter)
             .Select(EntityMapExpressions.ToUserMedicamentExtended(withImages))
             .ToListAsync(cancellationToken);
         return medicaments;
@@ -65,13 +64,13 @@ public class UserDrugRepository : IUserDrugRepository
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .WithFilter(m => m.ReleaseForm, filter.ReleaseFormNameFilter)
-            .WithFilter(m => m.ManufacturerName, filter.ManufacturerNameFilter)
+            .WithFilter(m => m.ManufacturerName!, filter.ManufacturerNameFilter)
             .Select(EntityMapExpressions.ToUserMedicamentSimple)
             .ToListAsync(cancellationToken);
         return medicaments;
     }
 
-    public async Task<UserMedicament?> GetMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserMedicament?> GetMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
             .AsNoTracking()
@@ -104,28 +103,27 @@ public class UserDrugRepository : IUserDrugRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.UserMedicament?> UpdateMedicamentAsync(Contract.UserMedicament model, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserMedicament?> UpdateMedicamentAsync(Contract.UserMedicament medicament, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
-        var entity = new Entities.UserMedicament
-        {
-            Id = model.Id,
-            UserProfileId = model.UserProfileId
-        };
+        var entity = await _dbContext.UserMedicaments
+            .Where(m => m.Id == medicament.Id)
+            .FirstOrDefaultAsync(cancellationToken);
 
-        var entry = _dbContext.Attach(entity);
-        entry.State = EntityState.Modified;
-        entry.UpdateIf(e => e.Name, model.Name, updateFlags.Name);
-        entry.UpdateIf(e => e.BasedOnMedicamentId, model.BasicMedicamentId, updateFlags.BasedOnMedicament);
-        entry.UpdateIf(e => e.ReleaseForm, model.ReleaseForm, updateFlags.ReleaseForm);
-        entry.UpdateIf(e => e.ManufacturerName, model.ManufacturerName, updateFlags.ManufacturerName);
-        entry.UpdateIf(e => e.Composition, model.Composition, updateFlags.Composition);
-        entry.UpdateIf(e => e.Description, model.Description, updateFlags.Description);
-        
+        if (entity == null) return null;
+
+        var entry = _dbContext.Entry(entity);
+        entry.UpdateIf(e => e.Name, medicament.Name, updateFlags.Name);
+        entry.UpdateIf(e => e.BasedOnMedicamentId, medicament.BasicMedicamentId, updateFlags.BasedOnMedicament);
+        entry.UpdateIf(e => e.ReleaseForm, medicament.ReleaseForm, updateFlags.ReleaseForm);
+        entry.UpdateIf(e => e.ManufacturerName, medicament.ManufacturerName, updateFlags.ManufacturerName);
+        entry.UpdateIf(e => e.Composition, medicament.Composition, updateFlags.Composition);
+        entry.UpdateIf(e => e.Description, medicament.Description, updateFlags.Description);
+
         if (updateFlags.Images)
         {
-            entity.Files = model.ImageGuids?
-                .ConvertAll(g => new Entities.UserMedicamentFile { FileGuid = g }) 
-                            ?? new();
+            entity.Files.RemoveAndAddExceptExistingByKey(medicament.ImageGuids,
+                existing => existing.FileGuid, guid => guid,
+                guid => new Entities.UserMedicamentFile() { FileGuid = guid });
         }
 
         await _dbContext.UserMedicaments.AddAsync(entity, cancellationToken);
@@ -133,7 +131,7 @@ public class UserDrugRepository : IUserDrugRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<RemoveOperationResult> RemoveContactAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
+    public async Task<RemoveOperationResult> RemoveMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
     {
         var existing = await _dbContext.UserMedicaments
             .FirstOrDefaultAsync(m => m.Id == id && m.UserProfileId == userProfileId, cancellationToken);

@@ -81,21 +81,29 @@ public class UserContactRepository : IUserContactRepository
         var contact = await _dbContext.UserProfileContacts
             .FirstOrDefaultAsync(c => c.UserProfileId == userProfileId && c.ContactProfileId == userContact.ContactProfileId, cancellationToken);
 
-        contact ??= new Entities.UserProfileContact
+        if (contact == null)
         {
-            UserProfileId = userProfileId,
-            ContactProfileId = userContact.ContactProfileId,
-            CustomName = userContact.CustomName
-        };
-        contact.CustomName = userContact.CustomName;
+            contact = new Entities.UserProfileContact
+            {
+                UserProfileId = userProfileId,
+                ContactProfileId = userContact.ContactProfileId,
+                CustomName = userContact.CustomName
+            };
+            await _dbContext.UserProfileContacts.AddAsync(contact, cancellationToken);
+        }
+        else
+        {
+            contact.CustomName = userContact.CustomName;
+        }
+
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
+        if (!saved) return null;
 
         var additionalData = await _dbContext.UserProfileContacts
             .AsNoTracking()
             .Select(c => new
             {
-                AvatarInfo = c.ContactProfile!.AvatarGuid == null
-                    ? null
+                AvatarInfo = c.ContactProfile!.AvatarGuid == null ? null
                     : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
                 IsCommon = _dbContext.UserProfileContacts
                     .Any(c2 => c2.UserProfileId == contact.ContactProfileId
@@ -103,15 +111,13 @@ public class UserContactRepository : IUserContactRepository
             })
             .FirstOrDefaultAsync(cancellationToken);
 
-        return saved
-            ? new Contract.UserContactSimple
+        return new Contract.UserContactSimple
             {
                 ContactProfileId = contact.ContactProfileId,
                 CustomName = contact.CustomName,
                 IsCommon = additionalData?.IsCommon ?? false,
                 Avatar = additionalData?.AvatarInfo
-            }
-            : null;
+            };
     }
 
 

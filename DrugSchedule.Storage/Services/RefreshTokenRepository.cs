@@ -54,8 +54,8 @@ public class RefreshTokenRepository : IRefreshTokenRepository
             .Where(rte => rte.RefreshToken == refreshToken)
             .Select(rte => new
             {
-                RefreshTokenExpiryTime = rte.RefreshTokenExpiryTime,
-                ClientInfo = rte.ClientInfo
+                rte.RefreshTokenExpiryTime,
+                rte.ClientInfo
             })
             .FirstOrDefaultAsync(cancellationToken);
 
