@@ -63,10 +63,7 @@ public class ScheduleShareRepository : IScheduleShareRepository
             .Select(c => c.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
-        if (contactId == default)
-        {
-            return null;
-        }
+        if (contactId == default) return null;
 
         if (share == null || contactId != share.ShareWithContactId)
         {
@@ -77,6 +74,7 @@ public class ScheduleShareRepository : IScheduleShareRepository
                 ShareWithContactId = contactId,
                 Comment = scheduleShare.Comment,
             };
+            await _dbContext.ScheduleShare.AddAsync(share, cancellationToken);
         }
         else
         {

@@ -79,7 +79,7 @@ public class UserContactsService : IUserContactsService
         var userProfileExists = await _profileRepository.DoesUserProfileExistsAsync(newContact.UserProfileId, cancellationToken);
         if (!userProfileExists)
         {
-            return new NotFound($"User with Id={newContact.UserProfileId} not found");
+            return new NotFound("User with provided Id not found");
         }
 
         var invalidInput = new InvalidInput();

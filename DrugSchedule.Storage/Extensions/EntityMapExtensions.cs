@@ -130,4 +130,16 @@ public static class EntityMapExtensions
             TakingRule = scheduleRepeat.TakingRule,
         };
     }
+
+    public static Contract.TakingСonfirmationPlain ToContractModel(this Entities.TakingСonfirmation takingСonfirmation)
+    {
+        return new Contract.TakingСonfirmationPlain
+        {
+            Id = takingСonfirmation.Id,
+            CreatedAt = takingСonfirmation.CreatedAt,
+            ImagesGuids = takingСonfirmation.Files.ConvertAll(p => p.FileGuid),
+            Text = takingСonfirmation.Text,
+            ScheduleRepeatId = takingСonfirmation.ScheduleRepeatId
+        };
+    }
 }

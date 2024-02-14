@@ -19,5 +19,5 @@ public interface IScheduleRepository
 
     public Task<TakingSchedulePlain?> UpdateTakingScheduleAsync(TakingSchedulePlain takingSchedule, TakingScheduleUpdateFlags updateFlags, CancellationToken cancellationToken = default);
   
-    public Task<RemoveOperationResult> RemoveTakingScheduleAsync(long id, long userId, CancellationToken cancellationToken = default);
+    public Task<RemoveOperationResult> RemoveTakingScheduleAsync(long id, CancellationToken cancellationToken = default);
 }
