@@ -33,7 +33,7 @@ public class DrugLibraryService : IDrugLibraryService
         var releaseForm = await _repository.GetMedicamentReleaseFormByIdAsync(id, cancellationToken);
         if (releaseForm == null)
         {
-            return new NotFound($"Release form with ID={id} not found");
+            return new NotFound("Release form with provided ID not found");
         }
         return releaseForm;
     }
@@ -52,7 +52,7 @@ public class DrugLibraryService : IDrugLibraryService
         var medicament = await _repository.GetMedicamentSimpleByIdAsync(id, cancellationToken);
         if (medicament == null)
         {
-            return new NotFound($"Medicament with ID={id} not found");
+            return new NotFound("Medicament with provided ID not found");
         }
         return ToModel(medicament);
     }
@@ -72,7 +72,7 @@ public class DrugLibraryService : IDrugLibraryService
         var medicament = await _repository.GetMedicamentExtendedByIdAsync(id, true, cancellationToken);
         if (medicament == null)
         {
-            return new NotFound($"Medicament form with ID={id} not found");
+            return new NotFound("Medicament form with provided ID not found");
         }
 
         var model = ToModel(medicament);
@@ -94,7 +94,7 @@ public class DrugLibraryService : IDrugLibraryService
         var manufacturer = await _repository.GetManufacturerByIdAsync(id, cancellationToken);
         if (manufacturer == null)
         {
-            return new NotFound($"Manufacturer with ID={id} not found");
+            return new NotFound("Manufacturer with provided ID not found");
         }
         return manufacturer;
     }

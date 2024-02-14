@@ -12,5 +12,5 @@ public class MedicamentUpdateFlags
 
     public bool Manufacturer { get; set; }
 
-    public bool ImagesGuids { get; set; }
+    public bool Images { get; set; }
 }

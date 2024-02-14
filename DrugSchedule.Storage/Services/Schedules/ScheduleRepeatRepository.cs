@@ -79,21 +79,25 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.ScheduleRepeatPlain?> UpdateRepeatAsync(Contract.TakingSchedulePlain takingSchedule, Contract.TakingScheduleUpdateFlags updateFlags,
+    public async Task<Contract.ScheduleRepeatPlain?> UpdateRepeatAsync(Contract.ScheduleRepeatPlain repeat, Contract.ScheduleRepeatUpdateFlags updateFlags,
         CancellationToken cancellationToken = default)
     {
-        var entity = await _dbContext.MedicamentTakingSchedules
-            .Where(r => r.Id == takingSchedule.Id)
-            .Where(r => r.UserMedicamentId == takingSchedule.UserProfileId)
+        var entity = await _dbContext.ScheduleRepeat
+            .Where(r => r.Id == repeat.Id)
             .FirstOrDefaultAsync(cancellationToken);
 
         if (entity == null) return null;
 
         var entry = _dbContext.Entry(entity);
-        entry.UpdateIf(e => e.UserMedicamentId, takingSchedule.UserMedicamentId, updateFlags.UserMedicamentId);
-        entry.UpdateIf(e => e.UserMedicamentId, takingSchedule.UserMedicamentId, updateFlags.UserMedicamentId);
-        entry.UpdateIf(e => e.UserMedicamentId, takingSchedule.UserMedicamentId, updateFlags.UserMedicamentId);
-        entry.UpdateIf(e => e.UserMedicamentId, takingSchedule.UserMedicamentId, updateFlags.UserMedicamentId);
+        entry.UpdateIf(e => e.BeginDate, repeat.BeginDate, updateFlags.BeginDate);
+        entry.UpdateIf(e => e.EndDate, repeat.EndDate, updateFlags.EndDate);
+        entry.UpdateIf(e => e.TimeOfDay, repeat.TimeOfDay, updateFlags.TimeOfDay);
+        entry.UpdateIf(e => e.Time, repeat.Time, updateFlags.Time);
+        entry.UpdateIf(e => e.RepeatDayOfWeek, repeat.RepeatDayOfWeek, updateFlags.RepeatDayOfWeek);
+        entry.UpdateIf(e => e.TakingRule, repeat.TakingRule, updateFlags.TakingRule);
+
+        var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
+        return saved ? entity.ToContractModel() : null;
     }
 
     public async Task<Contract.RemoveOperationResult> RemoveRepeatAsync(long id, CancellationToken cancellationToken = default)

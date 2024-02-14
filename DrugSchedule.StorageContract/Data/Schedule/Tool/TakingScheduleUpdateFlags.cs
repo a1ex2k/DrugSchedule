@@ -10,3 +10,4 @@ public class TakingScheduleUpdateFlags
 
     public bool Enabled { get; set; }
 }
+
