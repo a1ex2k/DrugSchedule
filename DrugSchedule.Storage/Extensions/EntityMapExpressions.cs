@@ -127,6 +127,7 @@ public static class EntityMapExpressions
             ImageGuids = userMedicament.Files.Select(userMedicamentFile => userMedicamentFile.FileGuid).ToList(),
         };
 
+
     public static Expression<Func<IdentityUser, Contract.UserIdentity>> ToIdentity
         => identityUser => new Contract.UserIdentity()
         {
@@ -135,6 +136,7 @@ public static class EntityMapExpressions
             Email = identityUser.Email,
             IsEmailConfirmed = identityUser.EmailConfirmed
         };
+
 
     public static Expression<Func<MedicamentTakingSchedule, Contract.TakingSchedulePlain>> ToSchedulePlain
         => s => new Contract.TakingSchedulePlain
@@ -147,6 +149,7 @@ public static class EntityMapExpressions
             CreatedAt = s.CreatedAt,
             Enabled = s.Enabled,
         };
+
 
     public static Expression<Func<ScheduleRepeat, Contract.ScheduleRepeatPlain>> ToScheduleRepeatPlain
         => s => new Contract.ScheduleRepeatPlain
@@ -161,7 +164,8 @@ public static class EntityMapExpressions
             TakingRule = s.TakingRule,
         };
 
-    public static Expression<Func<ScheduleShare, Contract.ScheduleSharePlain>> ToScheduleShare
+
+    public static Expression<Func<Entities.ScheduleShare, Contract.ScheduleSharePlain>> ToScheduleSharePlain
         => s => new Contract.ScheduleSharePlain
         {
             Id = s.Id,
@@ -170,7 +174,8 @@ public static class EntityMapExpressions
             Comment = s.Comment,
         };
 
-    public static Expression<Func<TakingСonfirmation, Contract.TakingСonfirmationPlain>> ToScheduleConfirmationPlain
+
+    public static Expression<Func<Entities.TakingСonfirmation, Contract.TakingСonfirmationPlain>> ToScheduleConfirmationPlain
         => s => new Contract.TakingСonfirmationPlain
         {
             Id = s.Id,
@@ -178,5 +183,67 @@ public static class EntityMapExpressions
             ImagesGuids = s.Files.Select(c => c.FileGuid).ToList(),
             Text = s.Text,
             ScheduleRepeatId = s.ScheduleRepeatId,
+        };
+
+
+    public static Expression<Func<Entities.TakingСonfirmation, Contract.TakingСonfirmation>> ToScheduleConfirmation
+        => s => new Contract.TakingСonfirmation
+        {
+            Id = s.Id,
+            CreatedAt = s.CreatedAt,
+            Images = s.Files
+                .Select(c => c.FileInfo!).AsQueryable()
+                .Select(ToFileInfo).ToList(),
+            Text = s.Text,
+        };
+
+
+    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleSimple>> ToScheduleSimple
+        => s => new Contract.TakingScheduleSimple
+        {
+            Id = s.Id,
+            MedicamentName = s.UserMedicamentId == null
+                ? s.GlobalMedicament!.Name 
+                : s.UserMedicament!.Name,
+            MedicamentReleaseFormName = s.UserMedicamentId == null
+                ? s.GlobalMedicament!.ReleaseForm!.Name
+                : s.UserMedicament!.ReleaseForm,
+            MedicamentImage = s.GlobalMedicament!.Files.Select(f => f.FileInfo!)
+                .AsQueryable()
+                    .Union(s.UserMedicament!.Files.Select(f => f.FileInfo!))
+                    .Select(ToFileInfo)
+                    .FirstOrDefault(),
+            CreatedAt = s.CreatedAt,
+            Enabled = s.Enabled
+        };
+
+
+    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleExtended>> ToScheduleExtended
+        => s => new Contract.TakingScheduleExtended
+        {
+            Id = s.Id,
+            GlobalMedicament = s.GlobalMedicamentId == null ? null : ToMedicamentSimple.Compile().Invoke(s.GlobalMedicament!),
+            UserMedicament = s.UserMedicamentId == null ? null : ToUserMedicamentSimple.Compile().Invoke(s.UserMedicament!),
+            Information = s.Information,
+            CreatedAt = s.CreatedAt,
+            Enabled = s.Enabled,
+            ScheduleRepeats = s.RepeatSchedules
+                .AsQueryable()
+                .Select(ToScheduleRepeatPlain)
+                .ToList(),
+            ScheduleShares = s.ScheduleShares
+                .AsQueryable()
+                .Select(ToScheduleShare)
+                .ToList()
+
+        };
+
+
+    public static Expression<Func<Entities.ScheduleShare, Contract.ScheduleShare>> ToScheduleShare
+        => s => new Contract.ScheduleShare
+        {
+            Id = s.Id,
+            UserContact = ,
+            Comment = s.Comment,
         };
 }

@@ -21,7 +21,7 @@ public class ScheduleShareRepository : IScheduleShareRepository
     {
         var share = await _dbContext.ScheduleShare
             .AsNoTracking()
-            .Select(EntityMapExpressions.ToScheduleShare)
+            .Select(EntityMapExpressions.ToScheduleSharePlain)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         return share;
     }
@@ -31,7 +31,7 @@ public class ScheduleShareRepository : IScheduleShareRepository
         var shares = await _dbContext.ScheduleShare
             .AsNoTracking()
             .Where(s => s.MedicamentTakingScheduleId == scheduleId)
-            .Select(EntityMapExpressions.ToScheduleShare)
+            .Select(EntityMapExpressions.ToScheduleSharePlain)
             .ToListAsync(cancellationToken);
         return shares;
     }
@@ -41,7 +41,7 @@ public class ScheduleShareRepository : IScheduleShareRepository
         var shares = await _dbContext.ScheduleShare
             .AsNoTracking()
             .Where(s => s.ShareWithContact!.ContactProfileId == contactUserId)
-            .Select(EntityMapExpressions.ToScheduleShare)
+            .Select(EntityMapExpressions.ToScheduleSharePlain)
             .ToListAsync(cancellationToken);
         return shares;
     }
