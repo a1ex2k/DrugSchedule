@@ -39,8 +39,8 @@ public class UserContactRepository : IUserContactRepository
         var contacts = await _dbContext.UserProfileContacts
             .AsNoTracking()
             .Where(c => c.UserProfileId == userProfileId)
-            .WithFilter(c1 => c1.ContactProfileId, filter.ContactProfileIdFilter)
-            .WithFilter(c2 => c2.CustomName, filter.ContactNameFilter)
+            .WithFilter(c => c.ContactProfileId, filter.ContactProfileIdFilter)
+            .WithFilter(c => c.CustomName, filter.ContactNameFilter)
             .Select(ContactProjection)
             .ToListAsync(cancellationToken);
 
@@ -63,12 +63,8 @@ public class UserContactRepository : IUserContactRepository
                 IsCommon = _dbContext.UserProfileContacts
                     .Any(c2 => c2.UserProfileId == c.ContactProfileId
                                && c2.ContactProfileId == c.UserProfileId)
-            });
-
-        if (commonOnly)
-        {
-            contactsQuery = contactsQuery.Where(c => c.IsCommon);
-        }
+            })
+            .WhereIf(commonOnly, c => c.IsCommon);
 
         var contacts = await contactsQuery.ToListAsync(cancellationToken);
         return contacts;

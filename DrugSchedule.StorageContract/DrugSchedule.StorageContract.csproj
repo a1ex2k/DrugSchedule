@@ -7,8 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Schedule\Extended\" />
-    <Folder Include="Data\Schedule\Simple\" />
+    <Compile Remove="Data\Schedule\Extended\**" />
+    <EmbeddedResource Remove="Data\Schedule\Extended\**" />
+    <None Remove="Data\Schedule\Extended\**" />
   </ItemGroup>
 
 </Project>
