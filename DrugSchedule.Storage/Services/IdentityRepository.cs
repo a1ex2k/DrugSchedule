@@ -54,8 +54,8 @@ public class IdentityRepository : IIdentityRepository
 
         var identityUsers = await _dbContext.Users
             .AsNoTracking()
-            .WithFilter(identity2 => identity2.Id, guids)
-            .WithFilter(identity1 => identity1.UserName!, filter.UsernameFilter)
+            .WithFilter(i => i.Id, guids)
+            .WithFilter(i => i.UserName!, filter.UsernameFilter)
             .WithPaging(filter)
             .Select(EntityMapExpressions.ToIdentity)
             .OrderBy(identity3 => identity3.Username)
