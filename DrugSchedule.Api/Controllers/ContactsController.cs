@@ -71,7 +71,8 @@ public class ContactsController : ControllerBase
     {
         var contactRemoveResult = await _userContactsService.RemoveContactAsync(dto.Adapt<UserId>(), cancellationToken);
         return contactRemoveResult.Match<IActionResult>(
-            ok => Ok("Contact added successfully"),
+            ok => Ok("Contact removed successfully"),
+            ok => Ok("Contact removed successfully"),
             notFound => NotFound(notFound.ToDto()));
     }
 }

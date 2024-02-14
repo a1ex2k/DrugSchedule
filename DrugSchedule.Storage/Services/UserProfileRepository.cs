@@ -20,7 +20,6 @@ public class UserProfileRepository : IUserProfileRepository
         _logger = logger;
     }
 
-
     public async Task<Contract.UserProfile?> GetUserProfileAsync(long id, bool withAvatar, CancellationToken cancellationToken = default)
     {
         var profile = await _dbContext.UserProfiles
@@ -94,30 +93,14 @@ public class UserProfileRepository : IUserProfileRepository
     {
         var existingUserProfile = await _dbContext.UserProfiles
             .FirstOrDefaultAsync(up => up.Id == userProfile.UserProfileId, cancellationToken);
-        if (existingUserProfile is null)
-        {
-            return null;
-        }
+        
+        if (existingUserProfile is null) return null;
 
-        if (updateFlags.RealName)
-        {
-            existingUserProfile.RealName = userProfile.RealName;
-        }
-
-        if (updateFlags.DateOfBirth)
-        {
-            existingUserProfile.DateOfBirth = userProfile.DateOfBirth;
-        }
-
-        if (updateFlags.AvatarGuid)
-        {
-            existingUserProfile.AvatarGuid = userProfile.Avatar?.Guid;
-        }
-
-        if (updateFlags.Sex)
-        {
-            existingUserProfile.Sex = userProfile.Sex;
-        }
+        var entry = _dbContext.Entry(existingUserProfile);
+        entry.UpdateIf(e => e.RealName, userProfile.RealName, updateFlags.RealName);
+        entry.UpdateIf(e => e.DateOfBirth, userProfile.DateOfBirth, updateFlags.DateOfBirth);
+        entry.UpdateIf(e => e.Sex, userProfile.Sex, updateFlags.Sex);
+        entry.UpdateIf(e => e.AvatarGuid, userProfile.Avatar?.Guid, updateFlags.AvatarGuid);
 
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return saved ? existingUserProfile.ToContractModel(false) : null;

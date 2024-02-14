@@ -33,7 +33,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         if (medicament == null)
         {
-            return new NotFound($"Current user doesn't have custom medicament with ID={id}");
+            return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
 
         if (medicament.BasicMedicamentId == null)
@@ -78,7 +78,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         var medicament = await _userDrugRepository.GetMedicamentSimpleAsync(_currentUserIdentifier.UserProfileId, id, cancellationToken);
         if (medicament == null)
         {
-            return new NotFound($"Current user doesn't have custom medicament with ID={id}");
+            return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
 
         return ToModel(medicament);
@@ -101,7 +101,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             var exists = await _drugLibrary.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
-                invalidInput.Add($"Base medicament with ID={model.BasicMedicamentId} not found");
+                invalidInput.Add("Base medicament with provided ID not found");
             }
         }
         if (string.IsNullOrWhiteSpace(model.Name))
@@ -137,7 +137,7 @@ public class UserDrugLibrary : IUserDrugLibrary
                 cancellationToken);
         if (medicament == null)
         {
-            return new NotFound($"Current user doesn't have custom medicament with ID={model.Id}");
+            return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
 
         var invalidInput = new InvalidInput();
@@ -146,13 +146,15 @@ public class UserDrugLibrary : IUserDrugLibrary
             var exists = await _drugLibrary.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
-                invalidInput.Add($"Base medicament with ID={model.BasicMedicamentId} not found. To remove, set BasicMedicamentId=0");
+                invalidInput.Add("Base medicament with provided ID not found. To remove, set BasicMedicamentId=0");
             }
         }
+
         if (model.Name != null && string.IsNullOrWhiteSpace(model.Name))
         {
             invalidInput.Add("Name must be non white space. Set null to keep current");
         }
+
         if (model.ReleaseForm != null && string.IsNullOrWhiteSpace(model.ReleaseForm))
         {
             invalidInput.Add("ReleaseForm must be non white space. Set null to keep current");
@@ -181,6 +183,20 @@ public class UserDrugLibrary : IUserDrugLibrary
         return CreateUpdateResultModel(savedMedicament!);
     }
 
+    public async Task<OneOf<True, NotFound, InvalidInput>> RemoveMedicamentAsync(long id, CancellationToken cancellationToken = default)
+    {
+        var deleteResult = await _userDrugRepository.RemoveMedicamentAsync(_currentUserIdentifier.UserProfileId, id, cancellationToken);
+        switch (deleteResult)
+        {
+            case RemoveOperationResult.Removed:
+                return new True();
+            case RemoveOperationResult.Used:
+                return new InvalidInput("User medicament cannot be removed because it is referenced by another object");
+            default:
+                return new NotFound("User medicament with provided ID not found");
+        }
+    }
+
 
     public async Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddImageAsync(long medicamentId, InputFile inputFile, CancellationToken cancellationToken = default)
     {
@@ -188,7 +204,7 @@ public class UserDrugLibrary : IUserDrugLibrary
             await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, medicamentId, cancellationToken);
         if (medicament == null)
         {
-            return new NotFound($"Current user doesn't have custom medicament with ID={medicamentId}");
+            return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
 
         var addResult = await _fileService.CreateAsync(
@@ -211,13 +227,12 @@ public class UserDrugLibrary : IUserDrugLibrary
             await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, medicamentId, cancellationToken);
         if (medicament == null)
         {
-            return new NotFound($"Current user doesn't have custom medicament with ID={medicamentId}");
+            return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
 
-        if (medicament.ImageGuids == null || !medicament.ImageGuids.Contains(fileGuid))
+        if (!medicament.ImageGuids.Contains(fileGuid))
         {
             return new NotFound($"User medicament doesn't contain any image with provided Guid");
-
         }
 
         var updateFlags = new UserMedicamentUpdateFlags

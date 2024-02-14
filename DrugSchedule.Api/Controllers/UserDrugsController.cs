@@ -7,6 +7,7 @@ using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using DrugSchedule.Services.Services;
 
 namespace DrugSchedule.Api.Controllers;
 
@@ -89,5 +90,27 @@ public class UserDrugsController : ControllerBase
         return removeResult.Match<IActionResult>(
             ok => Ok("Image removed successfully"),
             error => NotFound(error.ToDto()));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> UpdateMedicament(UserMedicamentUpdateDto dto, CancellationToken cancellationToken)
+    {
+        var updateResult = await _drugLibraryService.UpdateMedicamentAsync(dto.Adapt<UserMedicamentUpdate>(), cancellationToken);
+        return updateResult.Match<IActionResult>(
+            userModel => Ok(userModel.Adapt<UserMedicamentUpdateDto>()),
+            notFound => NotFound(notFound.ToDto()),
+            errorInput => BadRequest(errorInput.ToDto()));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Remove(UserMedicamentIdDto dto, CancellationToken cancellationToken)
+    {
+        var removeResult = await _drugLibraryService.RemoveMedicamentAsync(dto.UserMedicamentId, cancellationToken);
+        return removeResult.Match<IActionResult>(
+            ok => Ok("Medicament removed successfully"),
+            notFound => NotFound(notFound.ToDto()),
+            invalid => BadRequest(invalid.ToDto()));
     }
 }

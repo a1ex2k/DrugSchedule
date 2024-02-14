@@ -98,10 +98,10 @@ public class ScheduleRepository : IScheduleRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id, long userId, CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id, CancellationToken cancellationToken = default)
     {
         var deletedCount = await _dbContext.MedicamentTakingSchedules
-            .Where(s => s.Id == id && s.UserProfileId == userId)
+            .Where(s => s.Id == id)
             .ExecuteDeleteAsync(cancellationToken);
 
         return deletedCount > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
