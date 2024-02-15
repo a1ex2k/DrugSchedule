@@ -14,20 +14,23 @@ public class IdentityRepository : IIdentityRepository
     private readonly DrugScheduleContext _dbContext;
     private readonly UserManager<IdentityUser> _userManager;
 
-    public IdentityRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager, CancellationToken cancellationToken = default)
+    public IdentityRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager,
+        CancellationToken cancellationToken = default)
     {
         _dbContext = dbContext;
         _userManager = userManager;
     }
 
 
-    public async Task<UserIdentity?> GetUserIdentityAsync(string username, CancellationToken cancellationToken = default)
+    public async Task<UserIdentity?> GetUserIdentityAsync(string username,
+        CancellationToken cancellationToken = default)
     {
         var identityUser = await _userManager.FindByNameAsync(username);
         return identityUser?.ToContractModel();
     }
 
-    public async Task<UserIdentity?> GetUserIdentityAsync(string username, string password, CancellationToken cancellationToken = default)
+    public async Task<UserIdentity?> GetUserIdentityAsync(string username, string password,
+        CancellationToken cancellationToken = default)
     {
         var identityUser = await _userManager.FindByNameAsync(username);
 
@@ -48,12 +51,12 @@ public class IdentityRepository : IIdentityRepository
         return identityUser?.ToContractModel();
     }
 
-    public async Task<List<UserIdentity>> GetUserIdentitiesAsync(UserIdentityFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<UserIdentity>> GetUserIdentitiesAsync(UserIdentityFilter filter,
+        CancellationToken cancellationToken = default)
     {
         var guids = filter.GuidsFilter?.ConvertAll(g => g.ToString());
 
         var identityUsers = await _dbContext.Users
-            .AsNoTracking()
             .WithFilter(i => i.Id, guids)
             .WithFilter(i => i.UserName!, filter.UsernameFilter)
             .WithPaging(filter)
@@ -63,10 +66,10 @@ public class IdentityRepository : IIdentityRepository
         return identityUsers;
     }
 
-    public async Task<List<UserIdentity>> GetUserIdentitiesAsync(string usernameSearchString, CancellationToken cancellationToken = default)
+    public async Task<List<UserIdentity>> GetUserIdentitiesAsync(string usernameSearchString,
+        CancellationToken cancellationToken = default)
     {
         var identityUsers = await _dbContext.Users
-            .AsNoTracking()
             .Where(i => i.UserName != null && i.UserName.Contains(usernameSearchString))
             .Select(EntityMapExpressions.ToIdentity)
             .ToListAsync(cancellationToken);
@@ -88,7 +91,8 @@ public class IdentityRepository : IIdentityRepository
     }
 
 
-    public async Task<UserIdentity> CreateUserIdentityAsync(NewUserIdentity newIdentity, CancellationToken cancellationToken = default)
+    public async Task<UserIdentity> CreateUserIdentityAsync(NewUserIdentity newIdentity,
+        CancellationToken cancellationToken = default)
     {
         var identityUser = new IdentityUser
         {
@@ -100,14 +104,16 @@ public class IdentityRepository : IIdentityRepository
 
         if (!resultIdentity.Succeeded)
         {
-            throw new AggregateException("Cannot save user", resultIdentity.Errors.Select(e => new Exception(e.Description)));
+            throw new AggregateException("Cannot save user",
+                resultIdentity.Errors.Select(e => new Exception(e.Description)));
         }
 
         return identityUser.ToContractModel();
     }
 
 
-    public async Task<bool> UpdatePasswordAsync(PasswordUpdate passwordUpdate, CancellationToken cancellationToken = default)
+    public async Task<bool> UpdatePasswordAsync(PasswordUpdate passwordUpdate,
+        CancellationToken cancellationToken = default)
     {
         var identityUser = await _userManager.FindByIdAsync(passwordUpdate.IdentityGuid.ToString());
         if (identityUser == null)
@@ -115,7 +121,9 @@ public class IdentityRepository : IIdentityRepository
             return false;
         }
 
-        var result = await _userManager.ChangePasswordAsync(identityUser, passwordUpdate.OldPassword, passwordUpdate.NewPassword);
+        var result =
+            await _userManager.ChangePasswordAsync(identityUser, passwordUpdate.OldPassword,
+                passwordUpdate.NewPassword);
         return result.Succeeded;
     }
 }

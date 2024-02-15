@@ -20,22 +20,22 @@ public class UserDrugRepository : IUserDrugRepository
     }
 
 
-    public async Task<UserMedicamentExtended?> GetMedicamentExtendedAsync(long userProfileId, long id, bool withImages, bool withBasicMedicament,
+    public async Task<UserMedicamentExtended?> GetMedicamentExtendedAsync(long userProfileId, long id, bool withImages,
+        bool withBasicMedicament,
         CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
-            .AsNoTracking()
             .Where(m => m.Id == id && m.UserProfileId == userProfileId)
             .Select(EntityMapExpressions.ToUserMedicamentExtended(withImages))
             .FirstOrDefaultAsync(cancellationToken);
         return medicament;
     }
 
-    public async Task<List<UserMedicamentExtended>> GetMedicamentsExtendedAsync(long userProfileId, UserMedicamentFilter filter, bool withImages,
+    public async Task<List<UserMedicamentExtended>> GetMedicamentsExtendedAsync(long userProfileId,
+        UserMedicamentFilter filter, bool withImages,
         bool withBasicMedicament, CancellationToken cancellationToken = default)
     {
         var medicaments = await _dbContext.UserMedicaments
-            .AsNoTracking()
             .Where(m => m.UserProfileId == userProfileId)
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
@@ -46,20 +46,20 @@ public class UserDrugRepository : IUserDrugRepository
         return medicaments;
     }
 
-    public async Task<UserMedicamentSimple?> GetMedicamentSimpleAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
+    public async Task<UserMedicamentSimple?> GetMedicamentSimpleAsync(long userProfileId, long id,
+        CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
-            .AsNoTracking()
             .Where(m => m.Id == id && m.UserProfileId == userProfileId)
             .Select(EntityMapExpressions.ToUserMedicamentSimple)
             .FirstOrDefaultAsync(cancellationToken);
         return medicament;
     }
 
-    public async Task<List<UserMedicamentSimple>> GetMedicamentsSimpleAsync(long userProfileId, UserMedicamentFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<UserMedicamentSimple>> GetMedicamentsSimpleAsync(long userProfileId,
+        UserMedicamentFilter filter, CancellationToken cancellationToken = default)
     {
         var medicaments = await _dbContext.UserMedicaments
-            .AsNoTracking()
             .Where(m => m.UserProfileId == userProfileId)
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
@@ -70,17 +70,18 @@ public class UserDrugRepository : IUserDrugRepository
         return medicaments;
     }
 
-    public async Task<Contract.UserMedicament?> GetMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserMedicament?> GetMedicamentAsync(long userProfileId, long id,
+        CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
-            .AsNoTracking()
             .Where(u => u.Id == userProfileId && u.UserProfileId == userProfileId)
             .Select(EntityMapExpressions.ToUserMedicament)
             .FirstOrDefaultAsync(cancellationToken);
         return medicament;
     }
 
-    public async Task<Contract.UserMedicament?> CreateMedicamentAsync(Contract.UserMedicament model, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserMedicament?> CreateMedicamentAsync(Contract.UserMedicament model,
+        CancellationToken cancellationToken = default)
     {
         var entity = new Entities.UserMedicament
         {
@@ -103,7 +104,8 @@ public class UserDrugRepository : IUserDrugRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.UserMedicament?> UpdateMedicamentAsync(Contract.UserMedicament medicament, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserMedicament?> UpdateMedicamentAsync(Contract.UserMedicament medicament,
+        UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.UserMedicaments
             .Where(m => m.Id == medicament.Id)
@@ -131,7 +133,8 @@ public class UserDrugRepository : IUserDrugRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<RemoveOperationResult> RemoveMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
+    public async Task<RemoveOperationResult> RemoveMedicamentAsync(long userProfileId, long id,
+        CancellationToken cancellationToken = default)
     {
         var existing = await _dbContext.UserMedicaments
             .FirstOrDefaultAsync(m => m.Id == id && m.UserProfileId == userProfileId, cancellationToken);

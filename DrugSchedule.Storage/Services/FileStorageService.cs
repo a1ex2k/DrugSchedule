@@ -19,32 +19,37 @@ public class FileStorageService : IFileStorage
         _directoryPath = options.Value.DirectoryPath;
     }
 
-    public async Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    public async Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(fileInfo);
         var fileStream = GetReadStreamInternal(filePath);
         return fileStream;
     }
 
-    public async Task<Stream?> GetThumbnailStreamAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    public async Task<Stream?> GetThumbnailStreamAsync(Contract.FileInfo fileInfo,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetThumbnailPath(fileInfo);
         if (!File.Exists(filePath))
         {
             return null;
         }
+
         var fileStream = GetReadStreamInternal(filePath);
         return fileStream;
     }
 
-    public async Task<bool> WriteFileAsync(Contract.FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default)
+    public async Task<bool> WriteFileAsync(Contract.FileInfo fileInfo, Stream stream,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(fileInfo);
         var saved = await WriteFileInternalAsync(filePath, stream, cancellationToken);
         return saved;
     }
 
-    public async Task<bool> WriteThumbnailAsync(Contract.FileInfo fileInfo, Stream stream, CancellationToken cancellationToken = default)
+    public async Task<bool> WriteThumbnailAsync(Contract.FileInfo fileInfo, Stream stream,
+        CancellationToken cancellationToken = default)
     {
         var filePath = GetThumbnailPath(fileInfo);
         var saved = await WriteFileInternalAsync(filePath, stream, cancellationToken);
@@ -62,7 +67,8 @@ public class FileStorageService : IFileStorage
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "File cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
+            _logger.LogWarning(ex, "File cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid,
+                fileInfo.FileExtension);
         }
 
         if (fileInfo.HasThumbnail)
@@ -74,7 +80,8 @@ public class FileStorageService : IFileStorage
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Thumbnail cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid, fileInfo.FileExtension);
+                _logger.LogWarning(ex, "Thumbnail cannot be deleted: Guid={Guid}, Ext={Ext}", fileInfo.Guid,
+                    fileInfo.FileExtension);
             }
         }
 
@@ -114,7 +121,8 @@ public class FileStorageService : IFileStorage
         return null;
     }
 
-    private async Task<bool> WriteFileInternalAsync(string path, Stream stream, CancellationToken cancellationToken = default)
+    private async Task<bool> WriteFileInternalAsync(string path, Stream stream,
+        CancellationToken cancellationToken = default)
     {
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         var saved = false;

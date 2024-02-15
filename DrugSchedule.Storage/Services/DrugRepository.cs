@@ -20,10 +20,10 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<List<MedicamentExtended>> GetMedicamentsExtendedAsync(MedicamentFilter filter, bool withImages, CancellationToken cancellationToken = default)
+    public async Task<List<MedicamentExtended>> GetMedicamentsExtendedAsync(MedicamentFilter filter, bool withImages,
+        CancellationToken cancellationToken = default)
     {
         var medicaments = await _dbContext.Medicaments
-            .AsNoTracking()
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .WithFilter(m => m.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
@@ -39,10 +39,10 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<MedicamentSimple?> GetMedicamentSimpleByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<MedicamentSimple?> GetMedicamentSimpleByIdAsync(int id,
+        CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.Medicaments
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToMedicamentSimple)
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
         return medicament;
@@ -55,10 +55,10 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<List<Contract.Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.Manufacturer>> GetManufacturersAsync(ManufacturerFilter filter,
+        CancellationToken cancellationToken = default)
     {
         var manufacturers = await _dbContext.Manufacturers
-            .AsNoTracking()
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .OrderBy(m => m.Name)
@@ -70,10 +70,10 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<List<Contract.MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(MedicamentReleaseFormFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.MedicamentReleaseForm>> GetMedicamentReleaseFormsAsync(
+        MedicamentReleaseFormFilter filter, CancellationToken cancellationToken = default)
     {
         var releaseForms = await _dbContext.ReleaseForms
-            .AsNoTracking()
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .OrderBy(m => m.Name)
@@ -85,20 +85,20 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<MedicamentExtended?> GetMedicamentExtendedByIdAsync(int id, bool withImages, CancellationToken cancellationToken = default)
+    public async Task<MedicamentExtended?> GetMedicamentExtendedByIdAsync(int id, bool withImages,
+        CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.Medicaments
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToMedicamentExtended(withImages))
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
 
         return medicament;
     }
 
-    public async Task<List<MedicamentSimple>> GetMedicamentsSimpleAsync(MedicamentFilter filter, CancellationToken cancellationToken = default)
+    public async Task<List<MedicamentSimple>> GetMedicamentsSimpleAsync(MedicamentFilter filter,
+        CancellationToken cancellationToken = default)
     {
         var medicaments = await _dbContext.Medicaments
-            .AsNoTracking()
             .WithFilter(m => m.Id, filter.IdFilter)
             .WithFilter(m => m.Name, filter.NameFilter)
             .WithFilter(m => m.ManufacturerId, filter.ManufacturerFilter?.IdFilter?.ConvertAll(v => (int?)v))
@@ -112,7 +112,8 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         return medicaments;
     }
 
-    public async Task<MedicamentExtended?> UpdateMedicamentAsync(MedicamentExtended medicament, MedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
+    public async Task<MedicamentExtended?> UpdateMedicamentAsync(MedicamentExtended medicament,
+        MedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var existingMedicament = await _dbContext.Medicaments
             .Include(m => m.Files)
@@ -148,12 +149,14 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
 
         if (updateFlags.Manufacturer)
         {
-            existingMedicament.Manufacturer = medicament.Manufacturer is null ? null : new Entities.Manufacturer
-            {
-                Id = medicament.Manufacturer.Id,
-                Name = medicament.Manufacturer.Name,
-                AdditionalInfo = medicament.Manufacturer.AdditionalInfo
-            };
+            existingMedicament.Manufacturer = medicament.Manufacturer is null
+                ? null
+                : new Entities.Manufacturer
+                {
+                    Id = medicament.Manufacturer.Id,
+                    Name = medicament.Manufacturer.Name,
+                    AdditionalInfo = medicament.Manufacturer.AdditionalInfo
+                };
         }
 
         if (updateFlags.Images)
@@ -168,16 +171,17 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<Contract.Manufacturer?> GetManufacturerByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Contract.Manufacturer?> GetManufacturerByIdAsync(int id,
+        CancellationToken cancellationToken = default)
     {
         var manufacturer = await _dbContext.Manufacturers
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToManufacturer)
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
         return manufacturer;
     }
 
-    public async Task<Contract.Manufacturer?> UpdateManufacturerAsync(Contract.Manufacturer manufacturer, ManufacturerUpdateFlags updateFlags,
+    public async Task<Contract.Manufacturer?> UpdateManufacturerAsync(Contract.Manufacturer manufacturer,
+        ManufacturerUpdateFlags updateFlags,
         CancellationToken cancellationToken = default)
     {
         var existingManufacturer = await _dbContext.Manufacturers
@@ -202,17 +206,18 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<Contract.MedicamentReleaseForm?> GetMedicamentReleaseFormByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<Contract.MedicamentReleaseForm?> GetMedicamentReleaseFormByIdAsync(int id,
+        CancellationToken cancellationToken = default)
     {
         var releaseForm = await _dbContext.ReleaseForms
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToMedicamentReleaseForm)
             .FirstOrDefaultAsync(f => f.Id == id, cancellationToken);
 
         return releaseForm;
     }
 
-    public async Task<Contract.MedicamentReleaseForm?> UpdateMedicamentReleaseFormAsync(Contract.MedicamentReleaseForm releaseForm, MedicamentReleaseFormUpdateFlags updateFlags,
+    public async Task<Contract.MedicamentReleaseForm?> UpdateMedicamentReleaseFormAsync(
+        Contract.MedicamentReleaseForm releaseForm, MedicamentReleaseFormUpdateFlags updateFlags,
         CancellationToken cancellationToken = default)
     {
         var existingReleaseForm = await _dbContext.ReleaseForms
@@ -232,7 +237,8 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<MedicamentExtended?> CreateMedicamentAsync(MedicamentExtended medicament, CancellationToken cancellationToken = default)
+    public async Task<MedicamentExtended?> CreateMedicamentAsync(MedicamentExtended medicament,
+        CancellationToken cancellationToken = default)
     {
         var medicamentEntity = new Entities.Medicament
         {
@@ -275,7 +281,8 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<Contract.Manufacturer?> CreateManufacturerAsync(Contract.Manufacturer manufacturer, CancellationToken cancellationToken = default)
+    public async Task<Contract.Manufacturer?> CreateManufacturerAsync(Contract.Manufacturer manufacturer,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(manufacturer);
 
@@ -290,7 +297,8 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         return saved ? manufacturerEntity.ToContractModel() : null;
     }
 
-    public async Task<Contract.MedicamentReleaseForm?> CreateMedicamentReleaseForAsync(Contract.MedicamentReleaseForm releaseForm, CancellationToken cancellationToken = default)
+    public async Task<Contract.MedicamentReleaseForm?> CreateMedicamentReleaseForAsync(
+        Contract.MedicamentReleaseForm releaseForm, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(releaseForm);
 
@@ -305,7 +313,8 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     }
 
 
-    public async Task<RemoveOperationResult> RemoveMedicamentByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<RemoveOperationResult> RemoveMedicamentByIdAsync(int id,
+        CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.Medicaments
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
@@ -320,7 +329,8 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         return saved ? RemoveOperationResult.Removed : RemoveOperationResult.Used;
     }
 
-    public async Task<bool> AddMedicamentImageGuidAsync(int medicamentId, Guid imageGuid, CancellationToken cancellationToken = default)
+    public async Task<bool> AddMedicamentImageGuidAsync(int medicamentId, Guid imageGuid,
+        CancellationToken cancellationToken = default)
     {
         var medicamentFile = new Entities.MedicamentFile
         {
@@ -333,17 +343,19 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         return saved;
     }
 
-    public async Task<bool> RemoveMedicamentImageGuidAsync(int medicamentId, Guid imageGuid, CancellationToken cancellationToken = default)
+    public async Task<bool> RemoveMedicamentImageGuidAsync(int medicamentId, Guid imageGuid,
+        CancellationToken cancellationToken = default)
     {
         var removedCount = await _dbContext.MedicamentFiles
-           .Where(m => m.MedicamentId == medicamentId && m.FileGuid == imageGuid)
-           .ExecuteDeleteAsync(cancellationToken);
+            .Where(m => m.MedicamentId == medicamentId && m.FileGuid == imageGuid)
+            .ExecuteDeleteAsync(cancellationToken);
 
         return removedCount >= 1;
     }
 
 
-    public async Task<RemoveOperationResult> RemoveManufacturerByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<RemoveOperationResult> RemoveManufacturerByIdAsync(int id,
+        CancellationToken cancellationToken = default)
     {
         var manufacturer = await _dbContext.Manufacturers
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
@@ -352,14 +364,15 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         {
             return RemoveOperationResult.NotFound;
         }
-        
+
         _dbContext.Manufacturers.Remove(manufacturer);
         var removed = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return removed ? RemoveOperationResult.Removed : RemoveOperationResult.Used;
     }
 
 
-    public async Task<RemoveOperationResult> RemoveMedicamentReleaseFormByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<RemoveOperationResult> RemoveMedicamentReleaseFormByIdAsync(int id,
+        CancellationToken cancellationToken = default)
     {
         var releaseForm = await _dbContext.ReleaseForms
             .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);

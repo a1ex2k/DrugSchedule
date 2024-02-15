@@ -17,20 +17,20 @@ public class ScheduleRepository : IScheduleRepository
         _logger = logger;
     }
 
-    public async Task<Contract.TakingSchedulePlain?> GetTakingScheduleAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.TakingSchedulePlain?> GetTakingScheduleAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var schedule = await _dbContext.MedicamentTakingSchedules
-            .AsNoTracking()
             .Where(s => s.Id == id)
             .Select(EntityMapExpressions.ToSchedulePlain)
             .FirstOrDefaultAsync(cancellationToken);
         return schedule;
     }
 
-    public async Task<Contract.TakingSchedulePlain?> GetTakingScheduleAsync(long id, long userId, CancellationToken cancellationToken = default)
+    public async Task<Contract.TakingSchedulePlain?> GetTakingScheduleAsync(long id, long userId,
+        CancellationToken cancellationToken = default)
     {
         var schedule = await _dbContext.MedicamentTakingSchedules
-            .AsNoTracking()
             .Where(s => s.Id == id && s.UserProfileId == userId)
             .Select(EntityMapExpressions.ToSchedulePlain)
             .FirstOrDefaultAsync(cancellationToken);
@@ -45,14 +45,16 @@ public class ScheduleRepository : IScheduleRepository
         return scheduleExists;
     }
 
-    public async Task<List<Contract.TakingSchedulePlain>> GetTakingSchedulesAsync(Contract.TakingScheduleFilter filter, long userId, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.TakingSchedulePlain>> GetTakingSchedulesAsync(Contract.TakingScheduleFilter filter,
+        long userId, CancellationToken cancellationToken = default)
     {
         var schedules = await _dbContext.MedicamentTakingSchedules
-            .AsNoTracking()
             .Where(s => s.UserProfileId == userId)
             .WithFilter(s => s.Id, filter.IdFilter)
-            .WhereIf(filter.UserMedicamentIdFilter != null, s => filter.UserMedicamentIdFilter!.Contains((long)s.UserMedicamentId!))
-            .WhereIf(filter.GlobalMedicamentIdFilter != null, s => filter.GlobalMedicamentIdFilter!.Contains((int)s.GlobalMedicamentId!))
+            .WhereIf(filter.UserMedicamentIdFilter != null,
+                s => filter.UserMedicamentIdFilter!.Contains((long)s.UserMedicamentId!))
+            .WhereIf(filter.GlobalMedicamentIdFilter != null,
+                s => filter.GlobalMedicamentIdFilter!.Contains((int)s.GlobalMedicamentId!))
             .WithFilter(s => s.Enabled, filter.EnabledFilter)
             .OrderBy(s => s.Id)
             .WithPaging(filter)
@@ -62,7 +64,8 @@ public class ScheduleRepository : IScheduleRepository
         return schedules;
     }
 
-    public async Task<Contract.TakingSchedulePlain?> CreateTakingScheduleAsync(Contract.TakingSchedulePlain takingSchedule, CancellationToken cancellationToken = default)
+    public async Task<Contract.TakingSchedulePlain?> CreateTakingScheduleAsync(
+        Contract.TakingSchedulePlain takingSchedule, CancellationToken cancellationToken = default)
     {
         var entity = new Entities.MedicamentTakingSchedule
         {
@@ -79,7 +82,8 @@ public class ScheduleRepository : IScheduleRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.TakingSchedulePlain?> UpdateTakingScheduleAsync(Contract.TakingSchedulePlain takingSchedule, Contract.TakingScheduleUpdateFlags updateFlags,
+    public async Task<Contract.TakingSchedulePlain?> UpdateTakingScheduleAsync(
+        Contract.TakingSchedulePlain takingSchedule, Contract.TakingScheduleUpdateFlags updateFlags,
         CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.MedicamentTakingSchedules
@@ -98,7 +102,8 @@ public class ScheduleRepository : IScheduleRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var deletedCount = await _dbContext.MedicamentTakingSchedules
             .Where(s => s.Id == id)
