@@ -20,10 +20,6 @@
     <ProjectReference Include="..\DrugSchedule.StorageContract\DrugSchedule.StorageContract.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Schedule\" />
-  </ItemGroup>
-
 
 
 </Project>

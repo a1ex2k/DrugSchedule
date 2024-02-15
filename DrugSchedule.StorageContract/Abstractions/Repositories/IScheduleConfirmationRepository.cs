@@ -12,7 +12,7 @@ public interface IScheduleConfirmationRepository
 
     public Task<List<TakingСonfirmationPlain>> GetConfirmationsAsync(long repeatId, CancellationToken cancellationToken = default);
 
-    public Task<bool> DoesConfirmationExistAsync(long id, long repeatId, CancellationToken cancellationToken = default);
+    public Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long scheduleId, CancellationToken cancellationToken = default);
 
     public Task<TakingСonfirmationPlain?> CreateConfirmationAsync(TakingСonfirmationPlain confirmation, CancellationToken cancellationToken = default);
 

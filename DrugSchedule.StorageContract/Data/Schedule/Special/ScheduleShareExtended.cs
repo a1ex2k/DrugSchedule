@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.StorageContract.Data;
 
-public class ScheduleShare
+public class ScheduleShareExtended
 {
     public long Id { get; set; }
 

@@ -17,40 +17,41 @@ public class ScheduleShareRepository : IScheduleShareRepository
         _logger = logger;
     }
 
-    public async Task<Contract.ScheduleSharePlain?> GetScheduleShareAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.ScheduleSharePlain?> GetScheduleShareAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var share = await _dbContext.ScheduleShare
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToScheduleSharePlain)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         return share;
     }
 
-    public async Task<List<Contract.ScheduleSharePlain>> GetScheduleSharesAsync(long scheduleId, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.ScheduleSharePlain>> GetScheduleSharesAsync(long scheduleId,
+        CancellationToken cancellationToken = default)
     {
         var shares = await _dbContext.ScheduleShare
-            .AsNoTracking()
             .Where(s => s.MedicamentTakingScheduleId == scheduleId)
             .Select(EntityMapExpressions.ToScheduleSharePlain)
             .ToListAsync(cancellationToken);
         return shares;
     }
 
-    public async Task<List<Contract.ScheduleSharePlain>> GetSharesWithContactAsync(long contactUserId, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.ScheduleSharePlain>> GetSharesWithContactAsync(long contactUserId,
+        CancellationToken cancellationToken = default)
     {
         var shares = await _dbContext.ScheduleShare
-            .AsNoTracking()
             .Where(s => s.ShareWithContact!.ContactProfileId == contactUserId)
             .Select(EntityMapExpressions.ToScheduleSharePlain)
             .ToListAsync(cancellationToken);
         return shares;
     }
 
-    public async Task<Contract.ScheduleSharePlain?> AddOrUpdateShareAsync(Contract.ScheduleSharePlain scheduleShare, CancellationToken cancellationToken = default)
+    public async Task<Contract.ScheduleSharePlain?> AddOrUpdateShareAsync(Contract.ScheduleSharePlain scheduleShare,
+        CancellationToken cancellationToken = default)
     {
         var share = await _dbContext.ScheduleShare
             .Include(s => s.ShareWithContact!.ContactProfileId)
-            .FirstOrDefaultAsync(s => s.Id == scheduleShare.Id 
+            .FirstOrDefaultAsync(s => s.Id == scheduleShare.Id
                                       && s.MedicamentTakingScheduleId == scheduleShare.MedicamentTakingScheduleId,
                 cancellationToken);
 
@@ -93,10 +94,11 @@ public class ScheduleShareRepository : IScheduleShareRepository
             : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var deleted = await _dbContext.ScheduleShare
-            .Where(c => c.Id ==  id)
+            .Where(c => c.Id == id)
             .ExecuteDeleteAsync(cancellationToken);
         return deleted == 1 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
     }

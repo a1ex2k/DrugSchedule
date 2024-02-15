@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Linq.Expressions;
+using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Data.Entities;
 using DrugSchedule.StorageContract.Data;
 using Microsoft.AspNetCore.Identity;
@@ -218,7 +219,7 @@ public static class EntityMapExpressions
         };
 
 
-    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleExtended>> ToScheduleExtended
+    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleExtended>> ToScheduleExtended(DrugScheduleContext context)
         => s => new Contract.TakingScheduleExtended
         {
             Id = s.Id,
@@ -233,17 +234,31 @@ public static class EntityMapExpressions
                 .ToList(),
             ScheduleShares = s.ScheduleShares
                 .AsQueryable()
-                .Select(ToScheduleShare)
-                .ToList()
-
+                .Select(ToScheduleShare(context))
+                .ToList(),
+            OwnerProfileId = s.UserProfileId
         };
 
 
-    public static Expression<Func<Entities.ScheduleShare, Contract.ScheduleShare>> ToScheduleShare
-        => s => new Contract.ScheduleShare
+    public static Expression<Func<Entities.ScheduleShare, Contract.ScheduleShareExtended>> ToScheduleShare(DrugScheduleContext context)
+        => s => new Contract.ScheduleShareExtended
         {
             Id = s.Id,
-            UserContact = ,
+            UserContact = ToContactSimple(context).Compile().Invoke(s.ShareWithContact!),
             Comment = s.Comment,
+        };
+
+
+    public static Expression<Func<Entities.UserProfileContact, Contract.UserContactSimple>> ToContactSimple(DrugScheduleContext context)
+        => c => new Contract.UserContactSimple
+        {
+            ContactProfileId = c.ContactProfileId,
+            CustomName = c.CustomName,
+            Avatar = c.ContactProfile!.AvatarGuid == null
+                ? null
+                : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
+            IsCommon = context.UserProfileContacts
+                .Any(c2 => c2.UserProfileId == c.ContactProfileId
+                           && c2.ContactProfileId == c.UserProfileId)
         };
 }

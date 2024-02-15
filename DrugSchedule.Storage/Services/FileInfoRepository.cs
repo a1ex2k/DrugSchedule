@@ -12,7 +12,8 @@ public class FileInfoRepository : IFileInfoRepository
     private readonly DrugScheduleContext _dbContext;
     private readonly ILogger<FileInfoRepository> _logger;
 
-    public FileInfoRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager, ILogger<FileInfoRepository> logger)
+    public FileInfoRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager,
+        ILogger<FileInfoRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
@@ -21,23 +22,23 @@ public class FileInfoRepository : IFileInfoRepository
     public async Task<Contract.FileInfo?> GetFileInfoAsync(Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var info = await _dbContext.FileInfos
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToFileInfo)
             .FirstOrDefaultAsync(i => i.Guid == fileGuid, cancellationToken);
         return info;
     }
 
-    public async Task<List<Contract.FileInfo>> GetFileInfosAsync(List<Guid> guids, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.FileInfo>> GetFileInfosAsync(List<Guid> guids,
+        CancellationToken cancellationToken = default)
     {
         var infoList = await _dbContext.FileInfos
-            .AsNoTracking()
             .Where(i => guids.Contains(i.Guid))
             .Select(EntityMapExpressions.ToFileInfo)
             .ToListAsync(cancellationToken);
         return infoList;
     }
 
-    public async Task<Contract.FileInfo?> AddFileInfoAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    public async Task<Contract.FileInfo?> AddFileInfoAsync(Contract.FileInfo fileInfo,
+        CancellationToken cancellationToken = default)
     {
         var newFileInfo = new Entities.FileInfo
         {
@@ -55,7 +56,8 @@ public class FileInfoRepository : IFileInfoRepository
         return await _dbContext.TrySaveChangesAsync(_logger, cancellationToken) ? newFileInfo.ToContractModel() : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveFileByGuidAsync(Guid guid, CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveFileByGuidAsync(Guid guid,
+        CancellationToken cancellationToken = default)
     {
         var info = await _dbContext.FileInfos
             .FirstOrDefaultAsync(i => i.Guid == guid, cancellationToken);

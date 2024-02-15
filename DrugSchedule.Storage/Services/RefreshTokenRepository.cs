@@ -13,14 +13,16 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     private readonly DrugScheduleContext _dbContext;
     private readonly ILogger<RefreshTokenRepository> _logger;
 
-    public RefreshTokenRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager, ILogger<RefreshTokenRepository> logger)
+    public RefreshTokenRepository(DrugScheduleContext dbContext, UserManager<IdentityUser> userManager,
+        ILogger<RefreshTokenRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
     }
 
 
-    public async Task<Contract.RefreshTokenEntry?> AddRefreshTokenAsync(Contract.RefreshTokenEntry refreshTokenEntry, CancellationToken cancellationToken = default)
+    public async Task<Contract.RefreshTokenEntry?> AddRefreshTokenAsync(Contract.RefreshTokenEntry refreshTokenEntry,
+        CancellationToken cancellationToken = default)
     {
         var entry = new RefreshTokenEntry
         {
@@ -36,20 +38,21 @@ public class RefreshTokenRepository : IRefreshTokenRepository
     }
 
 
-    public async Task<Contract.RemoveOperationResult> RemoveRefreshTokenAsync(Guid userGuid, string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveRefreshTokenAsync(Guid userGuid, string refreshToken,
+        CancellationToken cancellationToken = default)
     {
         var result = await _dbContext.RefreshTokens
-                                           .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
-                                           .Where(rte => rte.RefreshToken == refreshToken)
-                                           .ExecuteDeleteAsync(cancellationToken);
+            .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
+            .Where(rte => rte.RefreshToken == refreshToken)
+            .ExecuteDeleteAsync(cancellationToken);
         return result > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
     }
 
 
-    public async Task<Contract.RefreshTokenEntry?> GetRefreshTokenEntryAsync(Guid userGuid, string refreshToken, CancellationToken cancellationToken = default)
+    public async Task<Contract.RefreshTokenEntry?> GetRefreshTokenEntryAsync(Guid userGuid, string refreshToken,
+        CancellationToken cancellationToken = default)
     {
         var result = await _dbContext.RefreshTokens
-            .AsNoTracking()
             .Where(rte => rte.IdentityUserGuid == userGuid.ToString())
             .Where(rte => rte.RefreshToken == refreshToken)
             .Select(rte => new
