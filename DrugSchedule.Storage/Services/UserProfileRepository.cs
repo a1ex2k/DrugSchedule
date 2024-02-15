@@ -20,10 +20,10 @@ public class UserProfileRepository : IUserProfileRepository
         _logger = logger;
     }
 
-    public async Task<Contract.UserProfile?> GetUserProfileAsync(long id, bool withAvatar, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserProfile?> GetUserProfileAsync(long id, bool withAvatar,
+        CancellationToken cancellationToken = default)
     {
         var profile = await _dbContext.UserProfiles
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToUserProfile(withAvatar))
             .FirstOrDefaultAsync(up => up.UserProfileId == id, cancellationToken);
         return profile;
@@ -35,10 +35,10 @@ public class UserProfileRepository : IUserProfileRepository
             .AnyAsync(u => u.Id == id, cancellationToken);
     }
 
-    public async Task<List<Contract.UserProfile>> GetUserProfilesAsync(List<long> ids, bool withAvatar, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.UserProfile>> GetUserProfilesAsync(List<long> ids, bool withAvatar,
+        CancellationToken cancellationToken = default)
     {
         var profiles = await _dbContext.UserProfiles
-            .AsNoTracking()
             .Where(up => ids.Contains(up.Id))
             .Select(EntityMapExpressions.ToUserProfile(withAvatar))
             .ToListAsync(cancellationToken);
@@ -51,7 +51,6 @@ public class UserProfileRepository : IUserProfileRepository
     {
         var guidString = guid.ToString();
         var profile = await _dbContext.UserProfiles
-            .AsNoTracking()
             .Where(u => u.IdentityGuid == guidString)
             .Select(EntityMapExpressions.ToUserProfile(withAvatar))
             .FirstOrDefaultAsync(cancellationToken);
@@ -59,11 +58,11 @@ public class UserProfileRepository : IUserProfileRepository
         return profile;
     }
 
-    public async Task<List<Contract.UserProfile>> GetUserProfilesAsync(List<Guid> guids, bool withAvatar, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.UserProfile>> GetUserProfilesAsync(List<Guid> guids, bool withAvatar,
+        CancellationToken cancellationToken = default)
     {
         var guidStrings = guids.ConvertAll(g => g.ToString());
         var profiles = await _dbContext.UserProfiles
-            .AsNoTracking()
             .Where(up => guidStrings.Contains(up.IdentityGuid))
             .Select(EntityMapExpressions.ToUserProfile(withAvatar))
             .ToListAsync(cancellationToken);
@@ -72,7 +71,8 @@ public class UserProfileRepository : IUserProfileRepository
     }
 
 
-    public async Task<Contract.UserProfile?> CreateUserProfileAsync(Contract.UserProfile userProfile, CancellationToken cancellationToken = default)
+    public async Task<Contract.UserProfile?> CreateUserProfileAsync(Contract.UserProfile userProfile,
+        CancellationToken cancellationToken = default)
     {
         var newDbProfile = new UserProfile
         {
@@ -88,12 +88,13 @@ public class UserProfileRepository : IUserProfileRepository
         return saved ? newDbProfile.ToContractModel(false) : null;
     }
 
-    public async Task<Contract.UserProfile?> UpdateUserProfileAsync(Contract.UserProfile userProfile, Contract.UserProfileUpdateFlags updateFlags,
+    public async Task<Contract.UserProfile?> UpdateUserProfileAsync(Contract.UserProfile userProfile,
+        Contract.UserProfileUpdateFlags updateFlags,
         CancellationToken cancellationToken = default)
     {
         var existingUserProfile = await _dbContext.UserProfiles
             .FirstOrDefaultAsync(up => up.Id == userProfile.UserProfileId, cancellationToken);
-        
+
         if (existingUserProfile is null) return null;
 
         var entry = _dbContext.Entry(existingUserProfile);
@@ -105,5 +106,4 @@ public class UserProfileRepository : IUserProfileRepository
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return saved ? existingUserProfile.ToContractModel(false) : null;
     }
-
 }

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.StorageContract.Data;
+namespace DrugSchedule.Services.Models;
 
 public class TakingScheduleExtended
 {
     public long Id { get; set; }
 
-    public long OwnerProfileId { get; set; }
+    public UserContactSimple? ContactOwnerProfile { get; set; }
 
     public MedicamentSimple? GlobalMedicament { get; set; }
 

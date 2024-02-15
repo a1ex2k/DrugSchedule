@@ -24,7 +24,6 @@ public class UserContactRepository : IUserContactRepository
         CancellationToken cancellationToken = default)
     {
         var contact = await _dbContext.UserProfileContacts
-            .AsNoTracking()
             .Where(c => c.UserProfileId == userProfileId && c.ContactProfileId == contactProfileId)
             .Select(ContactProjection)
             .FirstOrDefaultAsync(cancellationToken);
@@ -37,7 +36,6 @@ public class UserContactRepository : IUserContactRepository
         UserContactFilter filter, CancellationToken cancellationToken = default)
     {
         var contacts = await _dbContext.UserProfileContacts
-            .AsNoTracking()
             .Where(c => c.UserProfileId == userProfileId)
             .WithFilter(c => c.ContactProfileId, filter.ContactProfileIdFilter)
             .WithFilter(c => c.CustomName, filter.ContactNameFilter)
@@ -48,22 +46,12 @@ public class UserContactRepository : IUserContactRepository
     }
 
 
-    public async Task<List<UserContactSimple>> GetContactsSimpleAsync(long userProfileId, bool commonOnly, CancellationToken cancellationToken = default)
+    public async Task<List<UserContactSimple>> GetContactsSimpleAsync(long userProfileId, bool commonOnly,
+        CancellationToken cancellationToken = default)
     {
         var contactsQuery = _dbContext.UserProfileContacts
-            .AsNoTracking()
             .Where(c => c.UserProfileId == userProfileId)
-            .Select(c => new Contract.UserContactSimple
-            {
-                ContactProfileId = c.ContactProfileId,
-                CustomName = c.CustomName,
-                Avatar = c.ContactProfile!.AvatarGuid == null
-                    ? null
-                    : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
-                IsCommon = _dbContext.UserProfileContacts
-                    .Any(c2 => c2.UserProfileId == c.ContactProfileId
-                               && c2.ContactProfileId == c.UserProfileId)
-            })
+            .Select(EntityMapExpressions.ToContactSimple(_dbContext))
             .WhereIf(commonOnly, c => c.IsCommon);
 
         var contacts = await contactsQuery.ToListAsync(cancellationToken);
@@ -75,7 +63,9 @@ public class UserContactRepository : IUserContactRepository
         UserContactSimple userContact, CancellationToken cancellationToken = default)
     {
         var contact = await _dbContext.UserProfileContacts
-            .FirstOrDefaultAsync(c => c.UserProfileId == userProfileId && c.ContactProfileId == userContact.ContactProfileId, cancellationToken);
+            .FirstOrDefaultAsync(
+                c => c.UserProfileId == userProfileId && c.ContactProfileId == userContact.ContactProfileId,
+                cancellationToken);
 
         if (contact == null)
         {
@@ -96,10 +86,10 @@ public class UserContactRepository : IUserContactRepository
         if (!saved) return null;
 
         var additionalData = await _dbContext.UserProfileContacts
-            .AsNoTracking()
             .Select(c => new
             {
-                AvatarInfo = c.ContactProfile!.AvatarGuid == null ? null
+                AvatarInfo = c.ContactProfile!.AvatarGuid == null
+                    ? null
                     : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
                 IsCommon = _dbContext.UserProfileContacts
                     .Any(c2 => c2.UserProfileId == contact.ContactProfileId
@@ -108,12 +98,12 @@ public class UserContactRepository : IUserContactRepository
             .FirstOrDefaultAsync(cancellationToken);
 
         return new Contract.UserContactSimple
-            {
-                ContactProfileId = contact.ContactProfileId,
-                CustomName = contact.CustomName,
-                IsCommon = additionalData?.IsCommon ?? false,
-                Avatar = additionalData?.AvatarInfo
-            };
+        {
+            ContactProfileId = contact.ContactProfileId,
+            CustomName = contact.CustomName,
+            IsCommon = additionalData?.IsCommon ?? false,
+            Avatar = additionalData?.AvatarInfo
+        };
     }
 
 
