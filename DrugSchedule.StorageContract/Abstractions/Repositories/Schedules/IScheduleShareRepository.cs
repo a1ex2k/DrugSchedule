@@ -11,8 +11,6 @@ public interface IScheduleShareRepository
 
     public Task<List<ScheduleSharePlain>> GetScheduleSharesAsync(long scheduleId, CancellationToken cancellationToken = default);
 
-    public Task<List<ScheduleSharePlain>> GetSharesWithContactAsync(long contactUserId, CancellationToken cancellationToken = default);
-
     public Task<ScheduleSharePlain?> AddOrUpdateShareAsync(ScheduleSharePlain scheduleShare, CancellationToken cancellationToken = default);
 
     public Task<RemoveOperationResult> RemoveTakingScheduleAsync(long id, CancellationToken cancellationToken = default);

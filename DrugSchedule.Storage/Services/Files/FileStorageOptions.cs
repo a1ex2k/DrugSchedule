@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DrugSchedule.Storage;
+namespace DrugSchedule.Storage.Services;
 
 public class FileStorageOptions
 {

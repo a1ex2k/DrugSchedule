@@ -1,5 +1,5 @@
-﻿using DrugSchedule.Services.Models;
-using DrugSchedule.Services.Utils;
+﻿using DrugSchedule.Services.Errors;
+using DrugSchedule.Services.Models;
 
 namespace DrugSchedule.Services.Services.Abstractions;
 

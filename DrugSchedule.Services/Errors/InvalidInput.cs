@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace DrugSchedule.Services.Utils;
+namespace DrugSchedule.Services.Errors;
 
 public class InvalidInput
 {
@@ -13,7 +13,7 @@ public class InvalidInput
         ErrorsList.Add(message);
     }
 
-    public static implicit operator string?(InvalidInput? error) 
+    public static implicit operator string?(InvalidInput? error)
     {
         if (error == null || error.ErrorsList.Count == 0)
         {

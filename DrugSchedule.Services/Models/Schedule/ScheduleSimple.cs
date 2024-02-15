@@ -2,7 +2,7 @@
 
 namespace DrugSchedule.StorageContract.Data;
 
-public class TakingScheduleSimple
+public class ScheduleSimple
 {
     public long Id { get; set; }
 

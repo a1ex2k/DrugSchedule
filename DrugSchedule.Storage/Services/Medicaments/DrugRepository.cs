@@ -163,7 +163,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
         {
             existingMedicament.Files.RemoveAndAddExceptExistingByKey(medicament.Images,
                 existing => existing.FileGuid, f => f.Guid,
-                f => new Entities.MedicamentFile { FileGuid = f.Guid });
+                f => new MedicamentFile { FileGuid = f.Guid });
         }
 
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
@@ -240,7 +240,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     public async Task<MedicamentExtended?> CreateMedicamentAsync(MedicamentExtended medicament,
         CancellationToken cancellationToken = default)
     {
-        var medicamentEntity = new Entities.Medicament
+        var medicamentEntity = new Medicament
         {
             Name = medicament.Name,
             Description = medicament.Description,
@@ -332,7 +332,7 @@ public class DrugRepository : IReadonlyDrugRepository, IDrugRepository
     public async Task<bool> AddMedicamentImageGuidAsync(int medicamentId, Guid imageGuid,
         CancellationToken cancellationToken = default)
     {
-        var medicamentFile = new Entities.MedicamentFile
+        var medicamentFile = new MedicamentFile
         {
             MedicamentId = medicamentId,
             FileGuid = imageGuid
