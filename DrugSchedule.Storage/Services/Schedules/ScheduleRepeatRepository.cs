@@ -17,19 +17,19 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         _logger = logger;
     }
 
-    public async Task<Contract.ScheduleRepeatPlain?> GetRepeatAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.ScheduleRepeatPlain?> GetRepeatAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var repeat = await _dbContext.ScheduleRepeat
-            .AsNoTracking()
             .Select(EntityMapExpressions.ToScheduleRepeatPlain)
             .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         return repeat;
     }
 
-    public async Task<Contract.ScheduleRepeatPlain?> GetRepeatAsync(long id, long scheduleId, long userProfileId, CancellationToken cancellationToken = default)
+    public async Task<Contract.ScheduleRepeatPlain?> GetRepeatAsync(long id, long scheduleId, long userProfileId,
+        CancellationToken cancellationToken = default)
     {
         var repeat = await _dbContext.ScheduleRepeat
-            .AsNoTracking()
             .Where(r => r.Id == id)
             .Where(r => r.MedicamentTakingScheduleId == scheduleId)
             .Where(r => r.MedicamentTakingSchedule!.UserProfileId == userProfileId)
@@ -38,7 +38,8 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return repeat;
     }
 
-    public async Task<bool> DoesRepeatExistAsync(long id, long scheduleId, long userProfileId, CancellationToken cancellationToken = default)
+    public async Task<bool> DoesRepeatExistAsync(long id, long scheduleId, long userProfileId,
+        CancellationToken cancellationToken = default)
     {
         var repeatExists = await _dbContext.ScheduleRepeat
             .Where(r => r.Id == id)
@@ -49,10 +50,10 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return repeatExists;
     }
 
-    public async Task<List<Contract.ScheduleRepeatPlain>> GetRepeatsAsync(long scheduleId, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.ScheduleRepeatPlain>> GetRepeatsAsync(long scheduleId,
+        CancellationToken cancellationToken = default)
     {
         var repeats = await _dbContext.ScheduleRepeat
-            .AsNoTracking()
             .Where(r => r.MedicamentTakingScheduleId == scheduleId)
             .Select(EntityMapExpressions.ToScheduleRepeatPlain)
             .ToListAsync(cancellationToken);
@@ -60,7 +61,8 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return repeats;
     }
 
-    public async Task<Contract.ScheduleRepeatPlain?> CreateRepeatAsync(Contract.ScheduleRepeatPlain repeat, CancellationToken cancellationToken = default)
+    public async Task<Contract.ScheduleRepeatPlain?> CreateRepeatAsync(Contract.ScheduleRepeatPlain repeat,
+        CancellationToken cancellationToken = default)
     {
         var entity = new Entities.ScheduleRepeat
         {
@@ -79,7 +81,8 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.ScheduleRepeatPlain?> UpdateRepeatAsync(Contract.ScheduleRepeatPlain repeat, Contract.ScheduleRepeatUpdateFlags updateFlags,
+    public async Task<Contract.ScheduleRepeatPlain?> UpdateRepeatAsync(Contract.ScheduleRepeatPlain repeat,
+        Contract.ScheduleRepeatUpdateFlags updateFlags,
         CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.ScheduleRepeat
@@ -100,7 +103,8 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveRepeatAsync(long id, CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveRepeatAsync(long id,
+        CancellationToken cancellationToken = default)
     {
         var deletedCount = await _dbContext.ScheduleRepeat
             .Where(s => s.Id == id)
