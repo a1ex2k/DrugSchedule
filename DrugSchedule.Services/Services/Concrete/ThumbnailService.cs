@@ -9,7 +9,7 @@ public class ThumbnailService : IThumbnailService
 {
     private const int MaxSideSize = 256;
 
-    public async Task<MemoryStream?> CreateThumbnail(Stream sourceStream, string mimeType, bool crop, CancellationToken cancellationToken = default)
+    public async Task<MemoryStream?> CreateThumbnail(Stream sourceStream, string mimeType, CancellationToken cancellationToken = default)
     {
         if (!mimeType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
         {
@@ -22,7 +22,7 @@ public class ThumbnailService : IThumbnailService
             return null;
         }
 
-        Resize(image, MaxSideSize, crop);
+        Resize(image, MaxSideSize);
         return await SaveAsync(image, cancellationToken);
     }
 
@@ -49,12 +49,12 @@ public class ThumbnailService : IThumbnailService
         return stream;
     }
 
-    private void Resize(Image image, int maxDimensionSize, bool crop)
+    private void Resize(Image image, int maxDimensionSize)
     {
         image.Mutate(x => x.Resize(new ResizeOptions
         {
             Size = new Size(maxDimensionSize, maxDimensionSize),
-            Mode = crop ? ResizeMode.BoxPad : ResizeMode.Max,
+            Mode = ResizeMode.Max,
         }));
     }
 }

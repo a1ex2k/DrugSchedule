@@ -36,16 +36,6 @@ public class ScheduleShareRepository : IScheduleShareRepository
         return shares;
     }
 
-    public async Task<List<Contract.ScheduleSharePlain>> GetSharesWithContactAsync(long contactUserId,
-        CancellationToken cancellationToken = default)
-    {
-        var shares = await _dbContext.ScheduleShare
-            .Where(s => s.ShareWithContact!.ContactProfileId == contactUserId)
-            .Select(EntityMapExpressions.ToScheduleSharePlain)
-            .ToListAsync(cancellationToken);
-        return shares;
-    }
-
     public async Task<Contract.ScheduleSharePlain?> AddOrUpdateShareAsync(Contract.ScheduleSharePlain scheduleShare,
         CancellationToken cancellationToken = default)
     {

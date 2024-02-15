@@ -1,8 +1,8 @@
 ﻿using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Models;
-using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
+using DrugSchedule.Services.Errors;
 
 namespace DrugSchedule.Services.Services;
 
@@ -150,8 +150,7 @@ public class FileService : IFileService
 
         try
         {
-            using var thumbStream = await _thumbnailService.CreateThumbnail(stream, fileInfo.MediaType,
-                awaitableFileParams.CropThumbnail, cancellation);
+            using var thumbStream = await _thumbnailService.CreateThumbnail(stream, fileInfo.MediaType, cancellation);
             if (thumbStream != null)
             {
                 var thumbWritten = await _fileStorage.WriteThumbnailAsync(fileInfo, thumbStream, cancellation);
