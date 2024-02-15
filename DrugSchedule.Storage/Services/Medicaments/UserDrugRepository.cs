@@ -70,7 +70,7 @@ public class UserDrugRepository : IUserDrugRepository
         return medicaments;
     }
 
-    public async Task<Contract.UserMedicament?> GetMedicamentAsync(long userProfileId, long id,
+    public async Task<UserMedicament?> GetMedicamentAsync(long userProfileId, long id,
         CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
@@ -80,7 +80,7 @@ public class UserDrugRepository : IUserDrugRepository
         return medicament;
     }
 
-    public async Task<Contract.UserMedicament?> CreateMedicamentAsync(Contract.UserMedicament model,
+    public async Task<UserMedicament?> CreateMedicamentAsync(UserMedicament model,
         CancellationToken cancellationToken = default)
     {
         var entity = new Entities.UserMedicament
@@ -104,7 +104,7 @@ public class UserDrugRepository : IUserDrugRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.UserMedicament?> UpdateMedicamentAsync(Contract.UserMedicament medicament,
+    public async Task<UserMedicament?> UpdateMedicamentAsync(UserMedicament medicament,
         UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.UserMedicaments

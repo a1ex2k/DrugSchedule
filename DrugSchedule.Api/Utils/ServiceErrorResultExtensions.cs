@@ -1,5 +1,6 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
-using DrugSchedule.Services.Utils;
+using DrugSchedule.Services.Error;
+using DrugSchedule.Services.Errors;
 
 namespace DrugSchedule.Api.Utils;
 
@@ -20,6 +21,15 @@ public static class ServiceErrorResultExtensions
         {
             Category = "NotFound",
             Messages = new List<string>(1){ notFound.Message },
+        };
+    }
+
+    public static ErrorDto ToDto(this AccessDenied accessDenied)
+    {
+        return new ErrorDto
+        {
+            Category = "NotFound",
+            Messages = new List<string>(1) { accessDenied.Message },
         };
     }
 }
