@@ -7,23 +7,16 @@ public static class FileAvailability
 {
     private static AwaitableFileParams UserAvatarFileParams => new AwaitableFileParams
     {
-        MaxSize = 3 * 1024 * 1024,
-        FileExtensions = new[]
-        {
-            ".jpeg",
-            ".jpg",
-            ".png"
-        },
+        MaxSize = 4 * 1024 * 1024,
+        FileExtensions = new[] { ".jpeg", ".jpg", ".png" },
         TryCreateThumbnail = true,
-        CropThumbnail = true,
     };
 
     private static AwaitableFileParams UserMedicamentFileParams => new AwaitableFileParams
     {
-        MaxSize = 10 * 1024 * 1024,
+        MaxSize = 4 * 1024 * 1024,
         FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
         TryCreateThumbnail = true,
-        CropThumbnail = false,
     };
 
     private static AwaitableFileParams TakingConfirmationFileParams => new AwaitableFileParams
@@ -31,15 +24,6 @@ public static class FileAvailability
         MaxSize = 10 * 1024 * 1024,
         FileExtensions = new[] { ".jpeg", ".jpg", ".png" },
         TryCreateThumbnail = true,
-        CropThumbnail = true,
-    };
-
-    private static AwaitableFileParams MedicamentImageFileParams => new AwaitableFileParams
-    {
-        MaxSize = 1024 * 1024,
-        FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
-        TryCreateThumbnail = true,
-        CropThumbnail = false,
     };
 
 
@@ -66,7 +50,6 @@ public static class FileAvailability
     {
         return category switch
         {
-            FileCategory.MedicamentImage => MedicamentImageFileParams,
             FileCategory.UserAvatar => UserAvatarFileParams,
             FileCategory.DrugConfirmation => TakingConfirmationFileParams,
             FileCategory.UserMedicamentImage => UserMedicamentFileParams,

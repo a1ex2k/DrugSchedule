@@ -53,7 +53,7 @@ public class DownloadableFileConverter : IDownloadableFileConverter
             return null;
         }
 
-        if (originalAsThumb)
+        if (originalAsThumb && fileInfo.HasThumbnail)
         {
             return isPublic
                 ? _fileUrlProvider.GetPublicFileUri(fileInfo.Guid)

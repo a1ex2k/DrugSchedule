@@ -1,4 +1,5 @@
-﻿using DrugSchedule.Services.Models;
+﻿using DrugSchedule.Services.Errors;
+using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
@@ -258,7 +259,7 @@ public class UserService : IIdentityService, IUserService
             },
             Take = search.MaxCount
         };
-        filter.LimitPaging();
+
         var identities = await _identityRepository.GetUserIdentitiesAsync(filter, cancellationToken);
         var profiles = await _profileRepository.GetUserProfilesAsync(identities.ConvertAll(i => i.Guid), true, cancellationToken);
 

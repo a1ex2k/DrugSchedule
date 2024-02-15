@@ -4,6 +4,7 @@ using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Utils;
 using OneOf.Types;
+using DrugSchedule.Services.Errors;
 
 namespace DrugSchedule.Services.Services;
 

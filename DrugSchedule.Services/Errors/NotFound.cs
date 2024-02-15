@@ -1,8 +1,8 @@
-﻿namespace DrugSchedule.Services.Utils;
+﻿namespace DrugSchedule.Services.Errors;
 
 public class NotFound
 {
-    public string Message { get; init; } 
+    public string Message { get; init; }
 
     public static implicit operator string(NotFound error)
     {
