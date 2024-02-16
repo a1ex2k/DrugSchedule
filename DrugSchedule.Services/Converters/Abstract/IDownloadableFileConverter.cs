@@ -1,6 +1,6 @@
 ﻿using DrugSchedule.Services.Models;
 
-namespace DrugSchedule.Services.Services;
+namespace DrugSchedule.Services.Converters;
 
 public interface IDownloadableFileConverter
 {

@@ -108,6 +108,7 @@ public class UserDrugRepository : IUserDrugRepository
         UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.UserMedicaments
+            .Include(m => m.Files)
             .Where(m => m.Id == medicament.Id)
             .FirstOrDefaultAsync(cancellationToken);
 

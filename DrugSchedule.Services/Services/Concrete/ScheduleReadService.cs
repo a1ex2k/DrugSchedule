@@ -1,31 +1,24 @@
-﻿using DrugSchedule.Services.Models;
+﻿using DrugSchedule.Services.Converters;
+using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
-using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using TakingScheduleExtended = DrugSchedule.Services.Models.TakingScheduleExtended;
+using UserContactSimple = DrugSchedule.StorageContract.Data.UserContactSimple;
 
 namespace DrugSchedule.Services.Services;
 
 public class ScheduleReadService : IScheduleReadService
 {
-    private readonly IScheduleSpecialRepository _scheduleSpecialRepository;
-    private readonly IScheduleRepository _scheduleRepository;
-    private readonly IScheduleConfirmationRepository _confirmationRepository;
-    private readonly IScheduleRepeatRepository _repeatRepository;
-    private readonly IScheduleShareRepository _shareRepository;
-    private readonly IDownloadableFileConverter _downloadableFileConverter;
+    private readonly ISharedDataRepository _sharedDataRepository;
     private readonly ICurrentUserIdentifier _currentUserIdentifier;
+    private readonly IScheduleConverter _converter;
 
-    public ScheduleReadService(IScheduleSpecialRepository scheduleRepository, IScheduleRepository scheduleRepository1, IScheduleConfirmationRepository confirmationRepository, IScheduleRepeatRepository repeatRepository, IScheduleShareRepository shareRepository, IDownloadableFileConverter downloadableFileConverter, ICurrentUserIdentifier currentUserIdentifier)
+    public ScheduleReadService(ISharedDataRepository scheduleRepository, ICurrentUserIdentifier currentUserIdentifier, IScheduleConverter converter)
     {
-        _scheduleSpecialRepository = scheduleRepository;
-        _scheduleRepository = scheduleRepository1;
-        _confirmationRepository = confirmationRepository;
-        _repeatRepository = repeatRepository;
-        _shareRepository = shareRepository;
-        _downloadableFileConverter = downloadableFileConverter;
+        _sharedDataRepository = scheduleRepository;
         _currentUserIdentifier = currentUserIdentifier;
+        _converter = converter;
     }
 
 
@@ -37,16 +30,16 @@ public class ScheduleReadService : IScheduleReadService
         }
 
         var foundSchedules =
-            await _scheduleSpecialRepository.SearchForOwnedOrSharedAsync(_currentUserIdentifier.UserProfileId,
+            await _sharedDataRepository.SearchForOwnedOrSharedAsync(_currentUserIdentifier.UserProfileId,
                 searchString, cancellationToken);
 
-        return toScheduleSimpleCollection(foundSchedules);
+        return _converter.ToScheduleSimpleCollection(foundSchedules);
     }
 
 
     public async Task<OneOf<ScheduleSimple, NotFound>> GetScheduleSimpleAsync(long id, CancellationToken cancellationToken = default)
     {
-        var schedule = await _scheduleSpecialRepository.GetScheduleSimpleAsync(id,
+        var schedule = await _sharedDataRepository.GetScheduleSimpleAsync(id,
             _currentUserIdentifier.UserProfileId, cancellationToken);
 
         if (schedule == null)
@@ -54,22 +47,22 @@ public class ScheduleReadService : IScheduleReadService
             return new NotFound("Schedule was not found or current user doesn't have permissions to access");
         }
 
-        return ToScheduleSimple(schedule!);
+        return _converter.ToScheduleSimple(schedule!);
     }
 
 
     public async Task<ScheduleSimpleCollection> GetSchedulesSimpleAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
     {
-        var schedules = await _scheduleSpecialRepository.GetSchedulesSimpleAsync(
+        var schedules = await _sharedDataRepository.GetSchedulesSimpleAsync(
             filter, _currentUserIdentifier.UserProfileId, cancellationToken);
 
-        return toScheduleSimpleCollection(schedules);
+        return _converter.ToScheduleSimpleCollection(schedules);
     }
 
 
     public async Task<OneOf<TakingScheduleExtended, NotFound>> GetScheduleExtendedAsync(long id, CancellationToken cancellationToken = default)
     {
-        var schedule = await _scheduleSpecialRepository.GetScheduleExtendedAsync(id,
+        var schedule = await _sharedDataRepository.GetScheduleExtendedAsync(id,
             _currentUserIdentifier.UserProfileId, cancellationToken);
 
         if (schedule == null)
@@ -77,89 +70,31 @@ public class ScheduleReadService : IScheduleReadService
             return new NotFound("Schedule was not found or current user doesn't have permissions to access");
         }
 
-        return ToScheduleExtended(schedule!);
+        return _converter.ToScheduleExtended(schedule);
     }
 
 
-    public Task<ScheduleExtendedCollection> GetSchedulesExtendedAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
+    public async Task<ScheduleExtendedCollection> GetSchedulesExtendedAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var schedules = await _sharedDataRepository.GetSchedulesExtendedAsync(
+            filter, _currentUserIdentifier.UserProfileId, cancellationToken);
+
+        return _converter.ToScheduleExtendedCollection(schedules);
     }
 
 
-    public async Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(long confirmationId, long scheduleId,
-        CancellationToken cancellationToken = default)
+    public async Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default)
     {
         var checkResult =
-            await _scheduleSpecialRepository.GetOwnOrSharedSchedulesIdsAsync(scheduleId, _currentUserIdentifier.UserProfileId,
+            await _sharedDataRepository.GetOwnOrSharedSchedulesIdsAsync(filter.ScheduleId, _currentUserIdentifier.UserProfileId,
                 cancellationToken);
-        
+
         if (checkResult == null)
         {
             return new NotFound("Schedule was not found or current user doesn't have permissions to access");
         }
 
-        var confirmation = await _scheduleSpecialRepository.GetTakingConfirmationAsync()
-
-
+        var confirmations = await _sharedDataRepository.GetTakingConfirmationsAsync(filter, cancellationToken);
+        return _converter.ToСonfirmationCollection(confirmations);
     }
-
-
-    public async Task<TakingСonfirmationCollection> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default)
-    {
-        var 
     }
-
-
-    private TakingСonfirmation ToConfirmation(StorageContract.Data. schedule)
-    {
-        return new ScheduleSimple
-        {
-            Id = schedule.Id,
-            MedicamentName = schedule.MedicamentName,
-            MedicamentReleaseFormName = schedule.MedicamentReleaseFormName,
-            ThumbnailUrl = _downloadableFileConverter.ToThumbLink(schedule.MedicamentImage,
-                FileCategory.DrugConfirmation.IsPublic(), true),
-            CreatedAt = schedule.CreatedAt,
-            Enabled = schedule.Enabled
-        };
-    }
-
-    private ScheduleSimple ToScheduleSimple(StorageContract.Data.TakingScheduleSimple schedule)
-    {
-        return new ScheduleSimple
-        {
-            Id = schedule.Id,
-            MedicamentName = schedule.MedicamentName,
-            MedicamentReleaseFormName = schedule.MedicamentReleaseFormName,
-            ThumbnailUrl = _downloadableFileConverter.ToThumbLink(schedule.MedicamentImage,
-                FileCategory.DrugConfirmation.IsPublic(), true),
-            CreatedAt = schedule.CreatedAt,
-            Enabled = schedule.Enabled
-        };
-    }
-
-    private TakingScheduleExtended ToScheduleExtended(StorageContract.Data.TakingScheduleSimple schedule)
-    {
-        return new TakingScheduleExtended
-        {
-            Id = schedule.Id,
-            ContactOwnerProfile = null,
-            GlobalMedicament = null,
-            UserMedicament = null,
-            Information = null,
-            CreatedAt = schedule.CreatedAt,
-            Enabled = schedule.Enabled,
-            ScheduleRepeats = null,
-            ScheduleShares = null,
-        };
-    }
-
-    private ScheduleSimpleCollection toScheduleSimpleCollection(List<StorageContract.Data.TakingScheduleSimple> scheduleList)
-    {
-        return new ScheduleSimpleCollection
-        {
-            Schedules = scheduleList.ConvertAll(ToScheduleSimple) 
-        };
-    }
-}
