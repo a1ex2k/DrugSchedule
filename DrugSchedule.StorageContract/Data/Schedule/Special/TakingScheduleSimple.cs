@@ -6,6 +6,8 @@ public class TakingScheduleSimple
 {
     public long Id { get; set; }
 
+    public UserContactSimple? ContactOwner { get; set; }
+
     public string? MedicamentName { get; set; }
 
     public string? MedicamentReleaseFormName { get; set; }

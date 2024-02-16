@@ -1,34 +1,31 @@
-﻿using DrugSchedule.Services.Errors;
+﻿using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
-using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using OneOf.Types;
-using Models_UserContact = DrugSchedule.Services.Models.UserContact;
-using UserContact = DrugSchedule.Services.Models.UserContact;
 
 namespace DrugSchedule.Services.Services;
 
 public class UserContactsService : IUserContactsService
 {
-    private readonly IDownloadableFileConverter _downloadableFileConverter;
     private readonly ICurrentUserIdentifier _currentUserIdentifier;
     private readonly IUserContactRepository _contactsRepository;
     private readonly IUserProfileRepository _profileRepository;
     private readonly IIdentityRepository _identityRepository;
+    private readonly IUserContactConverter _converter;
 
-    public UserContactsService(ICurrentUserIdentifier currentUserIdentifier, IFileService fileService, IDownloadableFileConverter downloadableFileConverter, IUserContactRepository contactsRepository, IUserProfileRepository profileRepository, IIdentityRepository identityRepository)
+    public UserContactsService(ICurrentUserIdentifier currentUserIdentifier, IFileService fileService, IUserContactRepository contactsRepository, IUserProfileRepository profileRepository, IIdentityRepository identityRepository, IUserContactConverter converter)
     {
         _currentUserIdentifier = currentUserIdentifier;
-        _downloadableFileConverter = downloadableFileConverter;
         _contactsRepository = contactsRepository;
         _profileRepository = profileRepository;
         _identityRepository = identityRepository;
+        _converter = converter;
     }
 
 
-    public async Task<OneOf<Models_UserContact, NotFound>> GetContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<Models.UserContact, NotFound>> GetContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
     {
         var contact = await _contactsRepository.GetContactAsync(_currentUserIdentifier.UserProfileId, contactProfileId, cancellationToken);
         if (contact == null)
@@ -37,7 +34,7 @@ public class UserContactsService : IUserContactsService
         }
 
         var identity = await _identityRepository.GetUserIdentityAsync(contact.Profile.UserIdentityGuid, cancellationToken);
-        var contactModel = BuildContactModel(contact, identity!);
+        var contactModel = _converter.ToContactExtended(contact, identity!);
         return contactModel;
     }
 
@@ -50,7 +47,7 @@ public class UserContactsService : IUserContactsService
         var contactModelList = (
              from c in contacts
              join i in identities on c.Profile.UserIdentityGuid equals i.Guid
-             select BuildContactModel(c, i)
+             select _converter.ToContactExtended(c, i)
                  ).ToList();
         return new UserContactsCollection
         {
@@ -58,20 +55,12 @@ public class UserContactsService : IUserContactsService
         };
     }
 
+
     public async Task<UserContactsSimpleCollection> GetContactsSimpleAsync(bool commonOnly, CancellationToken cancellationToken = default)
     {
         var contacts = await _contactsRepository.GetContactsSimpleAsync(_currentUserIdentifier.UserProfileId, commonOnly, cancellationToken);
-        var model = new UserContactsSimpleCollection
-        {
-            Contacts = contacts.ConvertAll(c => new Models.UserContactSimple
-            {
-                UserProfileId = c.ContactProfileId,
-                СontactName = c.CustomName,
-                IsCommon = c.IsCommon,
-                ThumbnailUrl = _downloadableFileConverter.ToThumbLink(c.Avatar, FileCategory.UserAvatar.IsPublic())
-            })
-        };
-        return model;
+        var collection = _converter.ToContactSimpleCollection(contacts);
+        return collection;
     }
 
 
@@ -118,20 +107,4 @@ public class UserContactsService : IUserContactsService
 
         return new True();
     }
-
-
-    private Models.UserContact BuildContactModel(StorageContract.Data.UserContact contact, UserIdentity identity) => new Models_UserContact
-    {
-        IsCommon = contact.IsCommon,
-        HasSharedBy = contact.HasSharedBy,
-        HasSharedWith = contact.HasSharedWith,
-        UserProfileId = contact.Profile.UserProfileId,
-        Username = identity!.Username!,
-        СontactName = contact.CustomName,
-        RealName = contact.Profile.RealName,
-        Avatar = _downloadableFileConverter.ToFileModel(contact.Profile.Avatar,
-                FileCategory.UserMedicamentImage.IsPublic()),
-        DateOfBirth = contact.IsCommon ? contact.Profile.DateOfBirth : null,
-        Sex = contact.IsCommon ? contact.Profile.Sex : null
-    };
 }

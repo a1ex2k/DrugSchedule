@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using DrugSchedule.Services.Models;
-
-namespace DrugSchedule.StorageContract.Data;
+﻿namespace DrugSchedule.Services.Models;
 
 public class TakingСonfirmation
 {

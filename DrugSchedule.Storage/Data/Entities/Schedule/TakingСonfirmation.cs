@@ -4,7 +4,13 @@ public class TakingСonfirmation
 {
     public long Id { get; set; }
 
-    public required DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public DateOnly ForDate { get; set; }
+
+    public DateOnly ForTime { get; set; }
+    
+    public Contract.TimeOfDay ForTimeOfDay { get; set; }
 
     public List<TakingСonfirmationFile> Files { get; set; } = new();
 
