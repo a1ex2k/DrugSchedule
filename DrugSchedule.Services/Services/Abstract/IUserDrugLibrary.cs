@@ -1,5 +1,4 @@
-﻿using DrugSchedule.Services.Errors;
-using DrugSchedule.Services.Models;
+﻿using DrugSchedule.Services.Models;
 using DrugSchedule.StorageContract.Data;
 using OneOf.Types;
 

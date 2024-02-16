@@ -1,6 +1,4 @@
-﻿using DrugSchedule.Services.Models;
-
-namespace DrugSchedule.StorageContract.Data;
+﻿namespace DrugSchedule.Services.Models;
 
 public class ScheduleSimple
 {
@@ -11,6 +9,8 @@ public class ScheduleSimple
     public string? MedicamentReleaseFormName { get; set; }
 
     public string? ThumbnailUrl { get; set; }
+
+    public UserContactSimple? OwnerContact { get; set; }
 
     public required DateTime CreatedAt { get; set; }
 

@@ -1,12 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace DrugSchedule.StorageContract.Data;
 
 public class TakingConfirmationFilter : FilterBase
 {
-    public required long? RepeatId { get; set; }
+    public required List<long>? RepeatIds { get; set; }
 
     public required long ScheduleId { get; set; }
 
-    public required DateOnly LastDate { get; set; }
 }

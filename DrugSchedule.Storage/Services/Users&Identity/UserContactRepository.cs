@@ -45,6 +45,17 @@ public class UserContactRepository : IUserContactRepository
         return contacts;
     }
 
+    public async Task<UserContactSimple?> GetContactSimpleAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default)
+    {
+        var contact = await _dbContext.UserProfileContacts
+            .Where(c => c.UserProfileId == userProfileId)
+            .Where(c => c.ContactProfileId == contactProfileId)
+            .Select(EntityMapExpressions.ToContactSimple(_dbContext))
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return contact;
+    }
+
 
     public async Task<List<UserContactSimple>> GetContactsSimpleAsync(long userProfileId, bool commonOnly,
         CancellationToken cancellationToken = default)

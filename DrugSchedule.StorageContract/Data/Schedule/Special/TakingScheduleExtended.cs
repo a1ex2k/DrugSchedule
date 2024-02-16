@@ -7,7 +7,7 @@ public class TakingScheduleExtended
 {
     public long Id { get; set; }
 
-    public long OwnerProfileId { get; set; }
+    public UserContactSimple? ContactOwner { get; set; }
 
     public MedicamentSimple? GlobalMedicament { get; set; }
 
@@ -21,5 +21,5 @@ public class TakingScheduleExtended
 
     public List<ScheduleRepeatPlain> ScheduleRepeats { get; set; } = new();
 
-    public List<ScheduleShareExtended> ScheduleShares { get; set; } = new();
+    public List<ScheduleShareExtended>? ScheduleShares { get; set; } = new();
 }
