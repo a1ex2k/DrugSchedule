@@ -11,4 +11,8 @@ public class TakingScheduleFilter : FilterBase
     public List<long>? UserMedicamentIdFilter { get; set; }
 
     public bool? EnabledFilter { get; set; }
+
+    public long? ContactProfileId { get; set; }
+
+    public bool OwnedOnly { get; set; }
 }

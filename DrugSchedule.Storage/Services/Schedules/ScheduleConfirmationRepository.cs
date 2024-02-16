@@ -18,8 +18,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         _logger = logger;
     }
 
-    public async Task<Contract.TakingСonfirmationPlain?> GetConfirmationAsync(long id,
-        CancellationToken cancellationToken = default)
+    public async Task<Contract.TakingСonfirmationPlain?> GetConfirmationAsync(long id, CancellationToken cancellationToken = default)
     {
         var confirmation = await _dbContext.TakingСonfirmations
             .Where(s => s.Id == id)
@@ -28,8 +27,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return confirmation;
     }
 
-    public async Task<List<Contract.TakingСonfirmationPlain>> GetConfirmationsAsync(long repeatId,
-        CancellationToken cancellationToken = default)
+    public async Task<List<Contract.TakingСonfirmationPlain>> GetConfirmationsAsync(long repeatId, CancellationToken cancellationToken = default)
     {
         var confirmations = await _dbContext.TakingСonfirmations
             .Where(s => s.ScheduleRepeatId == repeatId)
@@ -38,22 +36,23 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return confirmations;
     }
 
-    public async Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long scheduleId,
-        CancellationToken cancellationToken = default)
+    public async Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long scheduleId, CancellationToken cancellationToken = default)
     {
         var exists = await _dbContext.TakingСonfirmations
-            .Where(s => s.Id == confirmationId && s.ScheduleRepeatId == repeatId)
+                        .Where(s => s.Id == confirmationId && s.ScheduleRepeatId == repeatId)
             .Where(s => s.ScheduleRepeat!.MedicamentTakingScheduleId == scheduleId)
             .AnyAsync(cancellationToken);
         return exists;
     }
 
-    public async Task<Contract.TakingСonfirmationPlain?> CreateConfirmationAsync(
-        Contract.TakingСonfirmationPlain confirmation, CancellationToken cancellationToken = default)
+    public async Task<Contract.TakingСonfirmationPlain?> CreateConfirmationAsync(Contract.TakingСonfirmationPlain confirmation, CancellationToken cancellationToken = default)
     {
         var entity = new Entities.TakingСonfirmation
         {
             CreatedAt = confirmation.CreatedAt,
+            ForDate = confirmation.ForDate,
+            ForTime = confirmation.ForTime,
+            ForTimeOfDay = confirmation.ForTimeOfDay,
             Text = confirmation.Text,
             ScheduleRepeatId = confirmation.ScheduleRepeatId,
         };
@@ -69,9 +68,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.TakingСonfirmationPlain?> UpdateConfirmationAsync(
-        Contract.TakingСonfirmationPlain confirmation, TakingСonfirmationUpdateFlags updateFlags,
-        CancellationToken cancellationToken = default)
+    public async Task<Contract.TakingСonfirmationPlain?> UpdateConfirmationAsync(Contract.TakingСonfirmationPlain confirmation, TakingСonfirmationUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.TakingСonfirmations
             .Include(c => c.Files)
@@ -79,14 +76,16 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
 
         if (entity == null) return null;
 
-        if (updateFlags.Text)
-        {
-            entity.Text = confirmation.Text;
-        }
+        var entry = _dbContext.Entry(entity);
+        entry.UpdateIf(x => x.Text, confirmation.Text, updateFlags.Text);
+        entry.UpdateIf(x => x.ForDate, confirmation.ForDate, updateFlags.ForDate);
+        entry.UpdateIf(x => x.ForTime, confirmation.ForTime, updateFlags.ForTime);
+        entry.UpdateIf(x => x.ForTimeOfDay, confirmation.ForTimeOfDay, updateFlags.ForTimeOfDay);
+        entry.UpdateIf(x => x.Text, confirmation.Text, updateFlags.Text);
 
         if (updateFlags.Images)
         {
-            entity.Files.RemoveAndAddExceptExistingByKey(confirmation.ImagesGuids,
+            entity.Files.RemoveAndAddExceptExistingByKey(confirmation.ImagesGuids, 
                 existing => existing.FileGuid, guid => guid,
                 guid => new Entities.TakingСonfirmationFile { FileGuid = guid });
         }
@@ -96,8 +95,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveConfirmationAsync(long id,
-        CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveConfirmationAsync(long id, CancellationToken cancellationToken = default)
     {
         var deletedCount = await _dbContext.TakingСonfirmationFiles
             .Where(e => e.Id == id)
@@ -106,8 +104,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return deletedCount > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
     }
 
-    public async Task<Guid?> AddConfirmationImageAsync(long id, Guid fileGuid,
-        CancellationToken cancellationToken = default)
+    public async Task<Guid?> AddConfirmationImageAsync(long id, Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var entity = new Entities.TakingСonfirmationFile
         {
@@ -120,8 +117,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return saved ? fileGuid : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveConfirmationImageAsync(long id, Guid fileGuid,
-        CancellationToken cancellationToken = default)
+    public async Task<Contract.RemoveOperationResult> RemoveConfirmationImageAsync(long id, Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var deletedCount = await _dbContext.TakingСonfirmationFiles
             .Where(f => f.TakingСonfirmationId == id && f.FileGuid == fileGuid)

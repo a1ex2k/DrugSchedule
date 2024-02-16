@@ -2,5 +2,5 @@
 
 public class TakingСonfirmationCollection
 {
-    public List<TakingСonfirmation> Confirmations { get; set; } = new();
+    public List<Services.Models.TakingСonfirmation> Confirmations { get; set; } = new();
 }

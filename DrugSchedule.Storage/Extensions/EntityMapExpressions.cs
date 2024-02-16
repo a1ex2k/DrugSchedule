@@ -1,10 +1,8 @@
-﻿using System.IO;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Data.Entities;
 using DrugSchedule.StorageContract.Data;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace DrugSchedule.Storage.Extensions;
 
@@ -181,9 +179,13 @@ public static class EntityMapExpressions
         {
             Id = s.Id,
             CreatedAt = s.CreatedAt,
-            ImagesGuids = s.Files.Select(c => c.FileGuid).ToList(),
+            ImagesGuids = s.Files.Select(c => c.FileGuid)
+                .ToList(),
             Text = s.Text,
             ScheduleRepeatId = s.ScheduleRepeatId,
+            ForDate = s.ForDate,
+            ForTime = s.ForTime,
+            ForTimeOfDay = s.ForTimeOfDay,
         };
 
 
@@ -191,15 +193,19 @@ public static class EntityMapExpressions
         => s => new Contract.TakingСonfirmation
         {
             Id = s.Id,
+            RepeatId = s.ScheduleRepeatId,
             CreatedAt = s.CreatedAt,
             Images = s.Files
                 .Select(c => c.FileInfo!).AsQueryable()
                 .Select(ToFileInfo).ToList(),
             Text = s.Text,
+            ForDate = s.ForDate,
+            ForTime = s.ForTime,
+            ForTimeOfDay = s.ForTimeOfDay,
         };
 
 
-    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleSimple>> ToScheduleSimple
+    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleSimple>> ToScheduleSimpleOwned
         => s => new Contract.TakingScheduleSimple
         {
             Id = s.Id,
@@ -219,7 +225,32 @@ public static class EntityMapExpressions
         };
 
 
-    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleExtended>> ToScheduleExtended(DrugScheduleContext context)
+    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleSimple>> ToScheduleSimple(DrugScheduleContext context, long userId)
+        => s => new Contract.TakingScheduleSimple
+        {
+            Id = s.Id,
+            MedicamentName = s.UserMedicamentId == null
+                ? s.GlobalMedicament!.Name
+                : s.UserMedicament!.Name,
+            MedicamentReleaseFormName = s.UserMedicamentId == null
+                ? s.GlobalMedicament!.ReleaseForm!.Name
+                : s.UserMedicament!.ReleaseForm,
+            MedicamentImage = s.GlobalMedicament!.Files.Select(f => f.FileInfo!)
+                .AsQueryable()
+                .Union(s.UserMedicament!.Files.Select(f => f.FileInfo!))
+                .Select(ToFileInfo)
+                .FirstOrDefault(),
+            ContactOwner = s.UserProfileId == userId ? null : context.UserProfileContacts
+                .Where(c => c.UserProfileId == userId && c.ContactProfileId == s.UserProfileId)
+                .Select(ToContactSimple(context))
+                .FirstOrDefault(),
+            CreatedAt = s.CreatedAt,
+            Enabled = s.Enabled
+        };
+
+
+
+    public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleExtended>> ToScheduleExtended(DrugScheduleContext context, long userId)
         => s => new Contract.TakingScheduleExtended
         {
             Id = s.Id,
@@ -232,11 +263,14 @@ public static class EntityMapExpressions
                 .AsQueryable()
                 .Select(ToScheduleRepeatPlain)
                 .ToList(),
-            ScheduleShares = s.ScheduleShares
+            ContactOwner = s.UserProfileId == userId ? null : context.UserProfileContacts
+                .Where(c => c.UserProfileId == userId && c.ContactProfileId == s.UserProfileId)
+                .Select(ToContactSimple(context))
+                .FirstOrDefault(),
+            ScheduleShares = s.UserProfileId != userId ? null : s.ScheduleShares
                 .AsQueryable()
                 .Select(ToScheduleShare(context))
-                .ToList(),
-            OwnerProfileId = s.UserProfileId
+                .ToList()
         };
 
 

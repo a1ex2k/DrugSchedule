@@ -3,7 +3,7 @@ using DrugSchedule.Services.Services.Abstractions;
 
 namespace DrugSchedule.Services.Services;
 
-public class DownloadableFileConverter : IDownloadableFileConverter
+public class DownloadableFileConverter : Converters.IDownloadableFileConverter
 {
     private readonly IFileUrlProvider _fileUrlProvider;
 

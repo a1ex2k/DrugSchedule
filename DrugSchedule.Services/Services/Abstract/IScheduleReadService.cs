@@ -1,5 +1,5 @@
-﻿using DrugSchedule.Services.Errors;
-using DrugSchedule.Services.Models;
+﻿using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Models.Schedule;
 using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.Services.Services;
@@ -16,7 +16,5 @@ public interface IScheduleReadService
     
     Task<ScheduleExtendedCollection> GetSchedulesExtendedAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default);
     
-    Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(long confirmationId, long scheduleId, CancellationToken cancellationToken = default);
-
-    Task<TakingСonfirmationCollection> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default);
+    Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default);
 }
