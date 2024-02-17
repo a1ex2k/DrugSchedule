@@ -4,7 +4,7 @@ using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.Services.Converters;
 
-internal class UserMedicamentConverter : IUserMedicamentConverter
+public class UserMedicamentConverter : IUserMedicamentConverter
 {
     private readonly IDownloadableFileConverter _downloadableFileConverter;
     private readonly IGlobalMedicamentConverter _globalMedicamentConverter;

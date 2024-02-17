@@ -1,24 +1,30 @@
 ﻿using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
+using System;
 using TakingScheduleExtended = DrugSchedule.Services.Models.TakingScheduleExtended;
-using UserContactSimple = DrugSchedule.StorageContract.Data.UserContactSimple;
 
 namespace DrugSchedule.Services.Services;
 
-public class ScheduleReadService : IScheduleReadService
+public class ScheduleService : IScheduleService
 {
     private readonly ISharedDataRepository _sharedDataRepository;
+    private readonly IScheduleRepository _scheduleRepository;
     private readonly ICurrentUserIdentifier _currentUserIdentifier;
+    private readonly ITimetableBuilder _timetableBuilder;
     private readonly IScheduleConverter _converter;
 
-    public ScheduleReadService(ISharedDataRepository scheduleRepository, ICurrentUserIdentifier currentUserIdentifier, IScheduleConverter converter)
+
+    public ScheduleService(ISharedDataRepository scheduleRepository, ICurrentUserIdentifier currentUserIdentifier, IScheduleConverter converter, ITimetableBuilder timetableBuilder, IScheduleRepository scheduleRepository1)
     {
         _sharedDataRepository = scheduleRepository;
         _currentUserIdentifier = currentUserIdentifier;
         _converter = converter;
+        _timetableBuilder = timetableBuilder;
+        _scheduleRepository = scheduleRepository1;
     }
 
 
@@ -85,11 +91,8 @@ public class ScheduleReadService : IScheduleReadService
 
     public async Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default)
     {
-        var checkResult =
-            await _sharedDataRepository.GetOwnOrSharedSchedulesIdsAsync(filter.ScheduleId, _currentUserIdentifier.UserProfileId,
-                cancellationToken);
-
-        if (checkResult == null)
+        var isAccessable = await DoesExistAndUserHasAccessAsync(filter.ScheduleId, cancellationToken);
+        if (!isAccessable)
         {
             return new NotFound("Schedule was not found or current user doesn't have permissions to access");
         }
@@ -97,4 +100,59 @@ public class ScheduleReadService : IScheduleReadService
         var confirmations = await _sharedDataRepository.GetTakingConfirmationsAsync(filter, cancellationToken);
         return _converter.ToСonfirmationCollection(confirmations);
     }
+
+
+    public async Task<OneOf<Timetable, InvalidInput>> GetTimetableAsync(DateOnly minDate, DateOnly maxDate, CancellationToken cancellationToken = default)
+    {
+        var datesAreValid = minDate <= maxDate && minDate.AddDays(32) >= maxDate;
+        if (!datesAreValid)
+        {
+            return new InvalidInput("Invalid dates. Minimum and maximum dates difference must be 32 days or less");
+        }
+
+        var scheduleIds =
+            await _scheduleRepository.GetUserSchedulesIdsAsync(_currentUserIdentifier.UserProfileId, cancellationToken);
+
+        if (scheduleIds.Count == 0)
+        {
+            return new Timetable();
+        }
+
+        var timetableEntries =
+            await _timetableBuilder.GetScheduleTimetableAsync(scheduleIds, minDate, maxDate, true, cancellationToken);
+
+        return new Timetable { TimetableEntries = timetableEntries };
     }
+
+
+    public async Task<OneOf<Timetable, NotFound, InvalidInput>> GetScheduleTimetableAsync(long scheduleId, DateOnly minDate, DateOnly maxDate, CancellationToken cancellationToken = default)
+    {
+        var datesAreValid = minDate <= maxDate && minDate.AddDays(32) >= maxDate;
+        if (!datesAreValid)
+        {
+            return new InvalidInput("Invalid dates. Minimum and maximum dates difference must be 32 days or less");
+        }
+
+        var hasAccess = await DoesExistAndUserHasAccessAsync(scheduleId, cancellationToken);
+        if (!hasAccess)
+        {
+            return new NotFound("Schedule was not found or current user doesn't have permissions to access");
+        }
+
+        var timetableEntries =
+            await _timetableBuilder.GetScheduleTimetableAsync([scheduleId], minDate, maxDate, true, cancellationToken);
+
+        return new Timetable { TimetableEntries = timetableEntries };
+    }
+
+
+    private async Task<bool> DoesExistAndUserHasAccessAsync(long scheduleId, CancellationToken cancellationToken)
+    {
+        var checkResult =
+            await _sharedDataRepository.GetOwnOrSharedScheduleIdAsync(scheduleId, _currentUserIdentifier.UserProfileId,
+                cancellationToken);
+
+        return checkResult is not null && 
+               (checkResult.OwnerId == _currentUserIdentifier.UserProfileId || checkResult.IsSharedWith);
+    }
+}

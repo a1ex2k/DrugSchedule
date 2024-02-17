@@ -2,17 +2,19 @@
 using DrugSchedule.Storage.Data.Entities;
 using DrugSchedule.Storage.Extensions;
 using DrugSchedule.StorageContract.Abstractions;
+using DrugSchedule.StorageContract.Data;
+using DrugSchedule.StorageContract.Data.Schedule.Tool;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace DrugSchedule.Storage.Services;
 
-public class SharedDataRepository : ISharedDataRepository
+public class ScheduleSpecialRepository : ISharedDataRepository
 {
     private readonly DrugScheduleContext _dbContext;
-    private readonly ILogger<SharedDataRepository> _logger;
+    private readonly ILogger<ScheduleSpecialRepository> _logger;
 
-    public SharedDataRepository(DrugScheduleContext dbContext, ILogger<SharedDataRepository> logger)
+    public ScheduleSpecialRepository(DrugScheduleContext dbContext, ILogger<ScheduleSpecialRepository> logger)
     {
         _dbContext = dbContext;
         _logger = logger;
@@ -123,7 +125,8 @@ public class SharedDataRepository : ISharedDataRepository
                 .Any(share => share.ShareWithContact!.ContactProfileId == userId));
         }
 
-        var schedules = await schedulesQuery.OrderByDescending(s => s.CreatedAt)
+        var schedules = await schedulesQuery
+            .OrderByDescending(s => s.CreatedAt)
             .WithPaging(filter)
             .Select(EntityMapExpressions.ToScheduleExtended(_dbContext, userId))
             .ToListAsync(cancellationToken);
@@ -131,17 +134,28 @@ public class SharedDataRepository : ISharedDataRepository
         return schedules;
     }
 
-    public async Task<Contract.UserMedicament?> GetSharedUserMedicament(long userMedicamentId, long shareProfileId,
+    public async Task<Contract.UserMedicamentExtended?> GetSharedUserMedicament(long userMedicamentId, long mustBeSharedWithProfileId,
         CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
             .Where(m => m.Id == userMedicamentId)
             .Where(m => _dbContext.ScheduleShare
-                .Any(s => s.ShareWithContact!.UserProfileId == shareProfileId))
-            .Select(EntityMapExpressions.ToUserMedicament)
+                .Any(s => s.ShareWithContact!.UserProfileId == mustBeSharedWithProfileId))
+            .Select(EntityMapExpressions.ToUserMedicamentExtended(true))
             .FirstOrDefaultAsync(cancellationToken);
 
         return medicament;
+    }
+
+    public async Task<List<long>> GetSharedScheduleIds(long userId, CancellationToken cancellationToken = default)
+    {
+        var ids = await _dbContext.MedicamentTakingSchedules
+            .Where(m => _dbContext.ScheduleShare
+                .Any(s => s.ShareWithContact!.UserProfileId == userId))
+            .Select(s => s.Id)
+            .ToListAsync(cancellationToken);
+
+        return ids;
     }
 
 
@@ -151,6 +165,8 @@ public class SharedDataRepository : ISharedDataRepository
         var confirmations = await _dbContext.TakingСonfirmations
             .WithFilter(c => c.ScheduleRepeatId, filter.RepeatIds)
             .Where(c => c.ScheduleRepeat!.MedicamentTakingScheduleId == filter.ScheduleId)
+            .WhereIf(filter.ForDateMin != null, c => c.ForDate >= filter.ForDateMin)
+            .WhereIf(filter.ForDateMax != null, c => c.ForDate <= filter.ForDateMax)
             .OrderByDescending(c => c.ForDate)
             .ThenByDescending(c => c.ForTimeOfDay)
             .ThenByDescending(c => c.ForTime)
@@ -162,7 +178,7 @@ public class SharedDataRepository : ISharedDataRepository
     }
 
 
-    public async Task<Contract.ScheduleAccessCheck?> GetOwnOrSharedSchedulesIdsAsync(long scheduleId, long ownerOrShareProfileId,
+    public async Task<Contract.ScheduleAccessCheck?> GetOwnOrSharedScheduleIdAsync(long scheduleId, long ownerOrShareProfileId,
         CancellationToken cancellationToken = default)
     {
         var result = await _dbContext.MedicamentTakingSchedules
@@ -180,7 +196,7 @@ public class SharedDataRepository : ISharedDataRepository
     }
 
 
-    public async Task<List<Contract.ScheduleAccessCheck>> GetOwnOrSharedSchedulesIdsAsync(List<long> scheduleIds, long ownerOrShareProfileId,
+    public async Task<List<Contract.ScheduleAccessCheck>> GetOwnOrSharedSchedulesIdsAsync(List<long>? scheduleIds, long ownerOrShareProfileId,
         CancellationToken cancellationToken = default)
     {
         var result = await _dbContext.MedicamentTakingSchedules

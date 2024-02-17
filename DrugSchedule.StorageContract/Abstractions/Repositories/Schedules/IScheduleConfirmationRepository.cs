@@ -10,8 +10,6 @@ public interface IScheduleConfirmationRepository
 {
     public Task<TakingСonfirmationPlain?> GetConfirmationAsync(long id, CancellationToken cancellationToken = default);
 
-    public Task<List<TakingСonfirmationPlain>> GetConfirmationsAsync(long repeatId, CancellationToken cancellationToken = default);
-
     public Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long scheduleId, CancellationToken cancellationToken = default);
 
     public Task<TakingСonfirmationPlain?> CreateConfirmationAsync(TakingСonfirmationPlain confirmation, CancellationToken cancellationToken = default);
@@ -23,4 +21,8 @@ public interface IScheduleConfirmationRepository
     public Task<Guid?> AddConfirmationImageAsync(long id, Guid fileGuid, CancellationToken cancellationToken = default);
 
     public Task<RemoveOperationResult> RemoveConfirmationImageAsync(long id, Guid fileGuid, CancellationToken cancellationToken = default);
+
+    public Task<bool> AnyConfirmationExistsAsync(List<long> repeatIds, CancellationToken cancellationToken = default);
+
+    public Task<List<TakingСonfirmationTimetableTrimmed>> GetTakingConfirmationsForTimetableAsync(List<long> repeatIds, CancellationToken cancellationToken = default);
 }

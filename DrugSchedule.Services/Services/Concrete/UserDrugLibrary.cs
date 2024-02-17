@@ -13,12 +13,13 @@ public class UserDrugLibrary : IUserDrugLibrary
     private readonly ICurrentUserIdentifier _currentUserIdentifier;
     private readonly IUserDrugRepository _userDrugRepository;
     private readonly IReadonlyDrugRepository _drugRepository;
+    private readonly ISharedDataRepository _sharedRepository;
     private readonly IFileService _fileService;
     private readonly IUserMedicamentConverter _converter;
     private readonly IDownloadableFileConverter _downloadableFileConverter;
 
     public UserDrugLibrary(IFileService fileService, ICurrentUserIdentifier currentUserIdentifier,
-        IUserDrugRepository userDrugRepository, IReadonlyDrugRepository drugRepository, IUserMedicamentConverter converter, IDownloadableFileConverter downloadableFileConverter)
+        IUserDrugRepository userDrugRepository, IReadonlyDrugRepository drugRepository, IUserMedicamentConverter converter, IDownloadableFileConverter downloadableFileConverter, ISharedDataRepository sharedRepository)
     {
         _fileService = fileService;
         _currentUserIdentifier = currentUserIdentifier;
@@ -26,6 +27,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         _drugRepository = drugRepository;
         _converter = converter;
         _downloadableFileConverter = downloadableFileConverter;
+        _sharedRepository = sharedRepository;
     }
 
     public async Task<OneOf<UserMedicamentExtendedModel, NotFound>> GetMedicamentExtendedAsync(long id,
@@ -91,7 +93,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         return _converter.ToUserMedicamentSimpleCollection(medicaments);
     }
 
-    public async Task<OneOf<UserMedicamentUpdate, InvalidInput>> CreateMedicamentAsync(NewUserMedicament model, CancellationToken cancellationToken = default)
+    public async Task<OneOf<UserMedicamentId, InvalidInput>> CreateMedicamentAsync(NewUserMedicament model, CancellationToken cancellationToken = default)
     {
         var invalidInput = new InvalidInput();
         if (model.BasicMedicamentId != null)
@@ -127,10 +129,10 @@ public class UserDrugLibrary : IUserDrugLibrary
         };
 
         var savedMedicament = await _userDrugRepository.CreateMedicamentAsync(medicament, cancellationToken);
-        return _converter.ToUpdateResultModel(savedMedicament!);
+        return (UserMedicamentId)savedMedicament!.Id;
     }
 
-    public async Task<OneOf<UserMedicamentUpdate, NotFound, InvalidInput>> UpdateMedicamentAsync(UserMedicamentUpdate model, CancellationToken cancellationToken = default)
+    public async Task<OneOf<UserMedicamentId, NotFound, InvalidInput>> UpdateMedicamentAsync(UserMedicamentUpdate model, CancellationToken cancellationToken = default)
     {
         var medicament =
             await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, model.Id,
@@ -141,46 +143,46 @@ public class UserDrugLibrary : IUserDrugLibrary
         }
 
         var invalidInput = new InvalidInput();
-        if (model.BasicMedicamentId != null && model.BasicMedicamentId != 0)
+        if (model.BasicMedicamentId != null)
         {
             var exists = await _drugRepository.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
-                invalidInput.Add("Base medicament with provided ID not found. To remove, set BasicMedicamentId=0");
+                invalidInput.Add("Base medicament with provided ID not found");
             }
         }
 
-        if (model.Name != null && string.IsNullOrWhiteSpace(model.Name))
+        if (string.IsNullOrWhiteSpace(model.Name))
         {
-            invalidInput.Add("Name must be non white space. Set null to keep current");
+            invalidInput.Add("Name must be non white space");
         }
 
-        if (model.ReleaseForm != null && string.IsNullOrWhiteSpace(model.ReleaseForm))
+        if (string.IsNullOrWhiteSpace(model.ReleaseForm))
         {
-            invalidInput.Add("ReleaseForm must be non white space. Set null to keep current");
+            invalidInput.Add("ReleaseForm must be non white space");
         }
 
         if (invalidInput.HasMessages) return invalidInput;
 
         var updateFlags = new UserMedicamentUpdateFlags
         {
-            BasedOnMedicament = model.BasicMedicamentId != null,
-            Name = model.Name != null,
-            Description = model.Description != null,
-            Composition = model.Composition != null,
-            ReleaseForm = model.ReleaseForm != null,
-            ManufacturerName = model.ManufacturerName != null,
+            BasedOnMedicament = true,
+            Name = true,
+            Description = true,
+            Composition = true,
+            ReleaseForm = true,
+            ManufacturerName = true,
         };
 
         medicament.BasicMedicamentId = model.BasicMedicamentId;
-        medicament.Name = model.Name!.Trim();
-        medicament.ReleaseForm = model.ReleaseForm!.Trim();
+        medicament.Name = model.Name.Trim();
+        medicament.ReleaseForm = model.ReleaseForm.Trim();
         medicament.Description = model.Description?.Trim();
         medicament.Composition = model.Composition?.Trim();
         medicament.ManufacturerName = model.ManufacturerName?.Trim();
 
         var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);
-        return _converter.ToUpdateResultModel(savedMedicament!);
+        return (UserMedicamentId)savedMedicament!.Id;
     }
 
     public async Task<OneOf<True, NotFound, InvalidInput>> RemoveMedicamentAsync(long id, CancellationToken cancellationToken = default)
@@ -243,6 +245,27 @@ public class UserDrugLibrary : IUserDrugLibrary
         }
         return new True();
     }
+
+    public async Task<OneOf<UserMedicamentExtendedModel, NotFound>> GetSharedUserMedicamentAsync(long userMedicamentId, CancellationToken cancellationToken = default)
+    {
+        var medicament = await _sharedRepository.GetSharedUserMedicament(userMedicamentId,
+            _currentUserIdentifier.UserProfileId, cancellationToken);
+
+        if (medicament == null)
+        {
+            return new NotFound("Shared user medicament was not found or current user doesn't have permissions to access");
+        }
+
+        if (medicament.BasicMedicamentId == null)
+        {
+            return _converter.ToUserMedicamentExtended(medicament, null);
+        }
+
+        var globalMedicament = await _drugRepository.GetMedicamentExtendedByIdAsync(medicament.BasicMedicamentId.Value, true, cancellationToken);
+
+        return _converter.ToUserMedicamentExtended(medicament, globalMedicament);
+    }
+
 
     private async Task<OneOf<FileInfo, InvalidInput>> CreateFileAsync(InputFile inputFile, CancellationToken cancellationToken)
     {

@@ -205,6 +205,16 @@ public static class EntityMapExpressions
         };
 
 
+    public static Expression<Func<Entities.TakingСonfirmation, Contract.TakingСonfirmationTimetableTrimmed>> ToScheduleConfirmationTimetable
+        => s => new Contract.TakingСonfirmationTimetableTrimmed
+        {
+            Id = s.Id,
+            ForDate = s.ForDate,
+            ForTime = s.ForTime,
+            ForTimeOfDay = s.ForTimeOfDay,
+        };
+
+
     public static Expression<Func<Entities.MedicamentTakingSchedule, Contract.TakingScheduleSimple>> ToScheduleSimpleOwned
         => s => new Contract.TakingScheduleSimple
         {

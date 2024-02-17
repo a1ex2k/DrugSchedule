@@ -59,9 +59,9 @@ public class IdentityRepository : IIdentityRepository
         var identityUsers = await _dbContext.Users
             .WithFilter(i => i.Id, guids)
             .WithFilter(i => i.UserName!, filter.UsernameFilter)
+            .OrderBy(i => i.UserName)
             .WithPaging(filter)
             .Select(EntityMapExpressions.ToIdentity)
-            .OrderBy(identity3 => identity3.Username)
             .ToListAsync(cancellationToken);
         return identityUsers;
     }

@@ -1,18 +1,18 @@
 using System.Text;
 using DrugSchedule.Api.FileAccessProvider;
 using DrugSchedule.Api.Middlwares;
+using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Options;
 using DrugSchedule.Services.Services;
 using DrugSchedule.Services.Services.Abstractions;
-using DrugSchedule.Storage;
 using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Services;
-using DrugSchedule.Storage.Services.Medicaments;
 using DrugSchedule.StorageContract.Abstractions;
 using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TokenService = DrugSchedule.Api.Jwt.TokenService;
@@ -25,17 +25,33 @@ builder.Configuration.AddJsonFile("appsettings.local.json", true);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddMapster();
-builder.Services.AddScoped<IFileAccessService, FileAccessService>();
+builder.Services.AddSingleton<IFileAccessService, FileAccessService>();
 builder.Services.AddScoped<CurrentUserMiddleware>();
 
 builder.Services.AddScoped<IFileInfoRepository, FileInfoRepository>();
-builder.Services.AddScoped<IFileStorage, FileStorageService>();
 builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IReadonlyDrugRepository, DrugRepository>();
 builder.Services.AddScoped<IUserDrugRepository, UserDrugRepository>();
 builder.Services.AddScoped<IUserContactRepository, UserContactRepository>();
+builder.Services.AddScoped<ISharedDataRepository, ScheduleSpecialRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
+builder.Services.AddScoped<IScheduleConfirmationRepository, ScheduleConfirmationRepository>();
+builder.Services.AddScoped<IScheduleShareRepository, ScheduleShareRepository>();
+builder.Services.AddScoped<IScheduleRepeatRepository, ScheduleRepeatRepository>();
+
+builder.Services.AddSingleton<IDownloadableFileConverter, DownloadableFileConverter>();
+builder.Services.AddSingleton<IUserContactConverter, UserContactConverter>();
+builder.Services.AddSingleton<IGlobalMedicamentConverter, GlobalMedicamentConverter>();
+builder.Services.AddSingleton<IUserMedicamentConverter, UserMedicamentConverter>();
+builder.Services.AddSingleton<IScheduleConverter, ScheduleConverter>();
+
+builder.Services.AddSingleton<IFileUrlProvider, FileUrlProvider>();
+builder.Services.AddSingleton<IFileProcessor, FileParamsProcessor>();
+builder.Services.AddSingleton<IThumbnailService, ThumbnailService>();
+builder.Services.AddSingleton<IFileStorage, FileStorageService>();
+builder.Services.AddSingleton<ITimetableBuilder, TimetableBuilder>();
 
 builder.Services.AddScoped<ICurrentUserIdentifier, CurrentUserIdentifier>();
 builder.Services.AddScoped<ITokenService, TokenService>();
@@ -43,10 +59,7 @@ builder.Services.AddScoped<IIdentityService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserContactsService, UserContactsService>();
 builder.Services.AddScoped<IFileService, FileService>();
-builder.Services.AddScoped<IFileUrlProvider, FileUrlProvider>();
-builder.Services.AddScoped<IDownloadableFileConverter, DownloadableFileConverter>();
-builder.Services.AddScoped<IFileProcessor, FileParamsProcessor>();
-builder.Services.AddScoped<IThumbnailService, ThumbnailService>();
+
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 builder.Services.AddScoped<IUserDrugLibrary, UserDrugLibrary>();
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
