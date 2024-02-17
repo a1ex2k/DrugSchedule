@@ -20,5 +20,7 @@ public interface ISharedDataRepository : IScheduleAccessChecker
     public Task<List<TakingСonfirmation>> GetTakingConfirmationsAsync(TakingConfirmationFilter filter,
         CancellationToken cancellationToken = default);
 
-    public Task<UserMedicament?> GetSharedUserMedicament(long userMedicamentId, long shareProfileId, CancellationToken cancellationToken = default);
+    public Task<UserMedicamentExtended?> GetSharedUserMedicament(long userMedicamentId, long mustBeSharedWithProfileId, CancellationToken cancellationToken = default);
+
+    public Task<List<long>> GetSharedScheduleIds(long userId, CancellationToken cancellationToken = default);
 }

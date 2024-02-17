@@ -13,6 +13,8 @@ public interface IScheduleRepository
 
     public Task<bool> DoesScheduleExistsAsync(long id, long userId, CancellationToken cancellationToken = default);
 
+    public Task<List<long>> GetUserSchedulesIdsAsync(long userId, CancellationToken cancellationToken = default);
+
     public Task<List<TakingSchedulePlain>> GetTakingSchedulesAsync(TakingScheduleFilter filter, long userId, CancellationToken cancellationToken = default);
 
     public Task<TakingSchedulePlain?> CreateTakingScheduleAsync(TakingSchedulePlain takingSchedule, CancellationToken cancellationToken = default);

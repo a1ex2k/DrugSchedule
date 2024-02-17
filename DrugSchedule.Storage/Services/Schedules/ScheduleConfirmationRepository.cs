@@ -2,8 +2,10 @@
 using DrugSchedule.Storage.Extensions;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
+using DrugSchedule.StorageContract.Data.Schedule.Tool;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using RepeatParameters = System.Collections.Generic.List<(long RepeatId, System.DateOnly[] CaculatedDates)>;
 
 namespace DrugSchedule.Storage.Services;
 
@@ -25,15 +27,6 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
             .Select(EntityMapExpressions.ToScheduleConfirmationPlain)
             .FirstOrDefaultAsync(cancellationToken);
         return confirmation;
-    }
-
-    public async Task<List<Contract.TakingСonfirmationPlain>> GetConfirmationsAsync(long repeatId, CancellationToken cancellationToken = default)
-    {
-        var confirmations = await _dbContext.TakingСonfirmations
-            .Where(s => s.ScheduleRepeatId == repeatId)
-            .Select(EntityMapExpressions.ToScheduleConfirmationPlain)
-            .ToListAsync(cancellationToken);
-        return confirmations;
     }
 
     public async Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long scheduleId, CancellationToken cancellationToken = default)
@@ -124,5 +117,26 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
             .ExecuteDeleteAsync(cancellationToken);
 
         return deletedCount > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
+    }
+
+    
+    public async Task<List<TakingСonfirmationTimetableTrimmed>> GetTakingConfirmationsForTimetableAsync(List<long> repeatIds,
+        CancellationToken cancellationToken = default)
+    {
+        var takingСonfirmations = await _dbContext.TakingСonfirmations
+            .WithFilter(tc => tc.ScheduleRepeatId, repeatIds)
+            .Select(EntityMapExpressions.ToScheduleConfirmationTimetable)
+            .ToListAsync(cancellationToken);
+
+        return takingСonfirmations;
+    }
+
+
+    public async Task<bool> AnyConfirmationExistsAsync(List<long> repeatIds, CancellationToken cancellationToken = default)
+    {
+        var exists = await _dbContext.TakingСonfirmations
+            .WithFilter(tc => tc.ScheduleRepeatId, repeatIds)
+            .AnyAsync(cancellationToken);
+        return exists;
     }
 }

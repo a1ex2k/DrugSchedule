@@ -1,7 +1,4 @@
-﻿using SixLabors.ImageSharp.Processing.Processors;
-using System.IO;
-
-namespace DrugSchedule.Services.Services;
+﻿namespace DrugSchedule.Services.Services;
 
 public interface IThumbnailService
 {

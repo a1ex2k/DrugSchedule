@@ -7,7 +7,7 @@ using UserContactSimple = DrugSchedule.StorageContract.Data.UserContactSimple;
 
 namespace DrugSchedule.Services.Converters;
 
-internal class ScheduleConverter : IScheduleConverter
+public class ScheduleConverter : IScheduleConverter
 {
     private readonly IDownloadableFileConverter _downloadableFileConverter;
     private readonly IGlobalMedicamentConverter _globalMedicamentConverter;
@@ -28,12 +28,16 @@ internal class ScheduleConverter : IScheduleConverter
         {
             Id = confirmation.Id,
             RepeatId = confirmation.RepeatId,
+            ForDate = confirmation.ForDate,
+            ForTime = confirmation.ForTime,
+            ForTimeOfDay = confirmation.ForTimeOfDay,
             CreatedAt = confirmation.CreatedAt,
             Images = new FileCollection
             {
-                Files = _downloadableFileConverter.ToFilesModels(confirmation.Images, FileCategory.DrugConfirmation.IsPublic())
+                Files = _downloadableFileConverter.ToFilesModels(confirmation.Images,
+                    FileCategory.DrugConfirmation.IsPublic())
             },
-            Text = null
+            Text = confirmation.Text,
         };
     }
 

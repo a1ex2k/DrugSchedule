@@ -6,4 +6,6 @@ public class UserSearchDto
 {
     [Required]
     public required string UsernameSubstring { get; set; }
+
+    public int MaxCount { get; set; }
 }

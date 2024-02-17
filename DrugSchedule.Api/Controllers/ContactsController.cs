@@ -22,7 +22,7 @@ public class ContactsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> GetAllSimple(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var contacts = await _userContactsService.GetContactsSimpleAsync(false, cancellationToken);
         return Ok(contacts.Adapt<UserContactsSimpleCollectionDto>());
@@ -30,7 +30,7 @@ public class ContactsController : ControllerBase
     
 
     [HttpPost]
-    public async Task<IActionResult> GetCommonSimple(CancellationToken cancellationToken)
+    public async Task<IActionResult> GetCommon(CancellationToken cancellationToken)
     {
         var contacts = await _userContactsService.GetContactsSimpleAsync(true, cancellationToken);
         return Ok(contacts.Adapt<UserContactsSimpleCollectionDto>());
@@ -38,7 +38,7 @@ public class ContactsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> GetExtendedSingle(UserIdDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetSingleExtended(UserIdDto dto, CancellationToken cancellationToken)
     {
         var contactsResult = await _userContactsService.GetContactAsync(dto.UserProfileId, cancellationToken);
         return contactsResult.Match<IActionResult>(
@@ -48,7 +48,7 @@ public class ContactsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> GetExtendedCollection(UserContactFilterDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetManyExtended(UserContactFilterDto dto, CancellationToken cancellationToken)
     {
         var contacts = await _userContactsService.GetContactsAsync(dto.Adapt<UserContactFilter>(), cancellationToken);
         return Ok(contacts.Adapt<UserContactsCollectionDto>());
@@ -56,11 +56,11 @@ public class ContactsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> Add(NewUserContactDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddOrUpdate(NewUserContactDto dto, CancellationToken cancellationToken)
     {
         var contactAddResult = await _userContactsService.AddContactAsync(dto.Adapt<NewUserContact>(), cancellationToken);
         return contactAddResult.Match<IActionResult>(
-            ok => Ok("Contact added successfully"),
+            ok => Ok("Contact edited successfully"),
             errorInput => BadRequest(errorInput.ToDto()),
             notFound => NotFound(notFound.ToDto()));
     }
@@ -69,9 +69,8 @@ public class ContactsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Remove(UserIdDto dto, CancellationToken cancellationToken)
     {
-        var contactRemoveResult = await _userContactsService.RemoveContactAsync(dto.Adapt<UserId>(), cancellationToken);
+        var contactRemoveResult = await _userContactsService.RemoveContactAsync(dto.UserProfileId, cancellationToken);
         return contactRemoveResult.Match<IActionResult>(
-            ok => Ok("Contact removed successfully"),
             ok => Ok("Contact removed successfully"),
             notFound => NotFound(notFound.ToDto()));
     }
