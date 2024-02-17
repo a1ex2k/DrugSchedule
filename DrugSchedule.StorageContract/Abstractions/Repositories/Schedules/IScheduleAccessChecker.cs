@@ -7,7 +7,7 @@ namespace DrugSchedule.StorageContract.Abstractions;
 
 public interface IScheduleAccessChecker
 {
-    public Task<ScheduleAccessCheck?> GetOwnOrSharedSchedulesIdsAsync(long scheduleId, long ownerOrShareProfileId, CancellationToken cancellationToken = default);
+    public Task<ScheduleAccessCheck?> GetOwnOrSharedScheduleIdAsync(long scheduleId, long ownerOrShareProfileId, CancellationToken cancellationToken = default);
     
     public Task<List<ScheduleAccessCheck>> GetOwnOrSharedSchedulesIdsAsync(List<long>? scheduleId, long ownerOrShareProfileId, CancellationToken cancellationToken = default);
 }

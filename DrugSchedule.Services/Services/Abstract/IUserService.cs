@@ -8,7 +8,7 @@ public interface IUserService
 {
     Task<OneOf<True, InvalidInput>> UpdatePasswordAsync(NewPasswordModel newPassword, CancellationToken cancellationToken = default);
 
-    Task<OneOf<UserUpdate, InvalidInput>> UpdateProfileAsync(UserUpdate userUpdate, CancellationToken cancellationToken = default);
+    Task<OneOf<True, InvalidInput>> UpdateProfileAsync(UserUpdate userUpdate, CancellationToken cancellationToken = default);
 
     Task<UserFull> GetCurrentUserAsync(CancellationToken cancellationToken = default);
 

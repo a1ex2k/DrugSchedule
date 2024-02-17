@@ -30,7 +30,7 @@ public class UserController : ControllerBase
 
     
     [HttpPost]
-    public async Task<IActionResult> SearchForUsers(UserSearchDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Search(UserSearchDto dto, CancellationToken cancellationToken)
     {
         var searchResult = await _userService.FindUsersAsync(dto.Adapt<UserSearch>(), cancellationToken);
         return searchResult.Match<IActionResult>(
@@ -44,7 +44,7 @@ public class UserController : ControllerBase
     {
         var updateResult = await _userService.UpdateProfileAsync(dto.Adapt<UserUpdate>(), cancellationToken);
         return updateResult.Match<IActionResult>(
-            userModel => Ok(userModel.Adapt<UserUpdateDto>()),
+            ok => Ok("User updated successfully"),
             errorInput => BadRequest(errorInput.ToDto()));
     }
 

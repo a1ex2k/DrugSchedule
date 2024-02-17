@@ -1,7 +1,7 @@
 ﻿using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 
-namespace DrugSchedule.Services.Services;
+namespace DrugSchedule.Services.Converters;
 
 public class DownloadableFileConverter : Converters.IDownloadableFileConverter
 {

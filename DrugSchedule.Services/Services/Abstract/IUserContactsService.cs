@@ -1,5 +1,4 @@
-﻿using DrugSchedule.Services.Errors;
-using DrugSchedule.Services.Models;
+﻿using DrugSchedule.Services.Models;
 using DrugSchedule.StorageContract.Data;
 using OneOf.Types;
 
@@ -15,5 +14,5 @@ public interface IUserContactsService
 
     Task<OneOf<True, InvalidInput, NotFound>> AddContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default);
 
-    Task<OneOf<True, NotFound>> RemoveContactAsync(UserId userId, CancellationToken cancellationToken = default);
+    Task<OneOf<True, NotFound>> RemoveContactAsync(long contactProfileId, CancellationToken cancellationToken = default);
 }

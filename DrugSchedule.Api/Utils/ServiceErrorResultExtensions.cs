@@ -1,5 +1,4 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
-using DrugSchedule.Services.Error;
 using DrugSchedule.Services.Errors;
 
 namespace DrugSchedule.Api.Utils;

@@ -170,55 +170,42 @@ public class UserService : IIdentityService, IUserService
     }
 
 
-    public async Task<OneOf<UserUpdate, InvalidInput>> UpdateProfileAsync(UserUpdate userUpdate, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, InvalidInput>> UpdateProfileAsync(UserUpdate userUpdate, CancellationToken cancellationToken = default)
     {
         var updateFlags = new UserProfileUpdateFlags
         {
-            RealName = userUpdate.RealName != null,
-            DateOfBirth = userUpdate.DateOfBirth.HasValue,
-            Sex = userUpdate.Sex.HasValue,
+            RealName = true,
+            DateOfBirth = true,
+            Sex = true,
         };
 
         var error = new InvalidInput();
 
-        if (updateFlags.DateOfBirth
-            && userUpdate.DateOfBirth!.Value != DateOnly.MinValue)
+        var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
+        if (userUpdate.DateOfBirth > currentDate.AddYears(-5)
+            || userUpdate.DateOfBirth < currentDate.AddYears(-120))
         {
-            var currentDate = DateOnly.FromDateTime(DateTime.UtcNow);
-            if (userUpdate.DateOfBirth.Value > currentDate.AddYears(-5)
-                || userUpdate.DateOfBirth.Value < currentDate.AddYears(-120))
-            {
-                error.Add("Invalid DateOfBirth: 01.01.0001 to reset, current age > 5 and < 120");
-            }
+            error.Add("Invalid date of birth. Current age must be greater than 5 and less than 120");
         }
 
-        if (updateFlags.RealName && userUpdate.RealName!.Length > 20)
+        if (userUpdate.RealName != null && userUpdate.RealName.Trim().Length > 30)
         {
-            error.Add("Invalid RealName: empty string to reset, up to 20 characters");
+            error.Add("Invalid real name. Max 30 characters");
         }
 
-        if (error.HasMessages)
-        {
-            return error;
-        }
+        if (error.HasMessages) return error;
 
         var userProfile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,
-            RealName = string.IsNullOrWhiteSpace(userUpdate.RealName) ? null : userUpdate.RealName.Trim(),
-            DateOfBirth = userUpdate.DateOfBirth == DateOnly.MinValue ? null : userUpdate.DateOfBirth,
+            RealName = userUpdate.RealName?.Trim(),
+            DateOfBirth = userUpdate.DateOfBirth,
             UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
-            Sex = userUpdate.Sex ?? Sex.Undefined,
+            Sex = userUpdate.Sex,
         };
-        var updateResult = await _profileRepository.UpdateUserProfileAsync(userProfile, updateFlags, cancellationToken);
 
-        var model = new UserUpdate
-        {
-            RealName = updateResult!.RealName,
-            DateOfBirth = updateResult!.DateOfBirth,
-            Sex = updateResult!.Sex
-        };
-        return model!;
+        _ = await _profileRepository.UpdateUserProfileAsync(userProfile, updateFlags, cancellationToken);
+        return new True();
     }
 
 
@@ -315,7 +302,7 @@ public class UserService : IIdentityService, IUserService
         {
             return new NotFound("Avatar with such Guid not found avatar");
         }
-        
+
         var profile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserProfileId,

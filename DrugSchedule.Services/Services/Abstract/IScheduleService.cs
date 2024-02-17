@@ -4,7 +4,7 @@ using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.Services.Services;
 
-public interface IScheduleReadService
+public interface IScheduleService
 {
     Task<OneOf<ScheduleSimpleCollection, InvalidInput>> SearchForScheduleAsync(string searchString, CancellationToken cancellationToken = default);
 
