@@ -85,21 +85,22 @@ public class UserContactsService : IUserContactsService
 
         if (invalidInput.HasMessages) return invalidInput;
 
-        var userContact = new StorageContract.Data.UserContactSimple
+        var userContact = new UserContactPlain
         {
             ContactProfileId = newContact.UserProfileId,
             CustomName = newContact.СontactName,
+            UserProfileId = _currentUserIdentifier.UserProfileId,
         };
 
-        var addedContact = await _contactsRepository.AddOrUpdateContactAsync(_currentUserIdentifier.UserProfileId, userContact, cancellationToken);
+        _ = await _contactsRepository.AddOrUpdateContactAsync(userContact, cancellationToken);
         return new True();
     }
 
 
-    public async Task<OneOf<True, NotFound>> RemoveContactAsync(UserId userId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
     {
         var contactRemoved = await
-            _contactsRepository.RemoveContactAsync(_currentUserIdentifier.UserProfileId, userId.UserProfileId, cancellationToken);
+            _contactsRepository.RemoveContactAsync(_currentUserIdentifier.UserProfileId, contactProfileId, cancellationToken);
         if (!contactRemoved)
         {
             return new NotFound("No contact with such ID found");

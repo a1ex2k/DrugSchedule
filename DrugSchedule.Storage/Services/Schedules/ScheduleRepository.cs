@@ -45,6 +45,16 @@ public class ScheduleRepository : IScheduleRepository
         return scheduleExists;
     }
 
+    public async Task<List<long>> GetUserSchedulesIdsAsync(long userId, CancellationToken cancellationToken = default)
+    {
+        var ids = await _dbContext.MedicamentTakingSchedules
+            .Where(s => s.UserProfileId == userId)
+            .Select(s => s.Id)
+            .ToListAsync(cancellationToken);
+
+        return ids;
+    }
+
     public async Task<List<Contract.TakingSchedulePlain>> GetTakingSchedulesAsync(Contract.TakingScheduleFilter filter,
         long userId, CancellationToken cancellationToken = default)
     {

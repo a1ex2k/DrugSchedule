@@ -99,11 +99,11 @@ public static class IQueryableExtensions
     }
 
 
-    public static IQueryable<TEntity> WithPaging<TEntity>(this IQueryable<TEntity> query, Contract.FilterBase filter)
+    public static IQueryable<TEntity> WithPaging<TEntity>(this IOrderedQueryable<TEntity> query, Contract.FilterBase filter)
     {
         ArgumentNullException.ThrowIfNull(filter, nameof(filter));
 
-        var modifiedQuery = query;
+        IQueryable<TEntity> modifiedQuery = query;
 
         if (filter.Skip > 0)
         {

@@ -15,6 +15,8 @@ public interface IScheduleRepeatRepository
 
     public Task<List<ScheduleRepeatPlain>> GetRepeatsAsync(long scheduleId, CancellationToken cancellationToken = default);
 
+    public Task<List<ScheduleRepeatPlain>> GetRepeatsAsync(List<long> schedulesIds, CancellationToken cancellationToken = default);
+
     public Task<ScheduleRepeatPlain?> CreateRepeatAsync(ScheduleRepeatPlain repeat, CancellationToken cancellationToken = default);
 
     public Task<ScheduleRepeatPlain?> UpdateRepeatAsync(ScheduleRepeatPlain repeat, ScheduleRepeatUpdateFlags updateFlags, CancellationToken cancellationToken = default);

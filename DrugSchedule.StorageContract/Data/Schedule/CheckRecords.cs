@@ -1,4 +1,11 @@
 ﻿
 namespace DrugSchedule.StorageContract.Data;
 
-public record struct ScheduleAccessCheck(long ScheduleId, long OwnerId, bool IsSharedWith);
+public class ScheduleAccessCheck
+{
+    public long ScheduleId { get; set; }
+
+    public long OwnerId { get; set; }
+    
+    public bool IsSharedWith { get; set; }
+}

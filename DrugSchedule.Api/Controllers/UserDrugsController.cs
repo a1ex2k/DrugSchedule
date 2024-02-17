@@ -25,7 +25,7 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> GetMedicament([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetSingle([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
     {
         var medicamentResult = await _drugLibraryService.GetMedicamentSimpleAsync(dto.UserMedicamentId, cancellationToken);
         return medicamentResult.Match<IActionResult>(
@@ -35,7 +35,7 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> GetMedicamentExtended([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetSingleExtended([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
     {
         var medicamentResult = await _drugLibraryService.GetMedicamentExtendedAsync(dto.UserMedicamentId, cancellationToken);
         return medicamentResult.Match<IActionResult>(
@@ -45,7 +45,7 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> GetMedicaments([FromBody] UserMedicamentFilterDto dto,
+    public async Task<IActionResult> GetMany([FromBody] UserMedicamentFilterDto dto,
         CancellationToken cancellationToken)
     {
         var medicamentResult =
@@ -55,7 +55,7 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> GetMedicamentsExtended([FromBody] UserMedicamentFilterDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetManyExtended([FromBody] UserMedicamentFilterDto dto, CancellationToken cancellationToken)
     {
         var medicamentResult =
             await _drugLibraryService.GetMedicamentsExtendedAsync(dto.Adapt<UserMedicamentFilter>(), cancellationToken);
@@ -64,7 +64,30 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> AddMedicamentImage([FromForm] NewUserMedicamentImageDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetSharedExtended([FromBody] UserMedicamentIdDto dto, CancellationToken cancellationToken)
+    {
+        var medicamentResult =
+            await _drugLibraryService.GetSharedUserMedicamentAsync(dto.UserMedicamentId, cancellationToken);
+        return medicamentResult.Match<IActionResult>(
+            m => Ok(medicamentResult.Adapt<UserMedicamentExtendedDto>()),
+            error => NotFound(error.ToDto()));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Add([FromForm] NewUserMedicamentDto dto, CancellationToken cancellationToken)
+    {
+        var addResult =
+            await _drugLibraryService.CreateMedicamentAsync(dto.Adapt<NewUserMedicament>(), cancellationToken);
+
+        return addResult.Match<IActionResult>(
+            id => Ok(new UserMedicamentIdDto {UserMedicamentId = id}),
+            error => NotFound(error.ToDto()));
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> AddImage([FromForm] NewUserMedicamentImageDto dto, CancellationToken cancellationToken)
     {
         var inputFile = new InputFile
         {
@@ -83,7 +106,7 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> RemoveMedicamentImage([FromBody] UserMedicamentImageRemoveDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveImage([FromBody] UserMedicamentImageRemoveDto dto, CancellationToken cancellationToken)
     {
         var removeResult =
             await _drugLibraryService.RemoveImageAsync(dto.UserMedicamentId, dto.FileGuid, cancellationToken);
@@ -94,7 +117,7 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> UpdateMedicament(UserMedicamentUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Update(UserMedicamentUpdateDto dto, CancellationToken cancellationToken)
     {
         var updateResult = await _drugLibraryService.UpdateMedicamentAsync(dto.Adapt<UserMedicamentUpdate>(), cancellationToken);
         return updateResult.Match<IActionResult>(

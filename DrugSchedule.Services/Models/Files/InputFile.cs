@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-
-namespace DrugSchedule.Services.Models;
+﻿namespace DrugSchedule.Services.Models;
 
 public class InputFile 
 {

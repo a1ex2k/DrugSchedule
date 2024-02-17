@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
+using DrugSchedule.StorageContract.Data;
 
-namespace DrugSchedule.StorageContract.Data;
+namespace DrugSchedule.Services.Models;
+
 
 public class TakingСonfirmationPlain
 {

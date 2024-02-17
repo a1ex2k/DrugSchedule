@@ -8,7 +8,7 @@ public class TakingСonfirmation
 
     public DateOnly ForDate { get; set; }
 
-    public DateOnly ForTime { get; set; }
+    public TimeOnly ForTime { get; set; }
     
     public Contract.TimeOfDay ForTimeOfDay { get; set; }
 

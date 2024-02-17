@@ -61,6 +61,16 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return repeats;
     }
 
+    public async Task<List<Contract.ScheduleRepeatPlain>> GetRepeatsAsync(List<long> scheduleIds, CancellationToken cancellationToken = default)
+    {
+        var repeats = await _dbContext.ScheduleRepeat
+            .WithFilter(r => r.MedicamentTakingScheduleId, scheduleIds)
+            .Select(EntityMapExpressions.ToScheduleRepeatPlain)
+            .ToListAsync(cancellationToken);
+
+        return repeats;
+    }
+
     public async Task<Contract.ScheduleRepeatPlain?> CreateRepeatAsync(Contract.ScheduleRepeatPlain repeat,
         CancellationToken cancellationToken = default)
     {
