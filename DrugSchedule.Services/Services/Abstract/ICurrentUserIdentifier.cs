@@ -6,11 +6,11 @@ public interface ICurrentUserIdentifier
 
     bool CanBeSet { get; }
 
-    long UserProfileId { get; }
+    long UserId { get; }
 
-    Guid UserIdentityGuid { get; }
+    Guid IdentityGuid { get; }
 
-    void Set(Guid userIdentityGuid, long userProfileId);
+    void Set(Guid identityGuid, long userId);
 
     void SetNotAvailable();
 }

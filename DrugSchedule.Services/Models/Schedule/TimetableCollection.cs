@@ -2,5 +2,5 @@
 
 public class Timetable
 {
-    public List<TimetableEntry> TimetableEntries { get; set; }
+    public List<TimetableEntry> TimetableEntries { get; set; } = new List<TimetableEntry>();
 }

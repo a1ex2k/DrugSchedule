@@ -36,7 +36,7 @@ public class ScheduleService : IScheduleService
         }
 
         var foundSchedules =
-            await _sharedDataRepository.SearchForOwnedOrSharedAsync(_currentUserIdentifier.UserProfileId,
+            await _sharedDataRepository.SearchForOwnedOrSharedAsync(_currentUserIdentifier.UserId,
                 searchString, cancellationToken);
 
         return _converter.ToScheduleSimpleCollection(foundSchedules);
@@ -46,7 +46,7 @@ public class ScheduleService : IScheduleService
     public async Task<OneOf<ScheduleSimple, NotFound>> GetScheduleSimpleAsync(long id, CancellationToken cancellationToken = default)
     {
         var schedule = await _sharedDataRepository.GetScheduleSimpleAsync(id,
-            _currentUserIdentifier.UserProfileId, cancellationToken);
+            _currentUserIdentifier.UserId, cancellationToken);
 
         if (schedule == null)
         {
@@ -60,7 +60,7 @@ public class ScheduleService : IScheduleService
     public async Task<ScheduleSimpleCollection> GetSchedulesSimpleAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
     {
         var schedules = await _sharedDataRepository.GetSchedulesSimpleAsync(
-            filter, _currentUserIdentifier.UserProfileId, cancellationToken);
+            filter, _currentUserIdentifier.UserId, cancellationToken);
 
         return _converter.ToScheduleSimpleCollection(schedules);
     }
@@ -69,7 +69,7 @@ public class ScheduleService : IScheduleService
     public async Task<OneOf<TakingScheduleExtended, NotFound>> GetScheduleExtendedAsync(long id, CancellationToken cancellationToken = default)
     {
         var schedule = await _sharedDataRepository.GetScheduleExtendedAsync(id,
-            _currentUserIdentifier.UserProfileId, cancellationToken);
+            _currentUserIdentifier.UserId, cancellationToken);
 
         if (schedule == null)
         {
@@ -83,7 +83,7 @@ public class ScheduleService : IScheduleService
     public async Task<ScheduleExtendedCollection> GetSchedulesExtendedAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
     {
         var schedules = await _sharedDataRepository.GetSchedulesExtendedAsync(
-            filter, _currentUserIdentifier.UserProfileId, cancellationToken);
+            filter, _currentUserIdentifier.UserId, cancellationToken);
 
         return _converter.ToScheduleExtendedCollection(schedules);
     }
@@ -111,7 +111,7 @@ public class ScheduleService : IScheduleService
         }
 
         var scheduleIds =
-            await _scheduleRepository.GetUserSchedulesIdsAsync(_currentUserIdentifier.UserProfileId, cancellationToken);
+            await _scheduleRepository.GetUserSchedulesIdsAsync(_currentUserIdentifier.UserId, cancellationToken);
 
         if (scheduleIds.Count == 0)
         {
@@ -149,10 +149,10 @@ public class ScheduleService : IScheduleService
     private async Task<bool> DoesExistAndUserHasAccessAsync(long scheduleId, CancellationToken cancellationToken)
     {
         var checkResult =
-            await _sharedDataRepository.GetOwnOrSharedScheduleIdAsync(scheduleId, _currentUserIdentifier.UserProfileId,
+            await _sharedDataRepository.GetOwnOrSharedScheduleIdAsync(scheduleId, _currentUserIdentifier.UserId,
                 cancellationToken);
 
         return checkResult is not null && 
-               (checkResult.OwnerId == _currentUserIdentifier.UserProfileId || checkResult.IsSharedWith);
+               (checkResult.OwnerId == _currentUserIdentifier.UserId || checkResult.IsSharedWith);
     }
 }

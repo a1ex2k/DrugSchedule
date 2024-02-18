@@ -3,6 +3,7 @@ using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Data.Entities;
 using DrugSchedule.StorageContract.Data;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace DrugSchedule.Storage.Extensions;
 
@@ -167,8 +168,7 @@ public static class EntityMapExpressions
     public static Expression<Func<Entities.ScheduleShare, Contract.ScheduleSharePlain>> ToScheduleSharePlain
         => s => new Contract.ScheduleSharePlain
         {
-            Id = s.Id,
-            MedicamentTakingScheduleId = s.MedicamentTakingScheduleId,
+            ScheduleId = s.MedicamentTakingScheduleId,
             ShareUserProfileId = s.ShareWithContact!.ContactProfileId,
             Comment = s.Comment,
         };
@@ -304,5 +304,20 @@ public static class EntityMapExpressions
             IsCommon = context.UserProfileContacts
                 .Any(c2 => c2.UserProfileId == c.ContactProfileId
                            && c2.ContactProfileId == c.UserProfileId)
+        };
+
+
+    public static Expression<Func<Entities.UserProfileContact, UserContact>> ToContact(DrugScheduleContext context)
+        => (c) => new Contract.UserContact
+        {
+            Profile = EntityMapExpressions.ToUserProfile(true).Compile().Invoke(c.ContactProfile!),
+            CustomName = c.CustomName,
+            IsCommon = context.UserProfileContacts
+                .Any(c2 => c2.UserProfileId == c.ContactProfileId
+                           && c2.ContactProfileId == c.UserProfileId),
+            HasSharedWith = c.ScheduleShares.Any(),
+            HasSharedBy = context.ScheduleShare
+                .Any(s => s.MedicamentTakingSchedule!.UserProfileId == c.ContactProfileId
+                          && s.ShareWithContactId == c.UserProfileId),
         };
 }

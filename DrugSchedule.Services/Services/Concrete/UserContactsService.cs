@@ -27,7 +27,7 @@ public class UserContactsService : IUserContactsService
 
     public async Task<OneOf<Models.UserContact, NotFound>> GetContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
     {
-        var contact = await _contactsRepository.GetContactAsync(_currentUserIdentifier.UserProfileId, contactProfileId, cancellationToken);
+        var contact = await _contactsRepository.GetContactAsync(_currentUserIdentifier.UserId, contactProfileId, cancellationToken);
         if (contact == null)
         {
             return new NotFound("No contact with such ID found");
@@ -41,7 +41,7 @@ public class UserContactsService : IUserContactsService
 
     public async Task<UserContactsCollection> GetContactsAsync(UserContactFilter filter, CancellationToken cancellationToken = default)
     {
-        var contacts = await _contactsRepository.GetContactsAsync(_currentUserIdentifier.UserProfileId, filter, cancellationToken);
+        var contacts = await _contactsRepository.GetContactsAsync(_currentUserIdentifier.UserId, filter, cancellationToken);
         var identities = await _identityRepository.GetUserIdentitiesAsync(new UserIdentityFilter { GuidsFilter = contacts.Select(c => c.Profile.UserIdentityGuid).ToList() }, cancellationToken);
 
         var contactModelList = (
@@ -58,13 +58,13 @@ public class UserContactsService : IUserContactsService
 
     public async Task<UserContactsSimpleCollection> GetContactsSimpleAsync(bool commonOnly, CancellationToken cancellationToken = default)
     {
-        var contacts = await _contactsRepository.GetContactsSimpleAsync(_currentUserIdentifier.UserProfileId, commonOnly, cancellationToken);
+        var contacts = await _contactsRepository.GetContactsSimpleAsync(_currentUserIdentifier.UserId, commonOnly, cancellationToken);
         var collection = _converter.ToContactSimpleCollection(contacts);
         return collection;
     }
 
 
-    public async Task<OneOf<True, InvalidInput, NotFound>> AddContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, InvalidInput, NotFound>> AddOrUpdateContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default)
     {
         var userProfileExists = await _profileRepository.DoesUserProfileExistsAsync(newContact.UserProfileId, cancellationToken);
         if (!userProfileExists)
@@ -73,7 +73,7 @@ public class UserContactsService : IUserContactsService
         }
 
         var invalidInput = new InvalidInput();
-        if (newContact.UserProfileId == _currentUserIdentifier.UserProfileId)
+        if (newContact.UserProfileId == _currentUserIdentifier.UserId)
         {
             invalidInput.Add($"Current user itself cannot be added to contacts");
         }
@@ -89,7 +89,7 @@ public class UserContactsService : IUserContactsService
         {
             ContactProfileId = newContact.UserProfileId,
             CustomName = newContact.СontactName,
-            UserProfileId = _currentUserIdentifier.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserId,
         };
 
         _ = await _contactsRepository.AddOrUpdateContactAsync(userContact, cancellationToken);
@@ -100,7 +100,7 @@ public class UserContactsService : IUserContactsService
     public async Task<OneOf<True, NotFound>> RemoveContactAsync(long contactProfileId, CancellationToken cancellationToken = default)
     {
         var contactRemoved = await
-            _contactsRepository.RemoveContactAsync(_currentUserIdentifier.UserProfileId, contactProfileId, cancellationToken);
+            _contactsRepository.RemoveContactAsync(_currentUserIdentifier.UserId, contactProfileId, cancellationToken);
         if (!contactRemoved)
         {
             return new NotFound("No contact with such ID found");

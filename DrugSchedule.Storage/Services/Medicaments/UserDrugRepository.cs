@@ -74,10 +74,20 @@ public class UserDrugRepository : IUserDrugRepository
         CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
-            .Where(u => u.Id == userProfileId && u.UserProfileId == userProfileId)
+            .Where(u => u.Id == id && u.UserProfileId == userProfileId)
             .Select(EntityMapExpressions.ToUserMedicament)
             .FirstOrDefaultAsync(cancellationToken);
         return medicament;
+    }
+
+    public async Task<bool> DoesMedicamentExistAsync(long userProfileId, long id, CancellationToken cancellationToken = default)
+    {
+        var exists = await _dbContext.UserMedicaments
+            .Where(u => u.Id == id && u.UserProfileId == userProfileId)
+            .Select(EntityMapExpressions.ToUserMedicament)
+            .AnyAsync(cancellationToken);
+
+        return exists;
     }
 
     public async Task<UserMedicament?> CreateMedicamentAsync(UserMedicament model,

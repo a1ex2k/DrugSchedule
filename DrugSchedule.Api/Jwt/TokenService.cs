@@ -111,9 +111,9 @@ public class TokenService : ITokenService
     {
         var authClaims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, userGuid.ToString()),
-            new Claim(StringConstants.UserProfileIdClaimName, userProfileId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new (StringConstants.UserIdentityGuidClaimName, userGuid.ToString()),
+            new (StringConstants.UserProfileIdClaimName, userProfileId.ToString()),
+            new (JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.Secret));

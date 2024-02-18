@@ -12,7 +12,7 @@ public interface IUserContactsService
 
     Task<UserContactsSimpleCollection> GetContactsSimpleAsync(bool commonOnly, CancellationToken cancellationToken = default);
 
-    Task<OneOf<True, InvalidInput, NotFound>> AddContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default);
+    Task<OneOf<True, InvalidInput, NotFound>> AddOrUpdateContactAsync(NewUserContact newContact, CancellationToken cancellationToken = default);
 
     Task<OneOf<True, NotFound>> RemoveContactAsync(long contactProfileId, CancellationToken cancellationToken = default);
 }

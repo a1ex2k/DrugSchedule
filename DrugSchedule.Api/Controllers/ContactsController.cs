@@ -58,7 +58,7 @@ public class ContactsController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddOrUpdate(NewUserContactDto dto, CancellationToken cancellationToken)
     {
-        var contactAddResult = await _userContactsService.AddContactAsync(dto.Adapt<NewUserContact>(), cancellationToken);
+        var contactAddResult = await _userContactsService.AddOrUpdateContactAsync(dto.Adapt<NewUserContact>(), cancellationToken);
         return contactAddResult.Match<IActionResult>(
             ok => Ok("Contact edited successfully"),
             errorInput => BadRequest(errorInput.ToDto()),

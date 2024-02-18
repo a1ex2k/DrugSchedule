@@ -233,7 +233,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<long>("MedicamentTakingScheduleId")
+                    b.Property<long>("ScheduleId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("RepeatDayOfWeek")
@@ -253,7 +253,7 @@ namespace DrugSchedule.Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MedicamentTakingScheduleId");
+                    b.HasIndex("ScheduleId");
 
                     b.HasIndex("UserProfileId");
 
@@ -271,7 +271,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<string>("Comment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<long>("MedicamentTakingScheduleId")
+                    b.Property<long>("ScheduleId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("ShareWithContactId")
@@ -279,7 +279,7 @@ namespace DrugSchedule.Storage.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MedicamentTakingScheduleId");
+                    b.HasIndex("ScheduleId");
 
                     b.HasIndex("ShareWithContactId");
 
@@ -727,7 +727,7 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.MedicamentTakingSchedule", "MedicamentTakingSchedule")
                         .WithMany("RepeatSchedules")
-                        .HasForeignKey("MedicamentTakingScheduleId")
+                        .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -742,7 +742,7 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     b.HasOne("DrugSchedule.Storage.Data.Entities.MedicamentTakingSchedule", "MedicamentTakingSchedule")
                         .WithMany("ScheduleShares")
-                        .HasForeignKey("MedicamentTakingScheduleId")
+                        .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
