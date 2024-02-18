@@ -30,11 +30,6 @@ public class ScheduleService : IScheduleService
 
     public async Task<OneOf<ScheduleSimpleCollection, InvalidInput>> SearchForScheduleAsync(string searchString, CancellationToken cancellationToken = default)
     {
-        if (string.IsNullOrWhiteSpace(searchString) || searchString.Trim().Length < 3)
-        {
-            return new InvalidInput("Search value must be at least 3 not whitespace characters long");
-        }
-
         var foundSchedules =
             await _sharedDataRepository.SearchForOwnedOrSharedAsync(_currentUserIdentifier.UserId,
                 searchString, cancellationToken);
@@ -50,7 +45,7 @@ public class ScheduleService : IScheduleService
 
         if (schedule == null)
         {
-            return new NotFound("Schedule was not found or current user doesn't have permissions to access");
+            return new NotFound("Schedule was not found or user doesn't have permissions to access");
         }
 
         return _converter.ToScheduleSimple(schedule!);
@@ -73,7 +68,7 @@ public class ScheduleService : IScheduleService
 
         if (schedule == null)
         {
-            return new NotFound("Schedule was not found or current user doesn't have permissions to access");
+            return new NotFound("Schedule was not found or user doesn't have permissions to access");
         }
 
         return _converter.ToScheduleExtended(schedule);
@@ -91,10 +86,10 @@ public class ScheduleService : IScheduleService
 
     public async Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default)
     {
-        var isAccessable = await DoesExistAndUserHasAccessAsync(filter.ScheduleId, cancellationToken);
-        if (!isAccessable)
+        var isAccessible = await DoesExistAndUserHasAccessAsync(filter.ScheduleId, cancellationToken);
+        if (!isAccessible)
         {
-            return new NotFound("Schedule was not found or current user doesn't have permissions to access");
+            return new NotFound("Schedule was not found or user doesn't have permissions to access");
         }
 
         var confirmations = await _sharedDataRepository.GetTakingConfirmationsAsync(filter, cancellationToken);
@@ -136,7 +131,7 @@ public class ScheduleService : IScheduleService
         var hasAccess = await DoesExistAndUserHasAccessAsync(scheduleId, cancellationToken);
         if (!hasAccess)
         {
-            return new NotFound("Schedule was not found or current user doesn't have permissions to access");
+            return new NotFound("Schedule was not found or user doesn't have permissions to access");
         }
 
         var timetableEntries =

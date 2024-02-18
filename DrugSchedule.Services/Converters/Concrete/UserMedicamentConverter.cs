@@ -15,17 +15,17 @@ public class UserMedicamentConverter : IUserMedicamentConverter
         _globalMedicamentConverter = globalMedicamentConverter;
     }
 
-    public UserMedicamentUpdate ToUpdateResultModel(UserMedicament medicament)
+    public UserMedicamentUpdate ToUpdateResultModel(UserMedicamentPlain medicamentPlain)
     {
         return new UserMedicamentUpdate
         {
-            Id = medicament.Id,
-            BasicMedicamentId = medicament.BasicMedicamentId,
-            Name = medicament.Name,
-            ReleaseForm = medicament.ReleaseForm,
-            Description = medicament.Description,
-            Composition = medicament.Composition,
-            ManufacturerName = medicament.ManufacturerName,
+            Id = medicamentPlain.Id,
+            BasicMedicamentId = medicamentPlain.BasicMedicamentId,
+            Name = medicamentPlain.Name,
+            ReleaseForm = medicamentPlain.ReleaseForm,
+            Description = medicamentPlain.Description,
+            Composition = medicamentPlain.Composition,
+            ManufacturerName = medicamentPlain.ManufacturerName,
         };
     }
 

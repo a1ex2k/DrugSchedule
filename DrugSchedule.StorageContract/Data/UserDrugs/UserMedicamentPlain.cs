@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DrugSchedule.StorageContract.Data;
 
-public class UserMedicament
+public class UserMedicamentPlain
 {
     public long Id { get; set; }
 
@@ -21,5 +21,5 @@ public class UserMedicament
 
     public List<Guid>? ImageGuids { get; set; }
 
-    public long UserProfileId { get; set; }
+    public long UserId { get; set; }
 }
