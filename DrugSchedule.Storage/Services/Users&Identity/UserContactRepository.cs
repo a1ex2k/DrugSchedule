@@ -25,7 +25,7 @@ public class UserContactRepository : IUserContactRepository
     {
         var contact = await _dbContext.UserProfileContacts
             .Where(c => c.UserProfileId == userProfileId && c.ContactProfileId == contactProfileId)
-            .Select(ContactProjection)
+            .Select(EntityMapExpressions.ToContact(_dbContext))
             .FirstOrDefaultAsync(cancellationToken);
 
         return contact;
@@ -39,7 +39,7 @@ public class UserContactRepository : IUserContactRepository
             .Where(c => c.UserProfileId == userProfileId)
             .WithFilter(c => c.ContactProfileId, filter.ContactProfileIdFilter)
             .WithFilter(c => c.CustomName, filter.ContactNameFilter)
-            .Select(ContactProjection)
+            .Select(EntityMapExpressions.ToContact(_dbContext))
             .ToListAsync(cancellationToken);
 
         return contacts;
@@ -67,6 +67,23 @@ public class UserContactRepository : IUserContactRepository
 
         var contacts = await contactsQuery.ToListAsync(cancellationToken);
         return contacts;
+    }
+
+
+    public async Task<bool?> IsContactCommon(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default)
+    {
+        var dbResult = await _dbContext.UserProfileContacts
+            .Where(c => c.UserProfileId == userProfileId)
+            .Where(c => c.ContactProfileId == contactProfileId)
+            .Select(c => new
+            { 
+                IsCommon = c.ContactProfile!.Contacts
+                    .AsQueryable()
+                    .Any(c2 => c2.ContactProfileId  == userProfileId)
+            })
+            .FirstOrDefaultAsync(cancellationToken);
+
+        return dbResult?.IsCommon;
     }
 
 
@@ -114,17 +131,4 @@ public class UserContactRepository : IUserContactRepository
     }
 
 
-    private Expression<Func<Entities.UserProfileContact, UserContact>> ContactProjection
-        => (c) => new Contract.UserContact
-        {
-            Profile = EntityMapExpressions.ToUserProfile(true).Compile().Invoke(c.ContactProfile!),
-            CustomName = c.CustomName,
-            IsCommon = _dbContext.UserProfileContacts
-                .Any(c2 => c2.UserProfileId == c.ContactProfileId
-                           && c2.ContactProfileId == c.UserProfileId),
-            HasSharedWith = c.ScheduleShares.Any(),
-            HasSharedBy = _dbContext.ScheduleShare
-                .Any(s => s.MedicamentTakingSchedule!.UserProfileId == c.ContactProfileId
-                          && s.ShareWithContactId == c.UserProfileId),
-        };
 }

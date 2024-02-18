@@ -2,9 +2,9 @@
 
 namespace DrugSchedule.Services.Models;
 
-public class ScheduleRepeatPlain
+public class NewScheduleRepeat
 {
-    public long Id { get; set; }
+    public long ScheduleId { get; set; }
 
     public required DateOnly BeginDate { get; set; }
 
@@ -15,8 +15,6 @@ public class ScheduleRepeatPlain
     public required RepeatDayOfWeek RepeatDayOfWeek { get; set; }
 
     public required DateOnly? EndDate { get; set; }
-
-    public required long MedicamentTakingScheduleId { get; set; }
 
     public string? TakingRule { get; set; }
 }

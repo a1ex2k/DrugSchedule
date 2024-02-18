@@ -2,5 +2,6 @@
 
 public class StringConstants
 {
-    public const string UserProfileIdClaimName = "user-profile-id";
+    public const string UserProfileIdClaimName = "profile-id";
+    public const string UserIdentityGuidClaimName = "identity-guid";
 }
