@@ -159,7 +159,7 @@ public class ScheduleSpecialRepository : ISharedDataRepository
     }
 
 
-    public async Task<List<Contract.TakingСonfirmation>> GetTakingConfirmationsAsync(Contract.TakingConfirmationFilter filter, 
+    public async Task<List<Contract.TakingСonfirmationExtended>> GetTakingConfirmationsAsync(Contract.TakingConfirmationFilter filter, 
         CancellationToken cancellationToken = default)
     {
         var confirmations = await _dbContext.TakingСonfirmations

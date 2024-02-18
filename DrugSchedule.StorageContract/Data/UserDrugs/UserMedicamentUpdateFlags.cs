@@ -2,6 +2,8 @@
 
 public class UserMedicamentUpdateFlags
 {
+    public bool UserId { get; set; }
+
     public bool BasedOnMedicament { get; set; }
 
     public bool Name { get; set; } = default!;

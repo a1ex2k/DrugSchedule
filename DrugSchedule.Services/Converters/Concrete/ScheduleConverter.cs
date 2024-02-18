@@ -22,7 +22,7 @@ public class ScheduleConverter : IScheduleConverter
         _contactConverter = contactConverter;
     }
 
-    public Models.TakingСonfirmation ToConfirmation(StorageContract.Data.TakingСonfirmation confirmation)
+    public Models.TakingСonfirmation ToConfirmation(StorageContract.Data.TakingСonfirmationExtended confirmation)
     {
         return new Models.TakingСonfirmation
         {
@@ -90,7 +90,7 @@ public class ScheduleConverter : IScheduleConverter
         };
     }
 
-    public TakingСonfirmationCollection ToСonfirmationCollection(List<StorageContract.Data.TakingСonfirmation> confirmationsList)
+    public TakingСonfirmationCollection ToСonfirmationCollection(List<StorageContract.Data.TakingСonfirmationExtended> confirmationsList)
     {
         return new TakingСonfirmationCollection
         {

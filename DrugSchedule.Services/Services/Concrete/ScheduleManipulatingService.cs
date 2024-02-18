@@ -54,7 +54,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         };
 
         var saved = await _scheduleRepository.CreateTakingScheduleAsync(schedule, cancellationToken);
-        return (ScheduleId)(saved?.Id ?? 0);
+        return (ScheduleId)saved!.Id;
     }
 
     public async Task<OneOf<ScheduleId, NotFound, InvalidInput>> UpdateScheduleAsync(ScheduleUpdate update,
@@ -85,7 +85,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         };
 
         var saved = await _scheduleRepository.UpdateTakingScheduleAsync(schedule, updateFlags, cancellationToken);
-        return (ScheduleId)(saved?.Id ?? 0);
+        return (ScheduleId)saved!.Id;
     }
 
     public async Task<OneOf<True, NotFound>> RemoveSchedule(long scheduleId,
@@ -104,39 +104,88 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
     public async Task<OneOf<RepeatId, NotFound, InvalidInput>> CreateRepeatAsync(NewScheduleRepeat newRepeat,
         CancellationToken cancellationToken = default)
     {
-        var error = await GetScheduleParametersErrorsAsync(
-            newSchedule.UserMedicamentId, newSchedule.GlobalMedicamentId, cancellationToken);
-        if (error != null)
+        var scheduleExists = await _scheduleRepository.DoesScheduleExistsAsync(newRepeat.ScheduleId, _currentUserIdentifier.UserId, cancellationToken);
+        if (!scheduleExists) 
         {
-            return error.Value.IsT0 ? error.Value.AsT0 : error.Value.AsT1;
+            return new NotFound("Schedule not found");
+        }
+
+        if (newRepeat.EndDate != null && newRepeat.EndDate <= newRepeat.BeginDate)
+        {
+            return new InvalidInput("End date must be undefined or greater than begin date");
+        }
+
+        var repeat = new ScheduleRepeatPlain
+        {
+            BeginDate = newRepeat.BeginDate,
+            Time = newRepeat.Time,
+            TimeOfDay = newRepeat.TimeOfDay,
+            RepeatDayOfWeek = newRepeat.RepeatDayOfWeek,
+            EndDate = newRepeat.EndDate,
+            MedicamentTakingScheduleId = newRepeat.ScheduleId,
+            TakingRule = newRepeat.TakingRule?.Trim()
         };
 
-        var schedule = new TakingSchedulePlain
+        var saved = await _repeatRepository.CreateRepeatAsync(repeat, cancellationToken);
+        return (RepeatId)saved!.Id;
+    }
+
+    public async Task<OneOf<RepeatId, NotFound, InvalidInput>> UpdateRepeatAsync(ScheduleRepeatUpdate repeatUpdate,
+        CancellationToken cancellationToken = default)
+    {
+        var repeatExists = await _repeatRepository.DoesRepeatExistAsync(repeatUpdate.Id, _currentUserIdentifier.UserId, cancellationToken);
+        if (!repeatExists)
         {
-            UserProfileId = _currentUserIdentifier.UserId,
-            GlobalMedicamentId = newSchedule.GlobalMedicamentId,
-            UserMedicamentId = newSchedule.UserMedicamentId,
-            Information = newSchedule.Information?.Trim(),
-            CreatedAt = DateTime.UtcNow,
-            Enabled = newSchedule.Enabled
+            return new NotFound("User has no repeat with provided ID");
+        }
+
+        if (repeatUpdate.EndDate != null && repeatUpdate.EndDate <= repeatUpdate.BeginDate)
+        {
+            return new InvalidInput("End date must be undefined or greater than begin date");
+        }
+
+        var hasConfirmations = await _confirmationRepository.AnyConfirmationExistsAsync([repeatUpdate.Id], cancellationToken);
+        if (hasConfirmations)
+        {
+            return new InvalidInput("Repeat cannot be updated because it already has confirmations. Create another one");
+        }
+
+        var repeat = new ScheduleRepeatPlain
+        {
+            BeginDate = repeatUpdate.BeginDate,
+            Time = repeatUpdate.Time,
+            TimeOfDay = repeatUpdate.TimeOfDay,
+            RepeatDayOfWeek = repeatUpdate.RepeatDayOfWeek,
+            EndDate = repeatUpdate.EndDate,
+            TakingRule = repeatUpdate.TakingRule?.Trim()
         };
 
-        var saved = await _scheduleRepository.CreateTakingScheduleAsync(schedule, cancellationToken);
-        return (ScheduleId)(saved?.Id ?? 0);
+        var updateFlags = new ScheduleRepeatUpdateFlags
+        {
+            BeginDate = true,
+            Time = true,
+            TimeOfDay = true,
+            RepeatDayOfWeek = true,
+            EndDate = true,
+            TakingRule = true
+        };
+
+        var saved = await _repeatRepository.UpdateRepeatAsync(repeat, updateFlags, cancellationToken);
+        return (RepeatId)saved!.Id;
     }
 
-    public async Task<OneOf<RepeatId, NotFound, InvalidInput>> UpdateRepeatAsync(ScheduleRepeatUpdate update,
-        CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveRepeatAsync(long repeatId, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
-    }
+        var repeatExists = await _repeatRepository.DoesRepeatExistAsync(repeatId, _currentUserIdentifier.UserId, cancellationToken);
+        if (!repeatExists)
+        {
+            return new NotFound("User has no repeat with provided ID");
+        }
 
-    public async Task<OneOf<True, NotFound>> RemoveRepeatAsync(long repeatId,
-        CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
+        _ = await _repeatRepository.RemoveRepeatAsync(repeatId, cancellationToken);
+        return new True();
     }
-
+    
     public async Task<OneOf<True, NotFound, InvalidInput>> AddOrUpdateShareAsync(ScheduleShareUpdate newShare,
         CancellationToken cancellationToken = default)
     {
@@ -176,42 +225,12 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
     }
 
 
-    private async Task<OneOf<NotFound, InvalidInput>?> GetRepeatParametersErrorsAsync(long? scheduleId, long? userDrugId, int? globalDrugId,
-        CancellationToken cancellationToken = default)
-    {
-        if (userDrugId == null && globalDrugId == null)
-        {
-            return new InvalidInput("Either global medicament or User medicament must be defined");
-        }
-
-        var globalDrugPassed = globalDrugId == null ||
-                               await _drugRepository.DoesMedicamentExistAsync(globalDrugId.Value, cancellationToken);
-
-        var userDrugPassed = userDrugId == null ||
-                             await _userDrugRepository.DoesMedicamentExistAsync(
-                                 _currentUserIdentifier.UserId, userDrugId.Value, cancellationToken);
-
-        var notFound = new NotFound();
-        if (scheduleId != null)
-        {
-            var exists = await _scheduleRepository.DoesScheduleExistsAsync(scheduleId.Value, _currentUserIdentifier.UserId, cancellationToken);
-            return new InvalidInput("Either global medicament or User medicament must be defined");
-        }
-
-        if (!globalDrugPassed || !userDrugPassed)
-        {
-            return new NotFound("Medicament not found");
-        }
-
-        return null;
-    }
-
     private async Task<OneOf<NotFound, InvalidInput>?> GetScheduleParametersErrorsAsync(long? scheduleId, long? userDrugId, int? globalDrugId,
         CancellationToken cancellationToken = default)
     {
         if (userDrugId == null && globalDrugId == null)
         {
-            return new InvalidInput("Either global medicament or User medicament must be defined");
+            return new InvalidInput("Either global medicament or user's medicament must be defined");
         }
 
         var globalDrugPassed = globalDrugId == null ||
@@ -221,11 +240,10 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
                              await _userDrugRepository.DoesMedicamentExistAsync(
                                  _currentUserIdentifier.UserId, userDrugId.Value, cancellationToken);
 
-        var notFound = new NotFound();
         if (scheduleId != null)
         {
             var exists = await _scheduleRepository.DoesScheduleExistsAsync(scheduleId.Value, _currentUserIdentifier.UserId, cancellationToken);
-            return new InvalidInput("Either global medicament or User medicament must be defined");
+            return new NotFound("Schedule not found");
         }
 
         if (!globalDrugPassed || !userDrugPassed)

@@ -2,6 +2,8 @@
 
 public class ScheduleRepeatUpdateFlags
 {
+    public bool ScheduleId { get; set; }
+
     public bool BeginDate { get; set; }
 
     public bool Time { get; set; }
