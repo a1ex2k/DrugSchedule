@@ -88,9 +88,9 @@ public static class EntityMapExtensions
     }
 
 
-    public static Contract.UserMedicament ToContractModel(this Entities.UserMedicament userMedicament)
+    public static Contract.UserMedicamentPlain ToContractModel(this Entities.UserMedicament userMedicament)
     {
-        return new Contract.UserMedicament
+        return new Contract.UserMedicamentPlain
         {
             BasicMedicamentId = userMedicament.BasedOnMedicamentId,
             Name = userMedicament.Name,
@@ -98,7 +98,7 @@ public static class EntityMapExtensions
             Composition = userMedicament.Composition,
             ReleaseForm = userMedicament.ReleaseForm,
             ManufacturerName = userMedicament.ManufacturerName,
-            UserProfileId = userMedicament.UserProfileId,
+            UserId = userMedicament.UserProfileId,
         };
     }
 

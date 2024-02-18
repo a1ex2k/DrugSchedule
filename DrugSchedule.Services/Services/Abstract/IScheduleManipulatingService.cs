@@ -14,7 +14,7 @@ public interface IScheduleManipulatingService
 
     Task<OneOf<RepeatId, NotFound, InvalidInput>> CreateRepeatAsync(NewScheduleRepeat newRepeat, CancellationToken cancellationToken = default);
 
-    Task<OneOf<RepeatId, NotFound, InvalidInput>> UpdateRepeatAsync(ScheduleRepeatUpdate update, CancellationToken cancellationToken = default);
+    Task<OneOf<RepeatId, NotFound, InvalidInput>> UpdateRepeatAsync(ScheduleRepeatUpdate repeatUpdate, CancellationToken cancellationToken = default);
 
     Task<OneOf<True, NotFound>> RemoveRepeatAsync(long repeatId, CancellationToken cancellationToken = default);
 

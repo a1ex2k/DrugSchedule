@@ -9,9 +9,9 @@ public interface IScheduleRepeatRepository
 {
     public Task<ScheduleRepeatPlain?> GetRepeatAsync(long id, CancellationToken cancellationToken = default);
 
-    public Task<ScheduleRepeatPlain?> GetRepeatAsync(long id, long scheduleId, long userProfileId, CancellationToken cancellationToken = default);
+    public Task<ScheduleRepeatPlain?> GetRepeatAsync(long id, long scheduleId, long userId, CancellationToken cancellationToken = default);
     
-    public Task<bool> DoesRepeatExistAsync(long id, long scheduleId, long userProfileId, CancellationToken cancellationToken = default);
+    public Task<bool> DoesRepeatExistAsync(long id, long userId, CancellationToken cancellationToken = default);
 
     public Task<List<ScheduleRepeatPlain>> GetRepeatsAsync(long scheduleId, CancellationToken cancellationToken = default);
 

@@ -70,7 +70,7 @@ public class UserDrugRepository : IUserDrugRepository
         return medicaments;
     }
 
-    public async Task<UserMedicament?> GetMedicamentAsync(long userProfileId, long id,
+    public async Task<UserMedicamentPlain?> GetMedicamentAsync(long userProfileId, long id,
         CancellationToken cancellationToken = default)
     {
         var medicament = await _dbContext.UserMedicaments
@@ -90,23 +90,23 @@ public class UserDrugRepository : IUserDrugRepository
         return exists;
     }
 
-    public async Task<UserMedicament?> CreateMedicamentAsync(UserMedicament model,
+    public async Task<UserMedicamentPlain?> CreateMedicamentAsync(UserMedicamentPlain medicament,
         CancellationToken cancellationToken = default)
     {
         var entity = new Entities.UserMedicament
         {
-            BasedOnMedicamentId = model.BasicMedicamentId,
-            Name = model.Name,
-            Description = model.Description,
-            Composition = model.Composition,
-            ReleaseForm = model.ReleaseForm,
-            ManufacturerName = model.ManufacturerName,
-            UserProfileId = model.UserProfileId,
+            BasedOnMedicamentId = medicament.BasicMedicamentId,
+            Name = medicament.Name,
+            Description = medicament.Description,
+            Composition = medicament.Composition,
+            ReleaseForm = medicament.ReleaseForm,
+            ManufacturerName = medicament.ManufacturerName,
+            UserProfileId = medicament.UserId,
         };
 
-        if (!model.ImageGuids.IsNullOrEmpty())
+        if (!medicament.ImageGuids.IsNullOrEmpty())
         {
-            entity.Files = model.ImageGuids!.ConvertAll(g => new Entities.UserMedicamentFile { FileGuid = g });
+            entity.Files = medicament.ImageGuids!.ConvertAll(g => new Entities.UserMedicamentFile { FileGuid = g });
         }
 
         await _dbContext.UserMedicaments.AddAsync(entity, cancellationToken);
@@ -114,7 +114,7 @@ public class UserDrugRepository : IUserDrugRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<UserMedicament?> UpdateMedicamentAsync(UserMedicament medicament,
+    public async Task<UserMedicamentPlain?> UpdateMedicamentAsync(UserMedicamentPlain medicament,
         UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default)
     {
         var entity = await _dbContext.UserMedicaments
@@ -125,6 +125,7 @@ public class UserDrugRepository : IUserDrugRepository
         if (entity == null) return null;
 
         var entry = _dbContext.Entry(entity);
+        entry.UpdateIf(e => e.UserProfileId, medicament.UserId, updateFlags.UserId);
         entry.UpdateIf(e => e.Name, medicament.Name, updateFlags.Name);
         entry.UpdateIf(e => e.BasedOnMedicamentId, medicament.BasicMedicamentId, updateFlags.BasedOnMedicament);
         entry.UpdateIf(e => e.ReleaseForm, medicament.ReleaseForm, updateFlags.ReleaseForm);
@@ -158,5 +159,27 @@ public class UserDrugRepository : IUserDrugRepository
         _dbContext.UserMedicaments.Remove(existing);
         var removed = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return removed ? RemoveOperationResult.Removed : RemoveOperationResult.Used;
+    }
+
+    public async Task<Guid?> AddMedicamentImageAsync(long id, Guid fileGuid, CancellationToken cancellationToken = default)
+    {
+        var entity = new Entities.UserMedicamentFile
+        {
+            UserMedicamentId = id,
+            FileGuid = default,
+        };
+
+        await _dbContext.UserMedicamentFiles.AddAsync(entity, cancellationToken);
+        var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
+        return saved ? fileGuid : null;
+    }
+
+    public async Task<RemoveOperationResult> RemoveMedicamentImageAsync(long id, Guid fileGuid, CancellationToken cancellationToken = default)
+    {
+        var deletedCount = await _dbContext.UserMedicamentFiles
+            .Where(f => f.UserMedicamentId == id && f.FileGuid == fileGuid)
+            .ExecuteDeleteAsync(cancellationToken);
+
+        return deletedCount > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
     }
 }

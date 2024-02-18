@@ -114,8 +114,8 @@ public static class EntityMapExpressions
     };
 
 
-    public static Expression<Func<Entities.UserMedicament, Contract.UserMedicament>> ToUserMedicament
-        => userMedicament => new Contract.UserMedicament
+    public static Expression<Func<Entities.UserMedicament, Contract.UserMedicamentPlain>> ToUserMedicament
+        => userMedicament => new Contract.UserMedicamentPlain
         {
             BasicMedicamentId = userMedicament.BasedOnMedicamentId,
             Name = userMedicament.Name,
@@ -123,7 +123,7 @@ public static class EntityMapExpressions
             Composition = userMedicament.Composition,
             ReleaseForm = userMedicament.ReleaseForm,
             ManufacturerName = userMedicament.ManufacturerName,
-            UserProfileId = userMedicament.UserProfileId,
+            UserId = userMedicament.UserProfileId,
             ImageGuids = userMedicament.Files.Select(userMedicamentFile => userMedicamentFile.FileGuid).ToList(),
         };
 
@@ -189,8 +189,8 @@ public static class EntityMapExpressions
         };
 
 
-    public static Expression<Func<Entities.TakingСonfirmation, Contract.TakingСonfirmation>> ToScheduleConfirmation
-        => s => new Contract.TakingСonfirmation
+    public static Expression<Func<Entities.TakingСonfirmation, Contract.TakingСonfirmationExtended>> ToScheduleConfirmation
+        => s => new Contract.TakingСonfirmationExtended
         {
             Id = s.Id,
             RepeatId = s.ScheduleRepeatId,

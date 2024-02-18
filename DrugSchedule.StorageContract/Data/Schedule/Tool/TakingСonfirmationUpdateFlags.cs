@@ -1,7 +1,4 @@
-﻿using System.Diagnostics.Contracts;
-using System;
-
-namespace DrugSchedule.StorageContract.Data;
+﻿namespace DrugSchedule.StorageContract.Data;
 
 public class TakingСonfirmationUpdateFlags
 {
