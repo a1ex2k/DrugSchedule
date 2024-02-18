@@ -33,7 +33,7 @@ public class UserDrugLibrary : IUserDrugLibrary
     public async Task<OneOf<UserMedicamentExtendedModel, NotFound>> GetMedicamentExtendedAsync(long id,
         CancellationToken cancellationToken = default)
     {
-        var medicament = await _userDrugRepository.GetMedicamentExtendedAsync(_currentUserIdentifier.UserProfileId, id,
+        var medicament = await _userDrugRepository.GetMedicamentExtendedAsync(_currentUserIdentifier.UserId, id,
             true, true, cancellationToken);
 
         if (medicament == null)
@@ -53,7 +53,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<UserMedicamentExtendedCollection> GetMedicamentsExtendedAsync(UserMedicamentFilter filter, CancellationToken cancellationToken = default)
     {
-        var medicaments = await _userDrugRepository.GetMedicamentsExtendedAsync(_currentUserIdentifier.UserProfileId, filter,
+        var medicaments = await _userDrugRepository.GetMedicamentsExtendedAsync(_currentUserIdentifier.UserId, filter,
             true, true, cancellationToken);
 
         var basicIds = medicaments
@@ -78,7 +78,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<OneOf<UserMedicamentSimpleModel, NotFound>> GetMedicamentSimpleAsync(long id, CancellationToken cancellationToken = default)
     {
-        var medicament = await _userDrugRepository.GetMedicamentSimpleAsync(_currentUserIdentifier.UserProfileId, id, cancellationToken);
+        var medicament = await _userDrugRepository.GetMedicamentSimpleAsync(_currentUserIdentifier.UserId, id, cancellationToken);
         if (medicament == null)
         {
             return new NotFound("Current user doesn't have custom medicament with provided ID");
@@ -89,7 +89,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<UserMedicamentSimpleCollection> GetMedicamentsSimpleAsync(UserMedicamentFilter filter, CancellationToken cancellationToken = default)
     {
-        var medicaments = await _userDrugRepository.GetMedicamentsSimpleAsync(_currentUserIdentifier.UserProfileId, filter, cancellationToken);
+        var medicaments = await _userDrugRepository.GetMedicamentsSimpleAsync(_currentUserIdentifier.UserId, filter, cancellationToken);
         return _converter.ToUserMedicamentSimpleCollection(medicaments);
     }
 
@@ -118,7 +118,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         var medicament = new UserMedicament
         {
-            UserProfileId = _currentUserIdentifier.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserId,
             BasicMedicamentId = model.BasicMedicamentId,
             Name = model.Name.Trim(),
             ReleaseForm = model.ReleaseForm.Trim(),
@@ -135,7 +135,7 @@ public class UserDrugLibrary : IUserDrugLibrary
     public async Task<OneOf<UserMedicamentId, NotFound, InvalidInput>> UpdateMedicamentAsync(UserMedicamentUpdate model, CancellationToken cancellationToken = default)
     {
         var medicament =
-            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, model.Id,
+            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserId, model.Id,
                 cancellationToken);
         if (medicament == null)
         {
@@ -187,7 +187,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<OneOf<True, NotFound, InvalidInput>> RemoveMedicamentAsync(long id, CancellationToken cancellationToken = default)
     {
-        var deleteResult = await _userDrugRepository.RemoveMedicamentAsync(_currentUserIdentifier.UserProfileId, id, cancellationToken);
+        var deleteResult = await _userDrugRepository.RemoveMedicamentAsync(_currentUserIdentifier.UserId, id, cancellationToken);
         switch (deleteResult)
         {
             case RemoveOperationResult.Removed:
@@ -203,7 +203,7 @@ public class UserDrugLibrary : IUserDrugLibrary
     public async Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddImageAsync(long medicamentId, InputFile inputFile, CancellationToken cancellationToken = default)
     {
         var medicament =
-            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, medicamentId, cancellationToken);
+            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
         if (medicament == null)
         {
             return new NotFound("Current user doesn't have custom medicament with provided ID");
@@ -221,7 +221,7 @@ public class UserDrugLibrary : IUserDrugLibrary
     public async Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, Guid fileGuid, CancellationToken cancellationToken = default)
     {
         var medicament =
-            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserProfileId, medicamentId, cancellationToken);
+            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
         if (medicament == null)
         {
             return new NotFound("Current user doesn't have custom medicament with provided ID");
@@ -249,7 +249,7 @@ public class UserDrugLibrary : IUserDrugLibrary
     public async Task<OneOf<UserMedicamentExtendedModel, NotFound>> GetSharedUserMedicamentAsync(long userMedicamentId, CancellationToken cancellationToken = default)
     {
         var medicament = await _sharedRepository.GetSharedUserMedicament(userMedicamentId,
-            _currentUserIdentifier.UserProfileId, cancellationToken);
+            _currentUserIdentifier.UserId, cancellationToken);
 
         if (medicament == null)
         {

@@ -134,7 +134,7 @@ public class UserService : IIdentityService, IUserService
 
     public async Task<OneOf<True, InvalidInput>> UpdatePasswordAsync(NewPasswordModel newPassword, CancellationToken cancellationToken = default)
     {
-        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
+        var identity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.IdentityGuid, cancellationToken);
 
         var error = new InvalidInput();
         if (!CridentialsValidator.ValidatePassword(newPassword.NewPassword))
@@ -154,7 +154,7 @@ public class UserService : IIdentityService, IUserService
 
         var passwordUpdate = new PasswordUpdate
         {
-            IdentityGuid = _currentUserIdentifier.UserIdentityGuid,
+            IdentityGuid = _currentUserIdentifier.IdentityGuid,
             OldPassword = newPassword.OldPassword,
             NewPassword = newPassword.NewPassword
         };
@@ -197,10 +197,10 @@ public class UserService : IIdentityService, IUserService
 
         var userProfile = new UserProfile
         {
-            UserProfileId = _currentUserIdentifier.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserId,
             RealName = userUpdate.RealName?.Trim(),
             DateOfBirth = userUpdate.DateOfBirth,
-            UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
+            UserIdentityGuid = _currentUserIdentifier.IdentityGuid,
             Sex = userUpdate.Sex,
         };
 
@@ -211,7 +211,7 @@ public class UserService : IIdentityService, IUserService
 
     public async Task<UserFull> GetCurrentUserAsync(CancellationToken cancellationToken = default)
     {
-        var userIdentity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.UserIdentityGuid, cancellationToken);
+        var userIdentity = await _identityRepository.GetUserIdentityAsync(_currentUserIdentifier.IdentityGuid, cancellationToken);
         var userProfile = await _profileRepository.GetUserProfileAsync(userIdentity!.Guid, true, cancellationToken);
 
         var userModel = new UserFull
@@ -282,7 +282,7 @@ public class UserService : IIdentityService, IUserService
 
         var profile = new UserProfile
         {
-            UserProfileId = _currentUserIdentifier.UserProfileId,
+            UserProfileId = _currentUserIdentifier.UserId,
             Avatar = fileServiceResult.AsT0
         };
         var updateFlags = new UserProfileUpdateFlags
@@ -297,7 +297,7 @@ public class UserService : IIdentityService, IUserService
 
     public async Task<OneOf<True, NotFound>> RemoveAvatarAsync(Guid fileGuid, CancellationToken cancellationToken = default)
     {
-        var user = await _profileRepository.GetUserProfileAsync(_currentUserIdentifier.UserProfileId, true, cancellationToken);
+        var user = await _profileRepository.GetUserProfileAsync(_currentUserIdentifier.UserId, true, cancellationToken);
         if (user?.Avatar?.Guid != fileGuid)
         {
             return new NotFound("Avatar with such Guid not found avatar");
@@ -305,8 +305,8 @@ public class UserService : IIdentityService, IUserService
 
         var profile = new UserProfile
         {
-            UserProfileId = _currentUserIdentifier.UserProfileId,
-            UserIdentityGuid = _currentUserIdentifier.UserIdentityGuid,
+            UserProfileId = _currentUserIdentifier.UserId,
+            UserIdentityGuid = _currentUserIdentifier.IdentityGuid,
             Avatar = null
         };
         var updateFlags = new UserProfileUpdateFlags

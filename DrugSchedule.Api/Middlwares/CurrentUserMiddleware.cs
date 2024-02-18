@@ -18,8 +18,9 @@ public class CurrentUserMiddleware : IMiddleware
         }
 
         var claims = context.User.Claims;
-        var identityGuidString = claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+        var identityGuidString = claims?.FirstOrDefault(c => c.Type == StringConstants.UserIdentityGuidClaimName)?.Value;
         var profileIdString = claims?.FirstOrDefault(c => c.Type == StringConstants.UserProfileIdClaimName)?.Value;
+       
         var guidParsed = Guid.TryParse(identityGuidString, out var identityGuid);
         var longParsed = long.TryParse(profileIdString, out var profileId);
 

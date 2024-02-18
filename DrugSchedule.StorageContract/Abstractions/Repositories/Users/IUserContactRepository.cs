@@ -15,6 +15,8 @@ public interface IUserContactRepository
     
     public Task<List<UserContactSimple>> GetContactsSimpleAsync(long userProfileId, bool commonOnly, CancellationToken cancellationToken = default);
 
+    public Task<bool?> IsContactCommon(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default);
+
     public Task<UserContactPlain?> AddOrUpdateContactAsync(UserContactPlain userContact, CancellationToken cancellationToken = default);
 
     public Task<bool> RemoveContactAsync(long userProfileId, long contactProfileId, CancellationToken cancellationToken = default);

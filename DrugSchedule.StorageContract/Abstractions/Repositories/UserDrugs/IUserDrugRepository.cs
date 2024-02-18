@@ -17,6 +17,8 @@ public interface IUserDrugRepository
 
     public Task<UserMedicament?> GetMedicamentAsync(long userProfileId, long id, CancellationToken cancellationToken = default);
 
+    public Task<bool> DoesMedicamentExistAsync(long userProfileId, long id, CancellationToken cancellationToken = default);
+
     public Task<UserMedicament?> CreateMedicamentAsync(UserMedicament model, CancellationToken cancellationToken = default);
 
     public Task<UserMedicament?> UpdateMedicamentAsync(UserMedicament medicament, UserMedicamentUpdateFlags updateFlags, CancellationToken cancellationToken = default);

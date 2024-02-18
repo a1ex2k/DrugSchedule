@@ -1,6 +1,7 @@
 ﻿using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Models.Schedule;
 using DrugSchedule.StorageContract.Data;
+using TakingСonfirmation = DrugSchedule.StorageContract.Data.TakingСonfirmation;
 
 namespace DrugSchedule.Services.Services;
 

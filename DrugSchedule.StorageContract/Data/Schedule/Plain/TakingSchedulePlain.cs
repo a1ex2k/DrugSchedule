@@ -6,7 +6,7 @@ public class TakingSchedulePlain
 {
     public long Id { get; set; }
 
-    public required long UserProfileId { get; set; }
+    public long UserProfileId { get; set; }
 
     public int? GlobalMedicamentId { get; set; }
 
@@ -14,7 +14,7 @@ public class TakingSchedulePlain
 
     public string? Information { get; set; }
 
-    public required DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public required bool Enabled { get; set; }
+    public bool Enabled { get; set; }
 }

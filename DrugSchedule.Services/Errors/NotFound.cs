@@ -2,15 +2,36 @@
 
 public class NotFound
 {
-    public string Message { get; init; }
+    public List<string> ErrorsList { get; init; } = new List<string>();
 
-    public static implicit operator string(NotFound error)
+    public bool HasMessages => ErrorsList.Count > 0;
+
+    public void Add(string message)
     {
-        return error.Message;
+        ErrorsList.Add(message);
+    }
+
+    public static implicit operator string?(NotFound? error)
+    {
+        if (error == null || error.ErrorsList.Count == 0)
+        {
+            return null;
+        }
+
+        if (error.ErrorsList.Count == 1)
+        {
+            return error.ErrorsList[0];
+        }
+
+        return string.Join(" \n", error.ErrorsList);
     }
 
     public NotFound(string message)
     {
-        Message = message;
+        ErrorsList.Add(message);
+    }
+
+    public NotFound()
+    {
     }
 }

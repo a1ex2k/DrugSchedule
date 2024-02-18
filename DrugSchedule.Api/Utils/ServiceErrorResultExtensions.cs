@@ -19,16 +19,7 @@ public static class ServiceErrorResultExtensions
         return new ErrorDto
         {
             Category = "NotFound",
-            Messages = new List<string>(1){ notFound.Message },
-        };
-    }
-
-    public static ErrorDto ToDto(this AccessDenied accessDenied)
-    {
-        return new ErrorDto
-        {
-            Category = "NotFound",
-            Messages = new List<string>(1) { accessDenied.Message },
+            Messages = notFound.ErrorsList,
         };
     }
 }
