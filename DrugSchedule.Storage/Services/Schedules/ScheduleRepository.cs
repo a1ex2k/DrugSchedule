@@ -103,6 +103,7 @@ public class ScheduleRepository : IScheduleRepository
         if (entity == null) return null;
 
         var entry = _dbContext.Entry(entity);
+        entry.UpdateIf(e => e.UserProfileId, takingSchedule.UserProfileId, updateFlags.UserProfileId);
         entry.UpdateIf(e => e.UserMedicamentId, takingSchedule.UserMedicamentId, updateFlags.UserMedicamentId);
         entry.UpdateIf(e => e.GlobalMedicamentId, takingSchedule.GlobalMedicamentId, updateFlags.GlobalMedicamentId);
         entry.UpdateIf(e => e.Information, takingSchedule.Information, updateFlags.Information);
@@ -112,11 +113,12 @@ public class ScheduleRepository : IScheduleRepository
         return saved ? entity.ToContractModel() : null;
     }
 
-    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id,
+    public async Task<Contract.RemoveOperationResult> RemoveTakingScheduleAsync(long id, long userId,
         CancellationToken cancellationToken = default)
     {
         var deletedCount = await _dbContext.MedicamentTakingSchedules
             .Where(s => s.Id == id)
+            .Where(s => s.UserProfileId == userId)
             .ExecuteDeleteAsync(cancellationToken);
 
         return deletedCount > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;

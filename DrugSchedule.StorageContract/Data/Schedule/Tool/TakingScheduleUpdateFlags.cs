@@ -2,6 +2,8 @@
 
 public class TakingScheduleUpdateFlags
 {
+    public bool UserProfileId { get; set; }
+
     public bool GlobalMedicamentId { get; set; }
 
     public bool UserMedicamentId { get; set; }
@@ -10,4 +12,3 @@ public class TakingScheduleUpdateFlags
 
     public bool Enabled { get; set; }
 }
-

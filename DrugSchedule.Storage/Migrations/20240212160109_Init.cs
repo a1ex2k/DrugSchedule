@@ -609,7 +609,7 @@ namespace DrugSchedule.Storage.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleRepeat_MedicamentTakingScheduleId",
                 table: "ScheduleRepeat",
-                column: "MedicamentTakingScheduleId");
+                column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleRepeat_UserProfileId",
@@ -619,7 +619,7 @@ namespace DrugSchedule.Storage.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleShare_MedicamentTakingScheduleId",
                 table: "ScheduleShare",
-                column: "MedicamentTakingScheduleId");
+                column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleShare_ShareWithContactId",

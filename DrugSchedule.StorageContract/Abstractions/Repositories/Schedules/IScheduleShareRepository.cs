@@ -7,11 +7,9 @@ namespace DrugSchedule.StorageContract.Abstractions;
 
 public interface IScheduleShareRepository
 {
-    public Task<ScheduleSharePlain?> GetScheduleShareAsync(long id, CancellationToken cancellationToken = default);
-
     public Task<List<ScheduleSharePlain>> GetScheduleSharesAsync(long scheduleId, CancellationToken cancellationToken = default);
 
     public Task<ScheduleSharePlain?> AddOrUpdateShareAsync(ScheduleSharePlain scheduleShare, CancellationToken cancellationToken = default);
 
-    public Task<RemoveOperationResult> RemoveTakingScheduleAsync(long id, CancellationToken cancellationToken = default);
+    public Task<RemoveOperationResult> RemoveScheduleShareAsync(long scheduleId, long contactProfileId, CancellationToken cancellationToken = default);
 }

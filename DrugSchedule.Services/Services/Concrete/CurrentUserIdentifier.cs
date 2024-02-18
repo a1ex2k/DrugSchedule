@@ -11,18 +11,18 @@ public class CurrentUserIdentifier : ICurrentUserIdentifier
 
     public bool IsAvailable => _isAvailable && _isSet;
     public bool CanBeSet => !_isSet;
-    public long UserProfileId => _userProfileId;
-    public Guid UserIdentityGuid => _userIdentityGuid;
+    public long UserId => _userProfileId;
+    public Guid IdentityGuid => _userIdentityGuid;
 
-    public void Set(Guid userIdentityGuid, long userProfileId)
+    public void Set(Guid identityGuid, long userId)
     {
         if (_isSet)
         {
             throw new InvalidOperationException("Data already set");
         }
 
-        _userIdentityGuid = userIdentityGuid;
-        _userProfileId = userProfileId;
+        _userIdentityGuid = identityGuid;
+        _userProfileId = userId;
         _isAvailable = true;
         _isSet = true;
     }
