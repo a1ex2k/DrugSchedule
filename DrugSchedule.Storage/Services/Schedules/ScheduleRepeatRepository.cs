@@ -38,12 +38,11 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return repeat;
     }
 
-    public async Task<bool> DoesRepeatExistAsync(long id, long scheduleId, long userProfileId,
+    public async Task<bool> DoesRepeatExistAsync(long id, long userProfileId,
         CancellationToken cancellationToken = default)
     {
         var repeatExists = await _dbContext.ScheduleRepeat
             .Where(r => r.Id == id)
-            .Where(r => r.MedicamentTakingScheduleId == scheduleId)
             .Where(r => r.MedicamentTakingSchedule!.UserProfileId == userProfileId)
             .AnyAsync(cancellationToken);
 
@@ -102,6 +101,7 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         if (entity == null) return null;
 
         var entry = _dbContext.Entry(entity);
+        entry.UpdateIf(e => e.MedicamentTakingScheduleId, repeat.MedicamentTakingScheduleId, updateFlags.ScheduleId);
         entry.UpdateIf(e => e.BeginDate, repeat.BeginDate, updateFlags.BeginDate);
         entry.UpdateIf(e => e.EndDate, repeat.EndDate, updateFlags.EndDate);
         entry.UpdateIf(e => e.TimeOfDay, repeat.TimeOfDay, updateFlags.TimeOfDay);

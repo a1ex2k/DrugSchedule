@@ -5,7 +5,7 @@ namespace DrugSchedule.Services.Converters;
 
 public interface IUserMedicamentConverter
 {
-    UserMedicamentUpdate ToUpdateResultModel(UserMedicament medicament);
+    UserMedicamentUpdate ToUpdateResultModel(UserMedicamentPlain medicamentPlain);
     UserMedicamentExtendedModel ToUserMedicamentExtended(UserMedicamentExtended userMedicament, MedicamentExtended? globalMedicament);
     UserMedicamentSimpleModel ToUserMedicamentSimple(UserMedicamentSimple userMedicament);
     UserMedicamentSimpleCollection ToUserMedicamentSimpleCollection(List<UserMedicamentSimple> userMedicaments);

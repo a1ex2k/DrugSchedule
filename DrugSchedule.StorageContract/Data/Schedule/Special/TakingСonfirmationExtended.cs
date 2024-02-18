@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace DrugSchedule.StorageContract.Data;
 
-public class TakingСonfirmation
+public class TakingСonfirmationExtended
 {
     public long Id { get; set; }
 

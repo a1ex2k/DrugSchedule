@@ -116,16 +116,15 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         if (invalidInput.HasMessages) return invalidInput;
 
-        var medicament = new UserMedicament
+        var medicament = new UserMedicamentPlain
         {
-            UserProfileId = _currentUserIdentifier.UserId,
+            UserId = _currentUserIdentifier.UserId,
             BasicMedicamentId = model.BasicMedicamentId,
             Name = model.Name.Trim(),
             ReleaseForm = model.ReleaseForm.Trim(),
             Description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description.Trim(),
             Composition = string.IsNullOrWhiteSpace(model.Composition) ? null : model.Composition.Trim(),
             ManufacturerName = string.IsNullOrWhiteSpace(model.ManufacturerName) ? null : model.ManufacturerName.Trim(),
-
         };
 
         var savedMedicament = await _userDrugRepository.CreateMedicamentAsync(medicament, cancellationToken);
@@ -134,10 +133,8 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<OneOf<UserMedicamentId, NotFound, InvalidInput>> UpdateMedicamentAsync(UserMedicamentUpdate model, CancellationToken cancellationToken = default)
     {
-        var medicament =
-            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserId, model.Id,
-                cancellationToken);
-        if (medicament == null)
+        var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(model.Id, _currentUserIdentifier.UserId, cancellationToken);
+        if (medicamentExists)
         {
             return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
@@ -174,12 +171,15 @@ public class UserDrugLibrary : IUserDrugLibrary
             ManufacturerName = true,
         };
 
-        medicament.BasicMedicamentId = model.BasicMedicamentId;
-        medicament.Name = model.Name.Trim();
-        medicament.ReleaseForm = model.ReleaseForm.Trim();
-        medicament.Description = model.Description?.Trim();
-        medicament.Composition = model.Composition?.Trim();
-        medicament.ManufacturerName = model.ManufacturerName?.Trim();
+        var medicament = new UserMedicamentPlain
+        {
+            BasicMedicamentId = model.BasicMedicamentId,
+            Name = model.Name.Trim(),
+            ReleaseForm = model.ReleaseForm.Trim(),
+            Description = model.Description?.Trim(),
+            Composition = model.Composition?.Trim(),
+            ManufacturerName = model.ManufacturerName?.Trim(),
+        };
 
         var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);
         return (UserMedicamentId)savedMedicament!.Id;
@@ -202,9 +202,8 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddImageAsync(long medicamentId, InputFile inputFile, CancellationToken cancellationToken = default)
     {
-        var medicament =
-            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
-        if (medicament == null)
+        var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
+        if (!medicamentExists)
         {
             return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
@@ -215,34 +214,24 @@ public class UserDrugLibrary : IUserDrugLibrary
             return addResult.AsT1;
         }
 
+        _ = await _userDrugRepository.AddMedicamentImageAsync(medicamentId, addResult.AsT0.Guid, cancellationToken);
         return _downloadableFileConverter.ToFileModel(addResult.AsT0, true)!;
     }
 
     public async Task<OneOf<True, NotFound>> RemoveImageAsync(long medicamentId, Guid fileGuid, CancellationToken cancellationToken = default)
     {
-        var medicament =
-            await _userDrugRepository.GetMedicamentAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
-        if (medicament == null)
+        var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
+        if (!medicamentExists)
         {
             return new NotFound("Current user doesn't have custom medicament with provided ID");
         }
 
-        if (medicament.ImageGuids?.Contains(fileGuid) != true)
+        var removeResult = await _userDrugRepository.RemoveMedicamentImageAsync(medicamentId, fileGuid, cancellationToken);
+        if (removeResult != RemoveOperationResult.Removed)
         {
             return new NotFound($"User medicament doesn't contain any image with provided Guid");
         }
-
-        var updateFlags = new UserMedicamentUpdateFlags
-        {
-            Images = true
-        };
-
-        medicament.ImageGuids.Remove(fileGuid);
-        var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);
-        if (savedMedicament != null)
-        {
-            await _fileService.RemoveFileAsync(fileGuid, cancellationToken);
-        }
+        
         return new True();
     }
 
