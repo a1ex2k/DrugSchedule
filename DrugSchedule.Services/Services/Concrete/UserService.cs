@@ -244,7 +244,7 @@ public class UserService : IIdentityService, IUserService
                 SubString = search.UsernameSubstring,
                 StringSearchType = StringSearch.Contains
             },
-            Take = search.MaxCount
+            Take = search.Take
         };
 
         var identities = await _identityRepository.GetUserIdentitiesAsync(filter, cancellationToken);

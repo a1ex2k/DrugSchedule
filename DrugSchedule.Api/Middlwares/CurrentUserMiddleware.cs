@@ -1,6 +1,4 @@
 ﻿using DrugSchedule.Services;
-using System.Security.Claims;
-using DrugSchedule.Services.Services;
 using DrugSchedule.Services.Services.Abstractions;
 
 namespace DrugSchedule.Api.Middlwares;
