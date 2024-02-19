@@ -1,5 +1,7 @@
-﻿using DrugSchedule.Services.Models;
+using System.Runtime.InteropServices.ComTypes;
+using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using OneOf.Types;
@@ -95,7 +97,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             _scheduleRepository.RemoveTakingScheduleAsync(scheduleId, _currentUserIdentifier.UserId, cancellationToken);
         if (removeResult != RemoveOperationResult.Removed)
         {
-            return new NotFound("User doesn't have schedules with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveSchedule);
         }
 
         return new True();
@@ -107,13 +109,21 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         var scheduleExists = await _scheduleRepository.DoesScheduleExistsAsync(newRepeat.ScheduleId, _currentUserIdentifier.UserId, cancellationToken);
         if (!scheduleExists) 
         {
-            return new NotFound("Schedule not found");
+            return new NotFound(ErrorMessages.ScheduleNotFound);
         }
 
+        var invalidInput = new InvalidInput();
         if (newRepeat.EndDate != null && newRepeat.EndDate <= newRepeat.BeginDate)
         {
-            return new InvalidInput("End date must be undefined or greater than begin date");
+            invalidInput.Add(ErrorMessages.ScheduleDatesInvalid);
         }
+
+        if (newRepeat.TimeOfDay == TimeOfDay.None && newRepeat.Time == null)
+        {
+            invalidInput.Add(ErrorMessages.ScheduleDatesInvalid);
+        }
+
+        if (invalidInput.HasMessages) return invalidInput;
 
         var repeat = new ScheduleRepeatPlain
         {
@@ -136,18 +146,18 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         var repeatExists = await _repeatRepository.DoesRepeatExistAsync(repeatUpdate.Id, _currentUserIdentifier.UserId, cancellationToken);
         if (!repeatExists)
         {
-            return new NotFound("User has no repeat with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveRepeat);
         }
 
         if (repeatUpdate.EndDate != null && repeatUpdate.EndDate <= repeatUpdate.BeginDate)
         {
-            return new InvalidInput("End date must be undefined or greater than begin date");
+            return new InvalidInput(ErrorMessages.ScheduleDatesInvalid);
         }
 
-        var hasConfirmations = await _confirmationRepository.AnyConfirmationExistsAsync([repeatUpdate.Id], cancellationToken);
+        var hasConfirmations = await _confirmationRepository.AnyConfirmationExistsAsync(new () {repeatUpdate.Id}, cancellationToken);
         if (hasConfirmations)
         {
-            return new InvalidInput("Repeat cannot be updated because it already has confirmations. Create another one");
+            return new InvalidInput(ErrorMessages.RepeatCannotBeUpdated);
         }
 
         var repeat = new ScheduleRepeatPlain
@@ -179,7 +189,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         var repeatExists = await _repeatRepository.DoesRepeatExistAsync(repeatId, _currentUserIdentifier.UserId, cancellationToken);
         if (!repeatExists)
         {
-            return new NotFound("User has no repeat with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveRepeat);
         }
 
         _ = await _repeatRepository.RemoveRepeatAsync(repeatId, cancellationToken);
@@ -194,14 +204,14 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             _currentUserIdentifier.UserId, cancellationToken);
         if (!scheduleExists)
         {
-            notFound.Add("User doesn't have schedules with provided ID");
+            notFound.Add(ErrorMessages.UserDoesntHaveSchedule);
         }
 
         var isCommonContact = await _contactRepository.IsContactCommon(_currentUserIdentifier.UserId,
             newShare.CommonContactProfileId, cancellationToken);
         if (!isCommonContact.HasValue || !isCommonContact.Value)
         {
-            notFound.Add("User doesn't have a common contact with provided ID");
+            notFound.Add(ErrorMessages.NoCommonContact);
         }
 
         if (notFound.HasMessages) return notFound;
@@ -230,7 +240,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
     {
         if (userDrugId == null && globalDrugId == null)
         {
-            return new InvalidInput("Either global medicament or user's medicament must be defined");
+            return new InvalidInput(ErrorMessages.ScheduleMedicamentsInvalid);
         }
 
         var globalDrugPassed = globalDrugId == null ||
@@ -240,17 +250,21 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
                              await _userDrugRepository.DoesMedicamentExistAsync(
                                  _currentUserIdentifier.UserId, userDrugId.Value, cancellationToken);
 
+        var notFound = new NotFound();
         if (scheduleId != null)
         {
             var exists = await _scheduleRepository.DoesScheduleExistsAsync(scheduleId.Value, _currentUserIdentifier.UserId, cancellationToken);
-            return new NotFound("Schedule not found");
+            if (!exists)
+            {
+                notFound.Add(ErrorMessages.ScheduleNotFound);
+            }
         }
 
         if (!globalDrugPassed || !userDrugPassed)
         {
-            return new NotFound("Medicament not found");
+            notFound.Add(ErrorMessages.MedicamentNotFound);
         }
-
-        return null;
+        
+        return notFound.HasMessages ? notFound : (OneOf<NotFound, InvalidInput>?)null;
     }
 }

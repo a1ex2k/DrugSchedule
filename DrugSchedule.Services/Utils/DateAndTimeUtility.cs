@@ -23,7 +23,7 @@ internal static class DateUtility
 
         while (startDate <= endDate)
         {
-            if (((int)dayOfWeek & (int)startDate.DayOfWeek) == (int)startDate.DayOfWeek)
+            if (((byte)dayOfWeek & (byte)startDate.DayOfWeek) == (byte)startDate.DayOfWeek)
             {
                 yield return startDate;
             }

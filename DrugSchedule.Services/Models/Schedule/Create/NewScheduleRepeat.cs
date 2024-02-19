@@ -8,7 +8,7 @@ public class NewScheduleRepeat
 
     public required DateOnly BeginDate { get; set; }
 
-    public required TimeOnly Time { get; set; }
+    public required TimeOnly? Time { get; set; }
 
     public required TimeOfDay TimeOfDay { get; set; }
 

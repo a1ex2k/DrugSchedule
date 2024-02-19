@@ -1,6 +1,7 @@
-﻿using DrugSchedule.Services.Converters;
+using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using OneOf.Types;
@@ -30,7 +31,7 @@ public class UserContactsService : IUserContactsService
         var contact = await _contactsRepository.GetContactAsync(_currentUserIdentifier.UserId, contactProfileId, cancellationToken);
         if (contact == null)
         {
-            return new NotFound("No contact with such ID found");
+            return new NotFound(ErrorMessages.NoContact);
         }
 
         var identity = await _identityRepository.GetUserIdentityAsync(contact.Profile.UserIdentityGuid, cancellationToken);
@@ -69,7 +70,7 @@ public class UserContactsService : IUserContactsService
         var userProfileExists = await _profileRepository.DoesUserProfileExistsAsync(newContact.UserProfileId, cancellationToken);
         if (!userProfileExists)
         {
-            return new NotFound("User with provided Id not found");
+            return new NotFound(ErrorMessages.UserNotFound);
         }
 
         var invalidInput = new InvalidInput();
@@ -103,7 +104,7 @@ public class UserContactsService : IUserContactsService
             _contactsRepository.RemoveContactAsync(_currentUserIdentifier.UserId, contactProfileId, cancellationToken);
         if (!contactRemoved)
         {
-            return new NotFound("No contact with such ID found");
+            return new NotFound(ErrorMessages.NoContact);
         }
 
         return new True();

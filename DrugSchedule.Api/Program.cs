@@ -12,7 +12,6 @@ using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using TokenService = DrugSchedule.Api.Jwt.TokenService;
@@ -58,11 +57,13 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserContactsService, UserContactsService>();
+builder.Services.AddScoped<IScheduleService, IScheduleService>();
+builder.Services.AddScoped<IScheduleConfirmationManipulatingService, ScheduleConfirmationManipulatingService>();
+builder.Services.AddScoped<IScheduleManipulatingService, ScheduleManipulatingService>();
+builder.Services.AddScoped<IUserContactsService, UserContactsService>();
 builder.Services.AddScoped<IFileService, FileService>();
-
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 builder.Services.AddScoped<IUserDrugLibrary, UserDrugLibrary>();
-builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 
 
 #endregion
