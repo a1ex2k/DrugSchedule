@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.StorageContract.Data;
 
-public enum Sex
+public enum Sex : byte
 {
     Undefined = 0,
     Male = 1,

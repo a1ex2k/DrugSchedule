@@ -8,7 +8,7 @@ public class ScheduleRepeatPlain
 
     public DateOnly BeginDate { get; set; }
 
-    public TimeOnly Time { get; set; }
+    public TimeOnly? Time { get; set; }
 
     public TimeOfDay TimeOfDay { get; set; }
 

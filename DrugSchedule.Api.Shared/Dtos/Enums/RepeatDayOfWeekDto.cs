@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace DrugSchedule.StorageContract.Data;
+namespace DrugSchedule.Api.Shared.Dtos;
 
 [Flags]
-public enum RepeatDayOfWeek : byte
+public enum RepeatDayOfWeekDto : byte
 {
     Sunday = 1 << 0,
     Monday = 1 << 1,

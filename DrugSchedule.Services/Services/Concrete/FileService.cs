@@ -1,8 +1,9 @@
-﻿using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Models;
 using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using DrugSchedule.Services.Errors;
+using DrugSchedule.Services.Utils;
 
 namespace DrugSchedule.Services.Services;
 
@@ -27,7 +28,7 @@ public class FileService : IFileService
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File info not found");
+            return new NotFound(ErrorMessages.FileInfoNotFound);
         }
 
         return fileInfo;
@@ -44,19 +45,19 @@ public class FileService : IFileService
     {
         if (fileGuid == Guid.Empty)
         {
-            return new NotFound("Empty guid");
+            return new NotFound(ErrorMessages.EmptyGuid);
         }
 
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File not found");
+            return new NotFound(ErrorMessages.FileNotFound);
         }
 
         var stream = await _fileStorage.GetReadStreamAsync(fileInfo, cancellationToken);
         if (stream == null)
         {
-            return new NotFound("File not found");
+            return new NotFound(ErrorMessages.FileNotFound);
         }
 
         var fileData = new FileData
@@ -71,19 +72,19 @@ public class FileService : IFileService
     {
         if (fileGuid == Guid.Empty)
         {
-            return new NotFound("Empty guid");
+            return new NotFound(ErrorMessages.EmptyGuid);
         }
 
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File not found");
+            return new NotFound(ErrorMessages.FileNotFound);
         }
 
         var stream = await _fileStorage.GetThumbnailStreamAsync(fileInfo, cancellationToken);
         if (stream == null)
         {
-            return new NotFound("File thumbnail not found");
+            return new NotFound(ErrorMessages.FileThumbnailNotFound);
         }
 
         var fileData = new FileData
@@ -128,7 +129,7 @@ public class FileService : IFileService
         var fileInfo = await _fileInfoRepository.GetFileInfoAsync(fileGuid, cancellationToken);
         if (fileInfo == null)
         {
-            return new NotFound("File info not found");
+            return new NotFound(ErrorMessages.FileInfoNotFound);
         }
 
         var wasRemovedFromStorage = await _fileStorage.RemoveFileAsync(fileInfo, cancellationToken);

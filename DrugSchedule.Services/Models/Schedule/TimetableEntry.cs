@@ -8,7 +8,7 @@ public class TimetableEntry
 
     public TimeOfDay TimeOfDay { get; set; }
 
-    public TimeOnly Time { get; set; }
+    public TimeOnly? Time { get; set; }
 
     public long ScheduleId { get; set; } 
 

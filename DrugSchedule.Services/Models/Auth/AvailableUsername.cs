@@ -8,5 +8,5 @@ public class AvailableUsername
 
     public required bool IsAvailable { get; set; }
 
-    public required string Comment { get; set; }
+    public required string? Comment { get; set; }
 }

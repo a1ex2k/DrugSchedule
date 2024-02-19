@@ -14,11 +14,11 @@ public class TakingСonfirmationPlain
 
     public string? Text { get; set; }
 
-    public long ScheduleRepeatId { get; set; }
+    public required long ScheduleRepeatId { get; set; }
 
     public DateOnly ForDate { get; set; }
 
-    public TimeOnly ForTime { get; set; }
+    public TimeOnly? ForTime { get; set; }
 
     public TimeOfDay ForTimeOfDay { get; set; }
 }
