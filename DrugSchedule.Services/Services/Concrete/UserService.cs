@@ -1,4 +1,4 @@
-﻿using DrugSchedule.Services.Converters;
+using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Utils;
@@ -39,7 +39,7 @@ public class UserService : IIdentityService, IUserService
 
         if (string.IsNullOrWhiteSpace(registerModel.Email))
         {
-            error.Add("Email is invalid");
+            error.Add(ErrorMessages.InvalidEmail);
         }
 
         if (!CridentialsValidator.ValidatePassword(registerModel.Password))
@@ -49,7 +49,7 @@ public class UserService : IIdentityService, IUserService
 
         if (string.Equals(registerModel.Password, registerModel.Username, StringComparison.OrdinalIgnoreCase))
         {
-            error.Add("Password and username must differ");
+            error.Add(ErrorMessages.PasswordUsernameMustDiffer);
         }
 
         if (error.HasMessages)
@@ -62,7 +62,7 @@ public class UserService : IIdentityService, IUserService
 
         if (usernameUsed || emailUsed)
         {
-            error.Add("Email or username is already used");
+            error.Add(ErrorMessages.EmailOrUsernameIsUsed);
             return error;
         }
 
@@ -86,7 +86,7 @@ public class UserService : IIdentityService, IUserService
         var userIdentity = await _identityRepository.GetUserIdentityAsync(loginModel.Username!, loginModel.Password!, cancellationToken);
         if (userIdentity == null)
         {
-            return new InvalidInput("Either username or password is incorrect");
+            return new InvalidInput(ErrorMessages.IncorrectUsernamePassword);
         }
 
         var userProfile = await _profileRepository.GetUserProfileAsync(userIdentity.Guid, false, cancellationToken)
@@ -127,7 +127,7 @@ public class UserService : IIdentityService, IUserService
         {
             Username = username,
             IsAvailable = !isUsed,
-            Comment = isUsed ? "Username already used" : "Free"
+            Comment = null
         };
     }
 
@@ -144,7 +144,7 @@ public class UserService : IIdentityService, IUserService
 
         if (string.Equals(newPassword.NewPassword, identity!.Username, StringComparison.OrdinalIgnoreCase))
         {
-            error.Add("Password and username must differ");
+            error.Add(ErrorMessages.PasswordUsernameMustDiffer);
         }
 
         if (error.HasMessages)
@@ -162,7 +162,7 @@ public class UserService : IIdentityService, IUserService
 
         if (!passwordWasUpdated)
         {
-            error.Add("Old password doesn't match or same to new one");
+            error.Add(ErrorMessages.IncorrectOldPassword);
             return error;
         }
 
@@ -185,12 +185,12 @@ public class UserService : IIdentityService, IUserService
         if (userUpdate.DateOfBirth > currentDate.AddYears(-5)
             || userUpdate.DateOfBirth < currentDate.AddYears(-120))
         {
-            error.Add("Invalid date of birth. Current age must be greater than 5 and less than 120");
+            error.Add(ErrorMessages.InvalidDateOfBirth);
         }
 
         if (userUpdate.RealName != null && userUpdate.RealName.Trim().Length > 30)
         {
-            error.Add("Invalid real name. Max 30 characters");
+            error.Add(ErrorMessages.InvalidRealName);
         }
 
         if (error.HasMessages) return error;
@@ -234,7 +234,7 @@ public class UserService : IIdentityService, IUserService
         var usernamePart = search.UsernameSubstring;
         if (string.IsNullOrWhiteSpace(usernamePart.Trim()) || usernamePart.Length < 3)
         {
-            return new InvalidInput("Search value must be at least 3 not whitespace characters long");
+            return new InvalidInput(ErrorMessages.SearchValueMustBeThreeChars);
         }
 
         var filter = new UserIdentityFilter
@@ -300,7 +300,7 @@ public class UserService : IIdentityService, IUserService
         var user = await _profileRepository.GetUserProfileAsync(_currentUserIdentifier.UserId, true, cancellationToken);
         if (user?.Avatar?.Guid != fileGuid)
         {
-            return new NotFound("Avatar with such Guid not found avatar");
+            return new NotFound(ErrorMessages.FileNotFound);
         }
 
         var profile = new UserProfile
@@ -316,7 +316,7 @@ public class UserService : IIdentityService, IUserService
         var updateResult = await _profileRepository.UpdateUserProfileAsync(profile, updateFlags, cancellationToken);
         if (updateResult == null)
         {
-            return new NotFound("Cannot remove avatar");
+            return new NotFound(ErrorMessages.CannotRemoveFile);
         }
 
         var removeResult = await _fileService.RemoveFileAsync(fileGuid, cancellationToken);

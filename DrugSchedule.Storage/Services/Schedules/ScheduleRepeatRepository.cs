@@ -26,12 +26,11 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
         return repeat;
     }
 
-    public async Task<Contract.ScheduleRepeatPlain?> GetRepeatAsync(long id, long scheduleId, long userProfileId,
+    public async Task<Contract.ScheduleRepeatPlain?> GetRepeatAsync(long id, long userProfileId,
         CancellationToken cancellationToken = default)
     {
         var repeat = await _dbContext.ScheduleRepeat
             .Where(r => r.Id == id)
-            .Where(r => r.MedicamentTakingScheduleId == scheduleId)
             .Where(r => r.MedicamentTakingSchedule!.UserProfileId == userProfileId)
             .Select(EntityMapExpressions.ToScheduleRepeatPlain)
             .FirstOrDefaultAsync(cancellationToken);

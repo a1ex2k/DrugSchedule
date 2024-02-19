@@ -29,11 +29,12 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return confirmation;
     }
 
-    public async Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long scheduleId, CancellationToken cancellationToken = default)
+    public async Task<bool> DoesConfirmationExistAsync(long confirmationId, long repeatId, long userId, CancellationToken cancellationToken = default)
     {
         var exists = await _dbContext.TakingСonfirmations
-                        .Where(s => s.Id == confirmationId && s.ScheduleRepeatId == repeatId)
-            .Where(s => s.ScheduleRepeat!.MedicamentTakingScheduleId == scheduleId)
+            .Where(s => s.Id == confirmationId)
+            .Where(s => s.ScheduleRepeatId == repeatId)
+            .Where(s => s.ScheduleRepeat!.MedicamentTakingSchedule!.UserProfileId == userId)
             .AnyAsync(cancellationToken);
         return exists;
     }
@@ -78,7 +79,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
 
         if (updateFlags.Images)
         {
-            entity.Files.RemoveAndAddExceptExistingByKey(confirmation.ImagesGuids, 
+            entity.Files.RemoveAndAddExceptExistingByKey(confirmation.ImagesGuids,
                 existing => existing.FileGuid, guid => guid,
                 guid => new Entities.TakingСonfirmationFile { FileGuid = guid });
         }
@@ -119,7 +120,7 @@ public class ScheduleConfirmationRepository : IScheduleConfirmationRepository
         return deletedCount > 0 ? Contract.RemoveOperationResult.Removed : Contract.RemoveOperationResult.NotFound;
     }
 
-    
+
     public async Task<List<TakingСonfirmationTimetableTrimmed>> GetTakingConfirmationsForTimetableAsync(List<long> repeatIds,
         CancellationToken cancellationToken = default)
     {

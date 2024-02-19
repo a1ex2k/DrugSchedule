@@ -1,4 +1,4 @@
-﻿using DrugSchedule.Services.Converters;
+using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Utils;
@@ -45,7 +45,7 @@ public class ScheduleService : IScheduleService
 
         if (schedule == null)
         {
-            return new NotFound("Schedule was not found or user doesn't have permissions to access");
+            return new NotFound(ErrorMessages.ScheduleNotFoundOrNoPermissionsToAccess);
         }
 
         return _converter.ToScheduleSimple(schedule!);
@@ -68,7 +68,7 @@ public class ScheduleService : IScheduleService
 
         if (schedule == null)
         {
-            return new NotFound("Schedule was not found or user doesn't have permissions to access");
+            return new NotFound(ErrorMessages.ScheduleNotFoundOrNoPermissionsToAccess);
         }
 
         return _converter.ToScheduleExtended(schedule);
@@ -89,7 +89,7 @@ public class ScheduleService : IScheduleService
         var isAccessible = await DoesExistAndUserHasAccessAsync(filter.ScheduleId, cancellationToken);
         if (!isAccessible)
         {
-            return new NotFound("Schedule was not found or user doesn't have permissions to access");
+            return new NotFound(ErrorMessages.ScheduleNotFoundOrNoPermissionsToAccess);
         }
 
         var confirmations = await _sharedDataRepository.GetTakingConfirmationsAsync(filter, cancellationToken);
@@ -102,7 +102,7 @@ public class ScheduleService : IScheduleService
         var datesAreValid = minDate <= maxDate && minDate.AddDays(32) >= maxDate;
         if (!datesAreValid)
         {
-            return new InvalidInput("Invalid dates. Minimum and maximum dates difference must be 32 days or less");
+            return new InvalidInput(ErrorMessages.InvalidRequestScheduleDates);
         }
 
         var scheduleIds =
@@ -125,13 +125,13 @@ public class ScheduleService : IScheduleService
         var datesAreValid = minDate <= maxDate && minDate.AddDays(32) >= maxDate;
         if (!datesAreValid)
         {
-            return new InvalidInput("Invalid dates. Minimum and maximum dates difference must be 32 days or less");
+            return new InvalidInput(ErrorMessages.InvalidRequestScheduleDates);
         }
 
         var hasAccess = await DoesExistAndUserHasAccessAsync(scheduleId, cancellationToken);
         if (!hasAccess)
         {
-            return new NotFound("Schedule was not found or user doesn't have permissions to access");
+            return new NotFound(ErrorMessages.ScheduleNotFoundOrNoPermissionsToAccess);
         }
 
         var timetableEntries =
