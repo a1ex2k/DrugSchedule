@@ -13,7 +13,7 @@ public class TakingСonfirmationExtended
 
     public DateOnly ForDate { get; set; }
 
-    public TimeOnly ForTime { get; set; }
+    public TimeOnly? ForTime { get; set; }
 
     public TimeOfDay ForTimeOfDay { get; set; }
 

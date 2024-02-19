@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.StorageContract.Data;
 
-public enum StringSearch
+public enum StringSearch : byte
 {
     StartsWith,
     Contains,

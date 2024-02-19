@@ -1,4 +1,4 @@
-﻿using DrugSchedule.StorageContract.Abstractions;
+using DrugSchedule.StorageContract.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
@@ -38,7 +38,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         if (medicament == null)
         {
-            return new NotFound("Current user doesn't have custom medicament with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveMedicament);
         }
 
         if (medicament.BasicMedicamentId == null)
@@ -81,7 +81,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         var medicament = await _userDrugRepository.GetMedicamentSimpleAsync(_currentUserIdentifier.UserId, id, cancellationToken);
         if (medicament == null)
         {
-            return new NotFound("Current user doesn't have custom medicament with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveMedicament);
         }
 
         return _converter.ToUserMedicamentSimple(medicament);
@@ -101,17 +101,17 @@ public class UserDrugLibrary : IUserDrugLibrary
             var exists = await _drugRepository.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
-                invalidInput.Add("Base medicament with provided ID not found");
+                invalidInput.Add(ErrorMessages.BasicMedicamentNotFound);
             }
         }
         if (string.IsNullOrWhiteSpace(model.Name))
         {
-            invalidInput.Add("Name must be non white space");
+            invalidInput.Add(ErrorMessages.NameMustBeNonWhiteSpace);
         }
 
         if (string.IsNullOrWhiteSpace(model.ReleaseForm))
         {
-            invalidInput.Add("ReleaseForm must be non white space");
+            invalidInput.Add(ErrorMessages.ReleaseFormMustBeNonWhitespace);
         }
 
         if (invalidInput.HasMessages) return invalidInput;
@@ -136,7 +136,7 @@ public class UserDrugLibrary : IUserDrugLibrary
         var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(model.Id, _currentUserIdentifier.UserId, cancellationToken);
         if (medicamentExists)
         {
-            return new NotFound("Current user doesn't have custom medicament with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveMedicament);
         }
 
         var invalidInput = new InvalidInput();
@@ -145,18 +145,18 @@ public class UserDrugLibrary : IUserDrugLibrary
             var exists = await _drugRepository.DoesMedicamentExistAsync(model.BasicMedicamentId.Value, cancellationToken);
             if (!exists)
             {
-                invalidInput.Add("Base medicament with provided ID not found");
+                invalidInput.Add(ErrorMessages.BasicMedicamentNotFound);
             }
         }
 
         if (string.IsNullOrWhiteSpace(model.Name))
         {
-            invalidInput.Add("Name must be non white space");
+            invalidInput.Add(ErrorMessages.NameMustBeNonWhiteSpace);
         }
 
         if (string.IsNullOrWhiteSpace(model.ReleaseForm))
         {
-            invalidInput.Add("ReleaseForm must be non white space");
+            invalidInput.Add(ErrorMessages.ReleaseFormMustBeNonWhitespace);
         }
 
         if (invalidInput.HasMessages) return invalidInput;
@@ -193,9 +193,9 @@ public class UserDrugLibrary : IUserDrugLibrary
             case RemoveOperationResult.Removed:
                 return new True();
             case RemoveOperationResult.Used:
-                return new InvalidInput("User medicament cannot be removed because it is referenced by another object");
+                return new InvalidInput(ErrorMessages.UserMedicamentReferenced);
             default:
-                return new NotFound("User medicament with provided ID not found");
+                return new NotFound(ErrorMessages.UserMedicamentNotFound);
         }
     }
 
@@ -205,14 +205,11 @@ public class UserDrugLibrary : IUserDrugLibrary
         var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
         if (!medicamentExists)
         {
-            return new NotFound("Current user doesn't have custom medicament with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveMedicament);
         }
 
         var addResult = await CreateFileAsync(inputFile, cancellationToken);
-        if (addResult.IsT1)
-        {
-            return addResult.AsT1;
-        }
+        if (addResult.IsT1) return addResult.AsT1;
 
         _ = await _userDrugRepository.AddMedicamentImageAsync(medicamentId, addResult.AsT0.Guid, cancellationToken);
         return _downloadableFileConverter.ToFileModel(addResult.AsT0, true)!;
@@ -223,15 +220,10 @@ public class UserDrugLibrary : IUserDrugLibrary
         var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(_currentUserIdentifier.UserId, medicamentId, cancellationToken);
         if (!medicamentExists)
         {
-            return new NotFound("Current user doesn't have custom medicament with provided ID");
+            return new NotFound(ErrorMessages.UserDoesntHaveMedicament);
         }
 
-        var removeResult = await _userDrugRepository.RemoveMedicamentImageAsync(medicamentId, fileGuid, cancellationToken);
-        if (removeResult != RemoveOperationResult.Removed)
-        {
-            return new NotFound($"User medicament doesn't contain any image with provided Guid");
-        }
-        
+        _ = await _userDrugRepository.RemoveMedicamentImageAsync(medicamentId, fileGuid, cancellationToken);
         return new True();
     }
 
@@ -242,7 +234,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         if (medicament == null)
         {
-            return new NotFound("Shared user medicament was not found or current user doesn't have permissions to access");
+            return new NotFound(ErrorMessages.SharedUserMedicamentNotFoundOrNoPermissions);
         }
 
         if (medicament.BasicMedicamentId == null)

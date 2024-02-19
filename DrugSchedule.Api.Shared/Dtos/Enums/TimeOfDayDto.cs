@@ -1,6 +1,6 @@
-﻿namespace DrugSchedule.StorageContract.Data;
+﻿namespace DrugSchedule.Api.Shared.Dtos;
 
-public enum TimeOfDay : byte
+public enum TimeOfDayDto : byte
 {
     None = 0,
     MorningWakeup = 1,

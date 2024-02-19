@@ -1,5 +1,6 @@
-﻿using DrugSchedule.Services.Errors;
+using DrugSchedule.Services.Errors;
 using DrugSchedule.Services.Models;
+using DrugSchedule.Services.Utils;
 using MimeDetective;
 
 namespace DrugSchedule.Services.Services;
@@ -17,17 +18,17 @@ public class FileParamsProcessor : IFileProcessor
         var error = new InvalidInput();
         if (string.IsNullOrWhiteSpace(inputFile.MediaType))
         {
-            error.Add("Media type (MIME type) not set");
+            error.Add(ErrorMessages.MimeTypeNotSet);
         }
 
         if (string.IsNullOrWhiteSpace(inputFile.NameWithExtension))
         {
-            error.Add("Original filename not set");
+            error.Add(ErrorMessages.FilenameNotSet);
         }
 
         if (!inputFile.Stream.CanRead || inputFile.Stream.Length == 0)
         {
-            error.Add("Input data stream cannot be read");
+            error.Add(ErrorMessages.StreamCannotBeRead);
         }
 
         if (inputFile.Stream.Length > awaitableFileParams.MaxSize)
