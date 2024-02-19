@@ -60,7 +60,7 @@ namespace DrugSchedule.Storage.Migrations
                     FileCategory = table.Column<int>(type: "int", nullable: false),
                     MediaType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Size = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false),
                     HasThumbnail = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -232,7 +232,7 @@ namespace DrugSchedule.Storage.Migrations
                     IdentityGuid = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     RealName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
-                    Sex = table.Column<int>(type: "int", nullable: false),
+                    Sex = table.Column<byte>(type: "tinyint", nullable: false),
                     AvatarGuid = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -372,7 +372,7 @@ namespace DrugSchedule.Storage.Migrations
                     GlobalMedicamentId = table.Column<int>(type: "int", nullable: true),
                     UserMedicamentId = table.Column<long>(type: "bigint", nullable: true),
                     Information = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false),
                     Enabled = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -429,9 +429,9 @@ namespace DrugSchedule.Storage.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BeginDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Time = table.Column<TimeOnly>(type: "time", nullable: false),
-                    TimeOfDay = table.Column<int>(type: "int", nullable: false),
-                    RepeatDayOfWeek = table.Column<int>(type: "int", nullable: false),
+                    Time = table.Column<TimeOnly>(type: "time", nullable: true),
+                    TimeOfDay = table.Column<byte>(type: "tinyint", nullable: false),
+                    RepeatDayOfWeek = table.Column<byte>(type: "tinyint", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: true),
                     MedicamentTakingScheduleId = table.Column<long>(type: "bigint", nullable: false),
                     TakingRule = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -486,7 +486,10 @@ namespace DrugSchedule.Storage.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2(2)", precision: 2, nullable: false),
+                    ForDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ForTime = table.Column<TimeOnly>(type: "time(2)", precision: 2, nullable: true),
+                    ForTimeOfDay = table.Column<byte>(type: "tinyint", nullable: false),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ScheduleRepeatId = table.Column<long>(type: "bigint", nullable: false)
                 },
@@ -498,7 +501,7 @@ namespace DrugSchedule.Storage.Migrations
                         column: x => x.ScheduleRepeatId,
                         principalTable: "ScheduleRepeat",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -609,7 +612,7 @@ namespace DrugSchedule.Storage.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleRepeat_MedicamentTakingScheduleId",
                 table: "ScheduleRepeat",
-                column: "ScheduleId");
+                column: "MedicamentTakingScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleRepeat_UserProfileId",
@@ -619,7 +622,7 @@ namespace DrugSchedule.Storage.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleShare_MedicamentTakingScheduleId",
                 table: "ScheduleShare",
-                column: "ScheduleId");
+                column: "MedicamentTakingScheduleId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleShare_ShareWithContactId",
