@@ -28,7 +28,7 @@ public class UserContactConverter : IUserContactConverter
             Avatar = _downloadableFileConverter.ToFileModel(contact.Profile.Avatar,
             FileCategory.UserMedicamentImage.IsPublic()),
             DateOfBirth = contact.IsCommon ? contact.Profile.DateOfBirth : null,
-            Sex = contact.IsCommon ? contact.Profile.Sex : null
+            Sex = contact.IsCommon ? contact.Profile.Sex : Sex.Undefined
         };
 
 
