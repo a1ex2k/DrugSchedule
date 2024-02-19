@@ -1,4 +1,5 @@
-﻿using System.Net.Mime;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Net.Mime;
 using Microsoft.EntityFrameworkCore;
 
 namespace DrugSchedule.Storage.Data.Entities;

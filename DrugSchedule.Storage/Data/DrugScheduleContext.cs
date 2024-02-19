@@ -104,10 +104,31 @@ public class DrugScheduleContext : IdentityDbContext
             .WithOne(e => e.MedicamentTakingSchedule)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<ScheduleRepeat>()
+            .HasMany(e => e.TakingСonfirmations)
+            .WithOne(e => e.ScheduleRepeat)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<UserProfileContact>()
             .HasMany(e => e.ScheduleShares)
             .WithOne(e => e.ShareWithContact)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<TakingСonfirmation>()
+            .Property(e => e.CreatedAt)
+            .HasPrecision(2);
+
+        modelBuilder.Entity<TakingСonfirmation>()
+            .Property(e => e.ForTime)
+            .HasPrecision(2);
+
+        modelBuilder.Entity<MedicamentTakingSchedule>()
+            .Property(e => e.CreatedAt)
+            .HasPrecision(2);
+
+        modelBuilder.Entity<FileInfo>()
+            .Property(e => e.CreatedAt)
+            .HasPrecision(2);
 
         base.OnModelCreating(modelBuilder);
     }
