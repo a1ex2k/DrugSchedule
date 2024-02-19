@@ -82,6 +82,7 @@ public class TimetableBuilder : ITimetableBuilder
         if (dateCompare != 0) return dateCompare;
         var timeOfDayCompare = first.TimeOfDay.CompareTo(second.TimeOfDay);
         if (timeOfDayCompare != 0) return timeOfDayCompare;
-        return first.Time.CompareTo(second.Time);
+        if (first.Time == null) return 1;
+        return first.Time.Value.CompareTo(second.Time);
     };
 }

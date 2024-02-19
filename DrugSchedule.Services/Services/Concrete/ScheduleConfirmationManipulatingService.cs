@@ -128,7 +128,7 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
         return new True();
     }
 
-    private bool DoesRepeatParametersMatch(ScheduleRepeatPlain repeat, DateOnly date, TimeOnly time,
+    private bool DoesRepeatParametersMatch(ScheduleRepeatPlain repeat, DateOnly date, TimeOnly? time,
         TimeOfDay timeOfDay)
     {
         if (time != repeat.Time) return false;

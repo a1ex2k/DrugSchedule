@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DrugSchedule.Storage.Migrations
 {
     [DbContext(typeof(DrugScheduleContext))]
-    [Migration("20240212160109_Init")]
+    [Migration("20240219113413_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,7 +32,8 @@ namespace DrugSchedule.Storage.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2(2)");
 
                     b.Property<string>("Extension")
                         .IsRequired()
@@ -162,7 +163,8 @@ namespace DrugSchedule.Storage.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2(2)");
 
                     b.Property<bool>("Enabled")
                         .HasColumnType("bit");
@@ -239,17 +241,17 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<long>("MedicamentTakingScheduleId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("RepeatDayOfWeek")
-                        .HasColumnType("int");
+                    b.Property<byte>("RepeatDayOfWeek")
+                        .HasColumnType("tinyint");
 
                     b.Property<string>("TakingRule")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly>("Time")
+                    b.Property<TimeOnly?>("Time")
                         .HasColumnType("time");
 
-                    b.Property<int>("TimeOfDay")
-                        .HasColumnType("int");
+                    b.Property<byte>("TimeOfDay")
+                        .HasColumnType("tinyint");
 
                     b.Property<long?>("UserProfileId")
                         .HasColumnType("bigint");
@@ -298,7 +300,18 @@ namespace DrugSchedule.Storage.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
+                        .HasPrecision(2)
+                        .HasColumnType("datetime2(2)");
+
+                    b.Property<DateOnly>("ForDate")
+                        .HasColumnType("date");
+
+                    b.Property<TimeOnly?>("ForTime")
+                        .HasPrecision(2)
+                        .HasColumnType("time(2)");
+
+                    b.Property<byte>("ForTimeOfDay")
+                        .HasColumnType("tinyint");
 
                     b.Property<long>("ScheduleRepeatId")
                         .HasColumnType("bigint");
@@ -420,8 +433,8 @@ namespace DrugSchedule.Storage.Migrations
                     b.Property<string>("RealName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Sex")
-                        .HasColumnType("int");
+                    b.Property<byte>("Sex")
+                        .HasColumnType("tinyint");
 
                     b.HasKey("Id");
 
@@ -765,7 +778,7 @@ namespace DrugSchedule.Storage.Migrations
                     b.HasOne("DrugSchedule.Storage.Data.Entities.ScheduleRepeat", "ScheduleRepeat")
                         .WithMany("TakingСonfirmations")
                         .HasForeignKey("ScheduleRepeatId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("ScheduleRepeat");

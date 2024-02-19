@@ -8,7 +8,6 @@ using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Services;
 using DrugSchedule.StorageContract.Abstractions;
-using Mapster;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -19,11 +18,14 @@ using TokenService = DrugSchedule.Api.Jwt.TokenService;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", true);
 
+var useSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
+var dbContextPoolSize = builder.Configuration.GetValue<int>("DbContextPoolSize");
+
+
 #region Services
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddMapster();
 builder.Services.AddSingleton<IFileAccessService, FileAccessService>();
 builder.Services.AddScoped<CurrentUserMiddleware>();
 
@@ -50,21 +52,20 @@ builder.Services.AddSingleton<IFileUrlProvider, FileUrlProvider>();
 builder.Services.AddSingleton<IFileProcessor, FileParamsProcessor>();
 builder.Services.AddSingleton<IThumbnailService, ThumbnailService>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
-builder.Services.AddSingleton<ITimetableBuilder, TimetableBuilder>();
 
+builder.Services.AddScoped<ITimetableBuilder, TimetableBuilder>();
 builder.Services.AddScoped<ICurrentUserIdentifier, CurrentUserIdentifier>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IIdentityService, UserService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserContactsService, UserContactsService>();
-builder.Services.AddScoped<IScheduleService, IScheduleService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IScheduleConfirmationManipulatingService, ScheduleConfirmationManipulatingService>();
 builder.Services.AddScoped<IScheduleManipulatingService, ScheduleManipulatingService>();
 builder.Services.AddScoped<IUserContactsService, UserContactsService>();
 builder.Services.AddScoped<IFileService, FileService>();
 builder.Services.AddScoped<IDrugLibraryService, DrugLibraryService>();
 builder.Services.AddScoped<IUserDrugLibrary, UserDrugLibrary>();
-
 
 #endregion
 
@@ -88,11 +89,14 @@ builder.Services.AddOptions<PrivateFileAccessOptions>()
 #endregion
 
 
-builder.Services.AddDbContext<DrugScheduleContext>(o =>
+builder.Services.AddDbContextPool<DrugScheduleContext>(o =>
 {
     o.UseSqlServer(builder.Configuration.GetConnectionString("DrugSchedule"));
-    o.EnableSensitiveDataLogging();
-});
+    if (builder.Environment.EnvironmentName == "Development")
+    {
+        o.EnableSensitiveDataLogging();
+    }
+}, dbContextPoolSize);
 
 #region Auth
 
@@ -103,6 +107,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.Password.RequireNonAlphanumeric = false;
     })
     .AddEntityFrameworkStores<DrugScheduleContext>();
+
 builder.Services.AddAuthentication(options =>
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -133,39 +138,41 @@ builder.Services.AddAuthentication(options =>
 
 #region Swagger
 
-builder.Services.AddSwaggerGen(options =>
+if (useSwagger)
 {
-    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    builder.Services.AddSwaggerGen(options =>
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme. \r\n Enter 'Bearer' [space] and then your token in the text input below.\r\nExample: \"Bearer 1safsfsdfdfd\"",
-    });
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
         {
-            new OpenApiSecurityScheme
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description = "JWT Authorization header using the Bearer scheme. \r\n Enter 'Bearer' [space] and then your token in the text input below.\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        });
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] {}
-        }
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                new string[] {}
+            }
+        });
     });
-});
-
+}
 
 #endregion
 
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
+if (useSwagger)
 {
     app.UseSwagger();
     app.UseSwaggerUI();

@@ -10,7 +10,7 @@ public class UserContact
 
     public required DateOnly? DateOfBirth { get; set; }
 
-    public required Sex? Sex { get; set; }
+    public required Sex Sex { get; set; }
 
     public required string СontactName { get; set; }
 
