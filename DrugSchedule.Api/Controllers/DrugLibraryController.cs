@@ -1,7 +1,6 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
-using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.StorageContract.Data;
 using Mapster;
@@ -25,7 +24,7 @@ public class DrugLibraryController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> GetMedicament([FromBody] MedicamentIdDto dto, CancellationToken cancellationToken)
     {
-        var medicamentResult = await _drugLibraryService.GetMedicamentAsync(dto.MedicamentId, cancellationToken);
+        var medicamentResult = await _drugLibraryService.GetMedicamentSimpleAsync(dto.MedicamentId, cancellationToken);
         return medicamentResult.Match<IActionResult>(
             m => Ok(m.Adapt<MedicamentSimpleDto>()),
             error => NotFound(error.ToDto()));
@@ -47,7 +46,7 @@ public class DrugLibraryController : ControllerBase
         CancellationToken cancellationToken)
     {
         var medicamentResult =
-            await _drugLibraryService.GetMedicamentsAsync(dto.Adapt<MedicamentFilter>(), cancellationToken);
+            await _drugLibraryService.GetMedicamentsSimpleAsync(dto.Adapt<MedicamentFilter>(), cancellationToken);
         return Ok(medicamentResult.Adapt<MedicamentSimpleCollectionDto>());
     }
 

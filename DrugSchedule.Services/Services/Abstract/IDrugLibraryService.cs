@@ -7,9 +7,9 @@ public interface IDrugLibraryService
 {
     public Task<ReleaseFormCollection> GetReleaseFormsAsync(MedicamentReleaseFormFilter filter, CancellationToken cancellationToken = default);
 
-    public Task<MedicamentSimpleCollection> GetMedicamentsAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
+    public Task<MedicamentSimpleCollection> GetMedicamentsSimpleAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
 
-    public Task<OneOf<MedicamentSimpleModel, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default);
+    public Task<OneOf<MedicamentSimpleModel, NotFound>> GetMedicamentSimpleAsync(int id, CancellationToken cancellationToken = default);
 
     public Task<MedicamentExtendedCollection> GetMedicamentsExtendedAsync(MedicamentFilter filter, CancellationToken cancellationToken = default);
 

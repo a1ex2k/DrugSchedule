@@ -60,7 +60,7 @@ public class ContactsController : ControllerBase
     {
         var contactAddResult = await _userContactsService.AddOrUpdateContactAsync(dto.Adapt<NewUserContact>(), cancellationToken);
         return contactAddResult.Match<IActionResult>(
-            ok => Ok("Contact edited successfully"),
+            ok => Ok("Contact saved"),
             errorInput => BadRequest(errorInput.ToDto()),
             notFound => NotFound(notFound.ToDto()));
     }
@@ -71,7 +71,7 @@ public class ContactsController : ControllerBase
     {
         var contactRemoveResult = await _userContactsService.RemoveContactAsync(dto.UserProfileId, cancellationToken);
         return contactRemoveResult.Match<IActionResult>(
-            ok => Ok("Contact removed successfully"),
+            ok => Ok("Contact removed"),
             notFound => NotFound(notFound.ToDto()));
     }
 }

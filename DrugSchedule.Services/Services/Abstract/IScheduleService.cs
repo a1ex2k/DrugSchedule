@@ -6,7 +6,7 @@ namespace DrugSchedule.Services.Services;
 
 public interface IScheduleService
 {
-    Task<OneOf<ScheduleSimpleCollection, InvalidInput>> SearchForScheduleAsync(string searchString, CancellationToken cancellationToken = default);
+    Task<OneOf<ScheduleSimpleCollection, InvalidInput>> SearchForScheduleAsync(ScheduleSearch searchParams, CancellationToken cancellationToken = default);
 
     Task<OneOf<ScheduleSimple, NotFound>> GetScheduleSimpleAsync(long scheduleId, CancellationToken cancellationToken = default);
 

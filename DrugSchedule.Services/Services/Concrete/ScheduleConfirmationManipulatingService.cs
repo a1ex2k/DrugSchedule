@@ -43,7 +43,7 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
         var confirmation = new TakingСonfirmationPlain
         {
             CreatedAt = DateTime.UtcNow,
-            Text = newConfirmation.Text?.Trim(),
+            Text = newConfirmation.Text?.Trim().Limit(),
             ScheduleRepeatId = repeat.Id,
             ForDate = newConfirmation.ForDate,
             ForTime = newConfirmation.ForTime,
@@ -69,7 +69,7 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
         {
             ScheduleRepeatId = update.RepeatId,
             Id = update.RepeatId,
-            Text = update.Text?.Trim()
+            Text = update.Text?.Trim().Limit()
         };
 
         var saved = await _confirmationRepository.UpdateConfirmationAsync(confirmation, updateFlags, cancellationToken);
