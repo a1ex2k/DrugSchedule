@@ -2,9 +2,9 @@
 
 namespace DrugSchedule.Api.ServerOnlyDtos;
 
-public class NewUserMedicamentImageDto
+public class NewConfirmationImageDto
 {
-    public required UserMedicamentIdDto UserMedicamentId { get; set; }
+    public required ConfirmationIdDto ConfirmationId { get; set; }
 
     public required IFormFile FormFile { get; set; }
 }

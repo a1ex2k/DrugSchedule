@@ -22,6 +22,7 @@ public class DrugLibraryService : IDrugLibraryService
 
     public async Task<ReleaseFormCollection> GetReleaseFormsAsync(MedicamentReleaseFormFilter filter, CancellationToken cancellationToken = default)
     {
+        filter.LimitSimple();
         var releaseForms = await _repository.GetMedicamentReleaseFormsAsync(filter, cancellationToken);
         return _converter.ToReleaseFormCollection(releaseForms);
     }
@@ -37,13 +38,14 @@ public class DrugLibraryService : IDrugLibraryService
         return releaseForm;
     }
 
-    public async Task<MedicamentSimpleCollection> GetMedicamentsAsync(MedicamentFilter filter, CancellationToken cancellationToken = default)
+    public async Task<MedicamentSimpleCollection> GetMedicamentsSimpleAsync(MedicamentFilter filter, CancellationToken cancellationToken = default)
     {
+        filter.LimitSimple();
         var medicaments = await _repository.GetMedicamentsSimpleAsync(filter, cancellationToken);
         return _converter.ToMedicamentSimpleCollection(medicaments);
     }
 
-    public async Task<OneOf<MedicamentSimpleModel, NotFound>> GetMedicamentAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<OneOf<MedicamentSimpleModel, NotFound>> GetMedicamentSimpleAsync(int id, CancellationToken cancellationToken = default)
     {
         var medicament = await _repository.GetMedicamentSimpleByIdAsync(id, cancellationToken);
         if (medicament == null)
@@ -56,6 +58,7 @@ public class DrugLibraryService : IDrugLibraryService
 
     public async Task<MedicamentExtendedCollection> GetMedicamentsExtendedAsync(MedicamentFilter filter, CancellationToken cancellationToken = default)
     {
+        filter.LimitExtended();
         var medicaments = await _repository.GetMedicamentsExtendedAsync(filter, true, cancellationToken);
         return _converter.ToMedicamentExtendedCollection(medicaments);
     }
@@ -73,6 +76,7 @@ public class DrugLibraryService : IDrugLibraryService
     
     public async Task<ManufacturerCollection> GetManufacturersAsync(ManufacturerFilter filter, CancellationToken cancellationToken = default)
     {
+        filter.LimitSimple();
         var manufacturers = await _repository.GetManufacturersAsync(filter, cancellationToken);
         return _converter.ToManufacturerCollection(manufacturers);
     }

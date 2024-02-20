@@ -120,11 +120,11 @@ public class UserDrugLibrary : IUserDrugLibrary
         {
             UserId = _currentUserIdentifier.UserId,
             BasicMedicamentId = model.BasicMedicamentId,
-            Name = model.Name.Trim(),
-            ReleaseForm = model.ReleaseForm.Trim(),
-            Description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description.Trim(),
-            Composition = string.IsNullOrWhiteSpace(model.Composition) ? null : model.Composition.Trim(),
-            ManufacturerName = string.IsNullOrWhiteSpace(model.ManufacturerName) ? null : model.ManufacturerName.Trim(),
+            Name = model.Name.Trim().Limit(),
+            ReleaseForm = model.ReleaseForm.Trim().Limit(),
+            Description = string.IsNullOrWhiteSpace(model.Description) ? null : model.Description.Trim().Limit(),
+            Composition = string.IsNullOrWhiteSpace(model.Composition) ? null : model.Composition.Trim().Limit(),
+            ManufacturerName = string.IsNullOrWhiteSpace(model.ManufacturerName) ? null : model.ManufacturerName.Trim().Limit(),
         };
 
         var savedMedicament = await _userDrugRepository.CreateMedicamentAsync(medicament, cancellationToken);
@@ -174,11 +174,11 @@ public class UserDrugLibrary : IUserDrugLibrary
         var medicament = new UserMedicamentPlain
         {
             BasicMedicamentId = model.BasicMedicamentId,
-            Name = model.Name.Trim(),
-            ReleaseForm = model.ReleaseForm.Trim(),
-            Description = model.Description?.Trim(),
-            Composition = model.Composition?.Trim(),
-            ManufacturerName = model.ManufacturerName?.Trim(),
+            Name = model.Name.Trim().Limit(),
+            ReleaseForm = model.ReleaseForm.Trim().Limit(),
+            Description = model.Description?.Trim().Limit(),
+            Composition = model.Composition?.Trim().Limit(),
+            ManufacturerName = model.ManufacturerName?.Trim().Limit(),
         };
 
         var savedMedicament = await _userDrugRepository.UpdateMedicamentAsync(medicament, updateFlags, cancellationToken);

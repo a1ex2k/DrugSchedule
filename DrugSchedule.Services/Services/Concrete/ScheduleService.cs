@@ -28,11 +28,12 @@ public class ScheduleService : IScheduleService
     }
 
 
-    public async Task<OneOf<ScheduleSimpleCollection, InvalidInput>> SearchForScheduleAsync(string searchString, CancellationToken cancellationToken = default)
+    public async Task<OneOf<ScheduleSimpleCollection, InvalidInput>> SearchForScheduleAsync(ScheduleSearch searchParams, CancellationToken cancellationToken = default)
     {
+        searchParams.LimitSimple();
         var foundSchedules =
             await _sharedDataRepository.SearchForOwnedOrSharedAsync(_currentUserIdentifier.UserId,
-                searchString, cancellationToken);
+                searchParams, cancellationToken);
 
         return _converter.ToScheduleSimpleCollection(foundSchedules);
     }
@@ -54,6 +55,7 @@ public class ScheduleService : IScheduleService
 
     public async Task<ScheduleSimpleCollection> GetSchedulesSimpleAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
     {
+        filter.LimitSimple();
         var schedules = await _sharedDataRepository.GetSchedulesSimpleAsync(
             filter, _currentUserIdentifier.UserId, cancellationToken);
 
@@ -77,6 +79,7 @@ public class ScheduleService : IScheduleService
 
     public async Task<ScheduleExtendedCollection> GetSchedulesExtendedAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default)
     {
+        filter.LimitExtended();
         var schedules = await _sharedDataRepository.GetSchedulesExtendedAsync(
             filter, _currentUserIdentifier.UserId, cancellationToken);
 
@@ -135,7 +138,7 @@ public class ScheduleService : IScheduleService
         }
 
         var timetableEntries =
-            await _timetableBuilder.GetScheduleTimetableAsync([scheduleId], minDate, maxDate, true, cancellationToken);
+            await _timetableBuilder.GetScheduleTimetableAsync(new(){scheduleId}, minDate, maxDate, true, cancellationToken);
 
         return new Timetable { TimetableEntries = timetableEntries };
     }
