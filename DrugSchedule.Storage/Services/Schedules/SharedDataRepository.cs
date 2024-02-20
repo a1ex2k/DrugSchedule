@@ -6,6 +6,7 @@ using DrugSchedule.StorageContract.Data;
 using DrugSchedule.StorageContract.Data.Schedule.Tool;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System.Linq;
 
 namespace DrugSchedule.Storage.Services;
 
@@ -67,18 +68,19 @@ public class ScheduleSpecialRepository : ISharedDataRepository
     }
 
 
-    public async Task<List<Contract.TakingScheduleSimple>> SearchForOwnedOrSharedAsync(long userId, string searchString, CancellationToken cancellationToken = default)
+    public async Task<List<Contract.TakingScheduleSimple>> SearchForOwnedOrSharedAsync(long userId, ScheduleSearch searchParams, CancellationToken cancellationToken = default)
     {
         var schedules = await _dbContext.MedicamentTakingSchedules
             .Where(s => s.UserProfileId == userId
                         || s.ScheduleShares.Any(share =>
                             share.ShareWithContact!.ContactProfileId == userId))
-            .Where(s => s.Information!.Contains(searchString)
-                        || s.GlobalMedicament!.Name.Contains(searchString)
-                        || s.GlobalMedicament!.ReleaseForm!.Name.Contains(searchString)
-                        || s.UserMedicament!.Name.Contains(searchString)
-                        || s.UserMedicament!.ReleaseForm!.Contains(searchString))
+            .Where(s => s.Information!.Contains(searchParams.SubString)
+                        || s.GlobalMedicament!.Name.Contains(searchParams.SubString)
+                        || s.GlobalMedicament!.ReleaseForm!.Name.Contains(searchParams.SubString)
+                        || s.UserMedicament!.Name.Contains(searchParams.SubString)
+                        || s.UserMedicament!.ReleaseForm!.Contains(searchParams.SubString))
             .OrderByDescending(s => s.CreatedAt)
+            .WithPaging(searchParams)
             .Select(EntityMapExpressions.ToScheduleSimple(_dbContext, userId))
             .ToListAsync(cancellationToken);
 

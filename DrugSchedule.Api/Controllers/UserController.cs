@@ -30,7 +30,7 @@ public class UserController : ControllerBase
 
     
     [HttpPost]
-    public async Task<IActionResult> Search(UserSearchDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> Search([FromBody] UserSearchDto dto, CancellationToken cancellationToken)
     {
         var searchResult = await _userService.FindUsersAsync(dto.Adapt<UserSearch>(), cancellationToken);
         return searchResult.Match<IActionResult>(
@@ -40,21 +40,21 @@ public class UserController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> UpdateProfile(UserUpdateDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> UpdateProfile([FromBody] UserUpdateDto dto, CancellationToken cancellationToken)
     {
         var updateResult = await _userService.UpdateProfileAsync(dto.Adapt<UserUpdate>(), cancellationToken);
         return updateResult.Match<IActionResult>(
-            ok => Ok("User updated successfully"),
+            ok => Ok("Profile updated"),
             errorInput => BadRequest(errorInput.ToDto()));
     }
 
 
     [HttpPost]
-    public async Task<IActionResult> ChangePassword(NewPasswordDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> ChangePassword([FromBody] NewPasswordDto dto, CancellationToken cancellationToken)
     {
         var changePasswordResult = await _userService.UpdatePasswordAsync(dto.Adapt<NewPasswordModel>(), cancellationToken);
         return changePasswordResult.Match<IActionResult>(
-            ok => Ok("Password changed successfully"),
+            ok => Ok("Password changed"),
             errorInput => BadRequest(errorInput.ToDto()));
     }
 
@@ -78,11 +78,11 @@ public class UserController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> RemoveAvatar(FileIdDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> RemoveAvatar([FromBody] FileIdDto dto, CancellationToken cancellationToken)
     {
         var removeAvatarResult = await _userService.RemoveAvatarAsync(dto.FileGuid, cancellationToken);
         return removeAvatarResult.Match<IActionResult>(
-            ok => Ok("Avatar removed successfully"),
+            ok => Ok("Avatar removed"),
             notFound => NotFound(notFound.ToDto()));
     }
 

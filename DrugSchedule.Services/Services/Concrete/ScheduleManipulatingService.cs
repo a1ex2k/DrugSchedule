@@ -50,7 +50,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             UserProfileId = _currentUserIdentifier.UserId,
             GlobalMedicamentId = newSchedule.GlobalMedicamentId,
             UserMedicamentId = newSchedule.UserMedicamentId,
-            Information = newSchedule.Information?.Trim(),
+            Information = newSchedule.Information?.Trim().Limit(),
             CreatedAt = DateTime.UtcNow,
             Enabled = newSchedule.Enabled
         };
@@ -74,7 +74,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             Id = update.Id,
             GlobalMedicamentId = update.GlobalMedicamentId,
             UserMedicamentId = update.UserMedicamentId,
-            Information = update.Information?.Trim(),
+            Information = update.Information?.Trim().Limit(),
             Enabled = update.Enabled
         };
 
@@ -133,7 +133,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             RepeatDayOfWeek = newRepeat.RepeatDayOfWeek,
             EndDate = newRepeat.EndDate,
             MedicamentTakingScheduleId = newRepeat.ScheduleId,
-            TakingRule = newRepeat.TakingRule?.Trim()
+            TakingRule = newRepeat.TakingRule?.Trim().Limit()
         };
 
         var saved = await _repeatRepository.CreateRepeatAsync(repeat, cancellationToken);
@@ -167,7 +167,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             TimeOfDay = repeatUpdate.TimeOfDay,
             RepeatDayOfWeek = repeatUpdate.RepeatDayOfWeek,
             EndDate = repeatUpdate.EndDate,
-            TakingRule = repeatUpdate.TakingRule?.Trim()
+            TakingRule = repeatUpdate.TakingRule?.Trim().Limit()
         };
 
         var updateFlags = new ScheduleRepeatUpdateFlags

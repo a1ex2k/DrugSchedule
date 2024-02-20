@@ -198,7 +198,7 @@ public class UserService : IIdentityService, IUserService
         var userProfile = new UserProfile
         {
             UserProfileId = _currentUserIdentifier.UserId,
-            RealName = userUpdate.RealName?.Trim(),
+            RealName = userUpdate.RealName?.Trim().Limit(),
             DateOfBirth = userUpdate.DateOfBirth,
             UserIdentityGuid = _currentUserIdentifier.IdentityGuid,
             Sex = userUpdate.Sex,
@@ -246,6 +246,8 @@ public class UserService : IIdentityService, IUserService
             },
             Take = search.Take
         };
+
+        filter.LimitSimple();
 
         var identities = await _identityRepository.GetUserIdentitiesAsync(filter, cancellationToken);
         var profiles = await _profileRepository.GetUserProfilesAsync(identities.ConvertAll(i => i.Guid), true, cancellationToken);

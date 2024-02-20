@@ -5,6 +5,7 @@ using DrugSchedule.Services.Converters;
 using DrugSchedule.Services.Options;
 using DrugSchedule.Services.Services;
 using DrugSchedule.Services.Services.Abstractions;
+using DrugSchedule.Services.Utils;
 using DrugSchedule.Storage.Data;
 using DrugSchedule.Storage.Services;
 using DrugSchedule.StorageContract.Abstractions;
@@ -85,6 +86,11 @@ builder.Services.AddOptions<PrivateFileAccessOptions>()
     .BindConfiguration(PrivateFileAccessOptions.SectionName)
     .ValidateDataAnnotations()
     .ValidateOnStart();
+
+var limiterOptions = builder.Configuration
+    .GetSection(SizeLimiterOptions.SectionName)
+    .Get<SizeLimiterOptions>();
+LimitExtensions.SetLimits(limiterOptions);
 
 #endregion
 
