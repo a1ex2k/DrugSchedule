@@ -11,7 +11,7 @@ public interface ISharedDataRepository
 
     public Task<List<TakingScheduleSimple>> GetSchedulesSimpleAsync(TakingScheduleFilter filter, long userId, CancellationToken cancellationToken = default);
     
-    public Task<List<TakingScheduleSimple>> SearchForOwnedOrSharedAsync(long userId, string searchString, CancellationToken cancellationToken = default);
+    public Task<List<TakingScheduleSimple>> SearchForOwnedOrSharedAsync(long userId, ScheduleSearch searchParams, CancellationToken cancellationToken = default);
 
     public Task<TakingScheduleExtended?> GetScheduleExtendedAsync(long id, long userId, CancellationToken cancellationToken = default);
 

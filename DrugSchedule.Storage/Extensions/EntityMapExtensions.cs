@@ -99,6 +99,7 @@ public static class EntityMapExtensions
             ReleaseForm = userMedicament.ReleaseForm,
             ManufacturerName = userMedicament.ManufacturerName,
             UserId = userMedicament.UserProfileId,
+            Id = userMedicament.Id,
         };
     }
 

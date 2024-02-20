@@ -51,7 +51,7 @@ public class AuthController : ControllerBase
     {
         var registerResult = await _identityService.RegisterUserAsync(dto.Adapt<RegisterModel>(), cancellationToken);
         return registerResult.Match<IActionResult>(
-            identity => Ok("User created successfully!"),
+            identity => Ok("User created"),
             error => BadRequest(error.ToDto()));
     }
         

@@ -62,18 +62,6 @@ public static class IQueryableExtensions
     }
 
 
-    public static IQueryable<TEntity> WhereOr<TEntity>(this IQueryable<TEntity> source, Expression<Func<TEntity, bool>> predicate1, Expression<Func<TEntity, bool>> predicate2)
-    {
-        var parameter = Expression.Parameter(typeof(TEntity));
-        var combined = Expression.Or(
-            Expression.Invoke(predicate1, parameter),
-            Expression.Invoke(predicate2, parameter)
-        );
-
-        var lambda = Expression.Lambda<Func<TEntity, bool>>(combined, parameter);
-        return source.Where(lambda);
-    }
-
     public static IQueryable<TEntity> WhereIf<TEntity>(this IQueryable<TEntity> source, bool condition, Expression<Func<TEntity, bool>> predicate)
     {
         if (!condition)

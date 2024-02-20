@@ -140,7 +140,6 @@ public class UserDrugRepository : IUserDrugRepository
                 guid => new Entities.UserMedicamentFile() { FileGuid = guid });
         }
 
-        await _dbContext.UserMedicaments.AddAsync(entity, cancellationToken);
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return saved ? entity.ToContractModel() : null;
     }
