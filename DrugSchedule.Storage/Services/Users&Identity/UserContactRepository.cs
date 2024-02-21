@@ -62,8 +62,10 @@ public class UserContactRepository : IUserContactRepository
     {
         var contactsQuery = _dbContext.UserProfileContacts
             .Where(c => c.UserProfileId == userProfileId)
-            .Select(EntityMapExpressions.ToContactSimple(_dbContext))
-            .WhereIf(commonOnly, c => c.IsCommon);
+            .WhereIf(commonOnly, c => _dbContext.UserProfileContacts
+                .Any(c2 => c2.UserProfileId == c.ContactProfileId
+                           && c2.ContactProfileId == c.UserProfileId))
+            .Select(EntityMapExpressions.ToContactSimple(_dbContext));
 
         var contacts = await contactsQuery.ToListAsync(cancellationToken);
         return contacts;

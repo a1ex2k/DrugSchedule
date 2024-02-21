@@ -104,6 +104,7 @@ builder.Services.AddDbContextPool<DrugScheduleContext>(o =>
     }
 }, dbContextPoolSize);
 
+
 #region Auth
 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
@@ -113,6 +114,24 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
         options.Password.RequireNonAlphanumeric = false;
     })
     .AddEntityFrameworkStores<DrugScheduleContext>();
+
+var jwtOptions = builder.Configuration
+    .GetSection(JwtOptions.SectionName)
+    .Get<JwtOptions>();
+
+var tokenValidationParameters = new TokenValidationParameters()
+{
+    ValidateIssuer = true,
+    ValidateAudience = true,
+    ValidateLifetime = true,
+    ValidateIssuerSigningKey = true,
+    ClockSkew = TimeSpan.FromSeconds(10),
+    ValidAudience = jwtOptions!.ValidAudience,
+    ValidIssuer = jwtOptions.ValidIssuer,
+    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+};
+
+builder.Services.AddSingleton(tokenValidationParameters);
 
 builder.Services.AddAuthentication(options =>
     {
@@ -124,20 +143,7 @@ builder.Services.AddAuthentication(options =>
     {
         options.SaveToken = true;
         options.RequireHttpsMetadata = false;
-        var jwtOptions = builder.Configuration
-            .GetSection(JwtOptions.SectionName)
-            .Get<JwtOptions>();
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.Zero,
-            ValidAudience = jwtOptions!.ValidAudience,
-            ValidIssuer = jwtOptions.ValidIssuer,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret))
-        };
+        options.TokenValidationParameters = tokenValidationParameters;
     });
 
 #endregion

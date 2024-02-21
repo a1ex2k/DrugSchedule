@@ -84,9 +84,7 @@ public class UserDrugRepository : IUserDrugRepository
     {
         var exists = await _dbContext.UserMedicaments
             .Where(u => u.Id == id && u.UserProfileId == userProfileId)
-            .Select(EntityMapExpressions.ToUserMedicament)
             .AnyAsync(cancellationToken);
-
         return exists;
     }
 
