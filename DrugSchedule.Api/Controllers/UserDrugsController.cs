@@ -120,7 +120,7 @@ public class UserDrugsController : ControllerBase
     {
         var updateResult = await _drugLibraryService.UpdateMedicamentAsync(dto.Adapt<UserMedicamentUpdate>(), cancellationToken);
         return updateResult.Match<IActionResult>(
-            userModel => Ok(userModel.Adapt<UserMedicamentUpdateDto>()),
+            id => Ok(new UserMedicamentIdDto { UserMedicamentId = id }),
             notFound => NotFound(notFound.ToDto()),
             errorInput => BadRequest(errorInput.ToDto()));
     }

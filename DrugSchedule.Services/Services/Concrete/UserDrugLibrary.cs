@@ -133,8 +133,8 @@ public class UserDrugLibrary : IUserDrugLibrary
 
     public async Task<OneOf<UserMedicamentId, NotFound, InvalidInput>> UpdateMedicamentAsync(UserMedicamentUpdate model, CancellationToken cancellationToken = default)
     {
-        var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(model.Id, _currentUserIdentifier.UserId, cancellationToken);
-        if (medicamentExists)
+        var medicamentExists = await _userDrugRepository.DoesMedicamentExistAsync(_currentUserIdentifier.UserId, model.Id, cancellationToken);
+        if (!medicamentExists)
         {
             return new NotFound(ErrorMessages.UserDoesntHaveMedicament);
         }
@@ -173,6 +173,7 @@ public class UserDrugLibrary : IUserDrugLibrary
 
         var medicament = new UserMedicamentPlain
         {
+            Id = model.Id,
             BasicMedicamentId = model.BasicMedicamentId,
             Name = model.Name.Trim().Limit(),
             ReleaseForm = model.ReleaseForm.Trim().Limit(),

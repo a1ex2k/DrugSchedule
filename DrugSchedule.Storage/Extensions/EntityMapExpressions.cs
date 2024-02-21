@@ -78,7 +78,7 @@ public static class EntityMapExpressions
         RealName = userProfile.RealName,
         DateOfBirth = userProfile.DateOfBirth,
         Sex = userProfile.Sex,
-        Avatar = withAvatar && userProfile.AvatarGuid != null ? ToFileInfo.Compile().Invoke(userProfile.AvatarInfo!) : null,
+        Avatar = withAvatar && userProfile.AvatarInfo != null ? ToFileInfo.Compile().Invoke(userProfile.AvatarInfo!) : null,
     };
 
 
@@ -239,14 +239,14 @@ public static class EntityMapExpressions
         => s => new Contract.TakingScheduleSimple
         {
             Id = s.Id,
-            MedicamentName = s.UserMedicamentId == null
+            MedicamentName = s.UserMedicament == null
                 ? s.GlobalMedicament!.Name
                 : s.UserMedicament!.Name,
-            MedicamentReleaseFormName = s.UserMedicamentId == null
+            MedicamentReleaseFormName = s.UserMedicament == null
                 ? s.GlobalMedicament!.ReleaseForm!.Name
                 : s.UserMedicament!.ReleaseForm,
-            MedicamentImage = s.GlobalMedicament!.Files.Select(f => f.FileInfo!)
-                .AsQueryable()
+            MedicamentImage = s.GlobalMedicament!.Files.AsQueryable()
+                .Select(f => f.FileInfo!)
                 .Union(s.UserMedicament!.Files.Select(f => f.FileInfo!))
                 .Select(ToFileInfo)
                 .FirstOrDefault(),
@@ -298,9 +298,8 @@ public static class EntityMapExpressions
         {
             ContactProfileId = c.ContactProfileId,
             CustomName = c.CustomName,
-            Avatar = c.ContactProfile!.AvatarGuid == null
-                ? null
-                : EntityMapExpressions.ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
+            Avatar = c.ContactProfile!.AvatarInfo == null ? null
+                : ToFileInfo.Compile().Invoke(c.ContactProfile!.AvatarInfo!),
             IsCommon = context.UserProfileContacts
                 .Any(c2 => c2.UserProfileId == c.ContactProfileId
                            && c2.ContactProfileId == c.UserProfileId)
@@ -310,12 +309,15 @@ public static class EntityMapExpressions
     public static Expression<Func<Entities.UserProfileContact, UserContact>> ToContact(DrugScheduleContext context)
         => (c) => new Contract.UserContact
         {
-            Profile = EntityMapExpressions.ToUserProfile(true).Compile().Invoke(c.ContactProfile!),
+            Profile = context.UserProfiles
+                .Where(up => up.Id == c.ContactProfileId)
+                .Select(ToUserProfile(true))
+                .FirstOrDefault()!,
             CustomName = c.CustomName,
             IsCommon = context.UserProfileContacts
                 .Any(c2 => c2.UserProfileId == c.ContactProfileId
                            && c2.ContactProfileId == c.UserProfileId),
-            HasSharedWith = c.ScheduleShares.Any(),
+            HasSharedWith = c.ScheduleShares.AsQueryable().Any(),
             HasSharedBy = context.ScheduleShare
                 .Any(s => s.MedicamentTakingSchedule!.UserProfileId == c.ContactProfileId
                           && s.ShareWithContactId == c.UserProfileId),
