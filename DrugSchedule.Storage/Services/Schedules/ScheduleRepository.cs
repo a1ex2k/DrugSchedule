@@ -65,7 +65,7 @@ public class ScheduleRepository : IScheduleRepository
                 s => filter.UserMedicamentIdFilter!.Contains((long)s.UserMedicamentId!))
             .WhereIf(filter.GlobalMedicamentIdFilter != null,
                 s => filter.GlobalMedicamentIdFilter!.Contains((int)s.GlobalMedicamentId!))
-            .WithFilter(s => s.Enabled, filter.EnabledFilter)
+            .WhereIf(filter.EnabledFilter != null, s => s.Enabled == filter.EnabledFilter!.Value)
             .OrderBy(s => s.Id)
             .WithPaging(filter)
             .Select(EntityMapExpressions.ToSchedulePlain)

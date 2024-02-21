@@ -39,10 +39,10 @@ public class ScheduleSpecialRepository : ISharedDataRepository
         var schedulesQuery = _dbContext.MedicamentTakingSchedules
             .WithFilter(s => s.Id, filter.IdFilter)
             .WhereIf(filter.UserMedicamentIdFilter != null,
-                s => filter.UserMedicamentIdFilter!.Contains((long)s.UserMedicamentId!))
+                s => filter.UserMedicamentIdFilter!.Contains(s.UserMedicamentId!.Value))
             .WhereIf(filter.GlobalMedicamentIdFilter != null,
-                s => filter.GlobalMedicamentIdFilter!.Contains((int)s.GlobalMedicamentId!))
-            .WithFilter(s => s.Enabled, filter.EnabledFilter);
+                s => filter.GlobalMedicamentIdFilter!.Contains(s.GlobalMedicamentId!.Value))
+            .WhereIf(filter.EnabledFilter != null, s => s.Enabled == filter.EnabledFilter!.Value);
 
         if (filter.OwnedOnly)
         {
@@ -110,7 +110,7 @@ public class ScheduleSpecialRepository : ISharedDataRepository
                 s => filter.UserMedicamentIdFilter!.Contains((long)s.UserMedicamentId!))
             .WhereIf(filter.GlobalMedicamentIdFilter != null,
                 s => filter.GlobalMedicamentIdFilter!.Contains((int)s.GlobalMedicamentId!))
-            .WithFilter(s => s.Enabled, filter.EnabledFilter);
+            .WhereIf(filter.EnabledFilter != null, s => s.Enabled == filter.EnabledFilter!.Value);
 
         if (filter.OwnedOnly)
         {
