@@ -5,20 +5,18 @@ namespace DrugSchedule.Api.Utils;
 
 public static class ServiceErrorResultExtensions
 {
-    public static ErrorDto ToDto(this InvalidInput invalidInput)
+    public static InvalidInputDto ToDto(this InvalidInput invalidInput)
     {
-        return new ErrorDto
+        return new InvalidInputDto
         {
-            Category = "InvalidInput",
             Messages = invalidInput.ErrorsList,
         };
     }
 
-    public static ErrorDto ToDto(this NotFound notFound)
+    public static NotFoundDto ToDto(this NotFound notFound)
     {
-        return new ErrorDto
+        return new NotFoundDto
         {
-            Category = "NotFound",
             Messages = notFound.ErrorsList,
         };
     }
