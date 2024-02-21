@@ -20,13 +20,15 @@ public class TokenService : ITokenService
 {
     private const int RefreshTokenLength = 64;
 
+    private readonly TokenValidationParameters _tokenValidationParameters;
     private readonly IOptions<JwtOptions> _jwtOptions;
     private readonly IRefreshTokenRepository _tokenRepository;
 
-    public TokenService(IOptions<JwtOptions> jwtOptions, IRefreshTokenRepository tokenRepository)
+    public TokenService(IRefreshTokenRepository tokenRepository, TokenValidationParameters tokenValidationParameters, IOptions<JwtOptions> jwtOptions)
     {
-        _jwtOptions = jwtOptions;
         _tokenRepository = tokenRepository;
+        _tokenValidationParameters = tokenValidationParameters;
+        _jwtOptions = jwtOptions;
     }
 
 
@@ -47,8 +49,8 @@ public class TokenService : ITokenService
             return invalidTokenError;
         }
 
-        var userGuidString = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-        if (string.IsNullOrWhiteSpace(userGuidString) || !Guid.TryParse(userGuidString, out var guid))
+        var userGuidString = principal.Claims.FirstOrDefault(c => c.Type == StringConstants.UserIdentityGuidClaimName)?.Value;
+        if (userGuidString == null || !Guid.TryParse(userGuidString, out var guid))
         {
             return invalidTokenError;
         }
@@ -60,7 +62,8 @@ public class TokenService : ITokenService
         }
 
         var refreshTokenEntry = await _tokenRepository.GetRefreshTokenEntryAsync(guid, refreshToken!, cancellationToken);
-        if (refreshTokenEntry is null || refreshTokenEntry.RefreshTokenExpiryTime > DateTime.UtcNow)
+        if (refreshTokenEntry is null 
+            || refreshTokenEntry.RefreshTokenExpiryTime < DateTime.UtcNow)
         {
             return invalidTokenError;
         }
@@ -119,8 +122,8 @@ public class TokenService : ITokenService
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.Secret));
 
         var token = new JwtSecurityToken(
-            issuer: _jwtOptions.Value.ValidIssuer,
-            audience: _jwtOptions.Value.ValidAudience,
+            issuer: _tokenValidationParameters.ValidIssuer,
+            audience: _tokenValidationParameters.ValidAudience,
             expires: DateTime.Now.AddMinutes(_jwtOptions.Value.AccessTokenValidityInMinutes),
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
@@ -144,25 +147,26 @@ public class TokenService : ITokenService
 
     private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token, CancellationToken cancellationToken = default)
     {
-        var tokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateAudience = false,
-            ValidateIssuer = false,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Value.Secret)),
-            ValidateLifetime = false
-        };
-
+        var tokenValidationParameters = _tokenValidationParameters.Clone();
+        tokenValidationParameters.ValidateLifetime = false;
         var tokenHandler = new JwtSecurityTokenHandler();
-        var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-        if (securityToken is not JwtSecurityToken jwtSecurityToken
-            || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
-                StringComparison.InvariantCultureIgnoreCase))
-        {
-            return null;
-        }
 
-        return principal;
+        try
+        {
+            var principal =
+                tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            if (securityToken is not JwtSecurityToken jwtSecurityToken
+                || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256,
+                    StringComparison.InvariantCultureIgnoreCase))
+            {
+                return null;
+            }
+
+            return principal;
+        }
+        catch { }
+        
+        return null;
     }
 
     private static string GenerateBytesString(int length)

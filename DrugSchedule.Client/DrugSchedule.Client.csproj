@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Networking\specification.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="Layout\MainLayout.razor.css" />
   </ItemGroup>
 
@@ -40,7 +44,22 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="Networking\specification.json">
+      <Generator>RefitterCodeGenerator</Generator>
+      <LastGenOutput>specification.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Networking\specification.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>specification.json</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

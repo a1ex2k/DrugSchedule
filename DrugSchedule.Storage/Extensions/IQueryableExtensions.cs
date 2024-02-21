@@ -44,9 +44,10 @@ public static class IQueryableExtensions
     }
 
 
-    public static IQueryable<TEntity> WithFilter<TEntity>(this IQueryable<TEntity> query, Expression<Func<TEntity, bool>> propertySelector, bool? value)
+    public static IQueryable<TEntity> WithFilter<TEntity, TProperty>(this IQueryable<TEntity> query, Expression<Func<TEntity, Nullable<TProperty>>> propertySelector, List<TProperty>? inList)
+    where TProperty : struct
     {
-        if (!value.HasValue)
+        if (inList is null || inList.Count == 0)
         {
             return query;
         }
@@ -54,10 +55,11 @@ public static class IQueryableExtensions
         ArgumentNullException.ThrowIfNull(propertySelector, nameof(propertySelector));
         ArgumentNullException.ThrowIfNull(query, nameof(query));
 
+        Expression<Func<TProperty, bool>> containsExpression = x => inList.Contains(x);
         var parameter = Expression.Parameter(typeof(TEntity), null);
         var propertyAccess = Expression.Invoke(propertySelector, parameter);
-        var equalCall = Expression.Invoke(Expression.Equal(propertyAccess, Expression.Constant(value.Value)), propertyAccess);
-        var lambda = Expression.Lambda<Func<TEntity, bool>>(equalCall, parameter);
+        var containsCall = Expression.Invoke(containsExpression, propertyAccess);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(containsCall, parameter);
         return query.Where(lambda);
     }
 
