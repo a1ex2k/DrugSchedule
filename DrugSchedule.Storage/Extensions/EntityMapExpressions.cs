@@ -179,7 +179,9 @@ public static class EntityMapExpressions
         {
             Id = s.Id,
             CreatedAt = s.CreatedAt,
-            ImagesGuids = s.Files.Select(c => c.FileGuid)
+            ImagesGuids = s.Files
+                .AsQueryable()
+                .Select(c => c.FileGuid)
                 .ToList(),
             Text = s.Text,
             ScheduleRepeatId = s.ScheduleRepeatId,
@@ -195,8 +197,8 @@ public static class EntityMapExpressions
             Id = s.Id,
             RepeatId = s.ScheduleRepeatId,
             CreatedAt = s.CreatedAt,
-            Images = s.Files
-                .Select(c => c.FileInfo!).AsQueryable()
+            Images = s.Files.AsQueryable()
+                .Select(c => c.FileInfo!)
                 .Select(ToFileInfo).ToList(),
             Text = s.Text,
             ForDate = s.ForDate,
@@ -220,7 +222,7 @@ public static class EntityMapExpressions
         {
             Id = s.Id,
             MedicamentName = s.UserMedicamentId == null
-                ? s.GlobalMedicament!.Name 
+                ? s.GlobalMedicament!.Name
                 : s.UserMedicament!.Name,
             MedicamentReleaseFormName = s.UserMedicamentId == null
                 ? s.GlobalMedicament!.ReleaseForm!.Name
@@ -264,14 +266,20 @@ public static class EntityMapExpressions
         => s => new Contract.TakingScheduleExtended
         {
             Id = s.Id,
-            GlobalMedicament = s.GlobalMedicamentId == null ? null : ToMedicamentSimple.Compile().Invoke(s.GlobalMedicament!),
-            UserMedicament = s.UserMedicamentId == null ? null : ToUserMedicamentSimple.Compile().Invoke(s.UserMedicament!),
+            GlobalMedicament = context.Medicaments
+                    .Where(m => m.Id == s.GlobalMedicamentId)
+                    .Select(ToMedicamentSimple)
+                    .FirstOrDefault(),
+            UserMedicament = context.UserMedicaments
+                .Where(m => m.Id == s.UserMedicamentId)
+                .Select(ToUserMedicamentSimple)
+                .FirstOrDefault(),
             Information = s.Information,
             CreatedAt = s.CreatedAt,
             Enabled = s.Enabled,
             ScheduleRepeats = s.RepeatSchedules
                 .AsQueryable()
-                .Select(ToScheduleRepeatPlain)
+                    .Select(ToScheduleRepeatPlain)
                 .ToList(),
             ContactOwner = s.UserProfileId == userId ? null : context.UserProfileContacts
                 .Where(c => c.UserProfileId == userId && c.ContactProfileId == s.UserProfileId)
