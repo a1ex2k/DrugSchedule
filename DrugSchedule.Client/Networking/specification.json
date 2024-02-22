@@ -129,10 +129,10 @@
         }
       }
     },
-    "/api/Contacts/GetAll": {
+    "/api/GetAll": {
       "post": {
         "tags": [
-          "Contacts"
+          "
         ],
         "responses": {
           "200": {
@@ -141,10 +141,10 @@
         }
       }
     },
-    "/api/Contacts/GetCommon": {
+    "/api/GetCommon": {
       "post": {
         "tags": [
-          "Contacts"
+          "
         ],
         "responses": {
           "200": {
@@ -153,10 +153,10 @@
         }
       }
     },
-    "/api/Contacts/GetSingleExtended": {
+    "/api/GetSingleExtended": {
       "post": {
         "tags": [
-          "Contacts"
+          "
         ],
         "requestBody": {
           "content": {
@@ -184,10 +184,10 @@
         }
       }
     },
-    "/api/Contacts/GetManyExtended": {
+    "/api/GetManyExtended": {
       "post": {
         "tags": [
-          "Contacts"
+          "
         ],
         "requestBody": {
           "content": {
@@ -215,10 +215,10 @@
         }
       }
     },
-    "/api/Contacts/AddOrUpdate": {
+    "/api/AddOrUpdate": {
       "post": {
         "tags": [
-          "Contacts"
+          "
         ],
         "requestBody": {
           "content": {
@@ -246,10 +246,10 @@
         }
       }
     },
-    "/api/Contacts/Remove": {
+    "/api/Remove": {
       "post": {
         "tags": [
-          "Contacts"
+          "
         ],
         "requestBody": {
           "content": {
