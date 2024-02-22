@@ -22,7 +22,7 @@ builder.Configuration.AddJsonFile("appsettings.local.json", true);
 var useSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
 var dbContextPoolSize = builder.Configuration.GetValue<int>("DbContextPoolSize");
 
-
+builder.Services.AddDateOnlyTimeOnlyStringConverters();
 #region Services
 
 builder.Services.AddControllers();
