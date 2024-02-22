@@ -33,6 +33,7 @@
     <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.4.2" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+    <PackageReference Include="Tewr.Blazor.FileReader" Version="3.3.2.23201" />
   </ItemGroup>
 
   <ItemGroup>
