@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Text.Json.Serialization;
 
 namespace DrugSchedule.Api.Shared.Dtos;
 
 [Flags]
+[JsonConverter(typeof(JsonEC))]
 public enum RepeatDayOfWeekDto : byte
 {
     Sunday = 1 << 0,
