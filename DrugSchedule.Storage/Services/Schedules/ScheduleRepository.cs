@@ -79,7 +79,6 @@ public class ScheduleRepository : IScheduleRepository
     {
         var entity = new Entities.MedicamentTakingSchedule
         {
-            Id = 0,
             UserProfileId = takingSchedule.UserProfileId,
             GlobalMedicamentId = takingSchedule.GlobalMedicamentId,
             UserMedicamentId = takingSchedule.UserMedicamentId,
@@ -88,6 +87,7 @@ public class ScheduleRepository : IScheduleRepository
             Enabled = takingSchedule.Enabled,
         };
 
+        await _dbContext.MedicamentTakingSchedules.AddAsync(entity, cancellationToken);
         var saved = await _dbContext.TrySaveChangesAsync(_logger, cancellationToken);
         return saved ? entity.ToContractModel() : null;
     }
