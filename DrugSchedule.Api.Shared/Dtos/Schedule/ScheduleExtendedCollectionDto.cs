@@ -4,5 +4,5 @@ namespace DrugSchedule.Api.Shared.Dtos;
 
 public class ScheduleExtendedCollectionDto
 {
-    public List<TakingScheduleExtendedDto> Schedules { get; set; } = new();
+    public List<ScheduleExtendedDto> Schedules { get; set; } = new();
 }

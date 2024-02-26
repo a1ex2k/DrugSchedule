@@ -41,7 +41,7 @@ public partial class ScheduleController : ControllerBase
     {
         var result = await _scheduleService.GetScheduleExtendedAsync(dto.ScheduleId, cancellationToken);
         return result.Match<IActionResult>(
-            schedule => Ok(schedule.Adapt<TakingScheduleExtendedDto>()),
+            schedule => Ok(schedule.Adapt<ScheduleExtendedDto>()),
             notFound => NotFound(notFound.ToDto())
         );
     }
@@ -58,7 +58,7 @@ public partial class ScheduleController : ControllerBase
     {
         var result = await _scheduleService.GetTakingConfirmationsAsync(dto.Adapt<TakingConfirmationFilter>(), cancellationToken);
         return result.Match<IActionResult>(
-            confirmationCollection => Ok(confirmationCollection),
+            confirmationCollection => Ok(confirmationCollection.Adapt<TakingСonfirmationCollectionDto>()),
             notFound => NotFound(notFound.ToDto())
         );
     }

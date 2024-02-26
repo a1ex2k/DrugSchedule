@@ -1,11 +1,12 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Threading;
 using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Networking.Exceptions;
 
 namespace DrugSchedule.Client.Networking;
 
-public class ApiClient
+public class ApiClient : IApiClient
 {
     private readonly ITokenStorage _tokenStorage;
     private readonly HttpClient _httpClient;
@@ -16,6 +17,17 @@ public class ApiClient
         _tokenStorage = tokenStorage;
     }
 
+    public async Task<ApiCallResult<TResponse>> PostAsync<TResponse>(string uri, CancellationToken cancellationToken = default)
+    {
+        await AssertTokensAsync(cancellationToken);
+        var response = await _httpClient.PostAsync(uri, null, cancellationToken);
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await RefreshTokensAsync(cancellationToken);
+            response = await _httpClient.PostAsync(uri, null, cancellationToken);
+        }
+        return await BuildResultAsync<TResponse>(response, cancellationToken);
+    }
 
     public async Task<ApiCallResult<TResponse>> PostAsync<TRequest, TResponse>(
         TRequest requestBody, string uri, CancellationToken cancellationToken = default)
@@ -31,7 +43,34 @@ public class ApiClient
     }
 
 
-    public async Task<ApiCallResult<TokenDto>> LogInAsync(LoginDto loginDto, CancellationToken cancellationToken = default)
+    public async Task<ApiCallResult> PostAsync<TRequest>(
+        TRequest requestBody, string uri, CancellationToken cancellationToken = default)
+    {
+        await AssertTokensAsync(cancellationToken);
+        var response = await _httpClient.PostAsJsonAsync(uri, requestBody, cancellationToken);
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await RefreshTokensAsync(cancellationToken);
+            response = await _httpClient.PostAsJsonAsync(uri, requestBody, cancellationToken);
+        }
+        return await BuildResultAsync(response, cancellationToken);
+    }
+
+    public async Task<ApiCallResult<TResponse>> PostAsync<TResponse>(
+        MultipartFormDataContent formDataContent, string uri, CancellationToken cancellationToken = default)
+    {
+        await AssertTokensAsync(cancellationToken);
+        var response = await _httpClient.PostAsync(uri, formDataContent, cancellationToken);
+        if (response.StatusCode == HttpStatusCode.Unauthorized)
+        {
+            await RefreshTokensAsync(cancellationToken);
+            response = await _httpClient.PostAsync(uri, formDataContent, cancellationToken);
+        }
+        return await BuildResultAsync<TResponse>(response, cancellationToken);
+    }
+
+
+    public async Task<ApiCallResult> LogInAsync(LoginDto loginDto, CancellationToken cancellationToken = default)
     {
         var response = await _httpClient.PostAsJsonAsync(EndpointsPaths.Auth_Login, loginDto, cancellationToken);
         var result = await BuildResultAsync<TokenDto>(response, cancellationToken);
@@ -44,8 +83,14 @@ public class ApiClient
         return result;
     }
 
-    public async Task LogOutAsync()
+    public async Task LogOutAsync(CancellationToken cancellationToken = default)
     {
+        await _httpClient.PostAsJsonAsync(EndpointsPaths.Auth_RevokeTokens, new TokenDto
+        {
+            RefreshToken = _tokenStorage.GetRefreshToken(),
+            AccessToken = _tokenStorage.GetAccessToken()
+        },  cancellationToken);
+
         await _tokenStorage.RemoveTokensAsync();
         SetHttpClientToken(null);
     }
@@ -74,6 +119,34 @@ public class ApiClient
                 {
                     throw new UnauthorizedException();
                 }
+            default:
+                throw new InvalidDataException("Response not recognized");
+        }
+    }
+
+
+    private async Task<ApiCallResult> BuildResultAsync(HttpResponseMessage response, CancellationToken cancellationToken)
+    {
+        switch (response.StatusCode)
+        {
+            case HttpStatusCode.OK:
+            {
+                return new ApiCallResult();
+            }
+            case HttpStatusCode.NotFound:
+            {
+                var notFound = await response.Content.ReadFromJsonAsync<NotFoundDto>(cancellationToken);
+                return new ApiCallResult(notFound!);
+            }
+            case HttpStatusCode.BadRequest:
+            {
+                var invalidInput = await response.Content.ReadFromJsonAsync<InvalidInputDto>(cancellationToken);
+                return new ApiCallResult(invalidInput!);
+            }
+            case HttpStatusCode.Unauthorized:
+            {
+                throw new UnauthorizedException();
+            }
             default:
                 throw new InvalidDataException("Response not recognized");
         }

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using DrugSchedule.Api.Shared.Converters;
+using System;
 using System.Text.Json.Serialization;
 
 namespace DrugSchedule.Api.Shared.Dtos;
 
 [Flags]
-[JsonConverter(typeof(JsonEC))]
+[JsonConverter(typeof(RepeatDayOfWeekDtoConverter))]
 public enum RepeatDayOfWeekDto : byte
 {
     Sunday = 1 << 0,

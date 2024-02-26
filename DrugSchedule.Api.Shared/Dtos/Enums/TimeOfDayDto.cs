@@ -1,5 +1,8 @@
-﻿namespace DrugSchedule.Api.Shared.Dtos;
+﻿using System.Text.Json.Serialization;
 
+namespace DrugSchedule.Api.Shared.Dtos;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TimeOfDayDto : byte
 {
     None = 0,

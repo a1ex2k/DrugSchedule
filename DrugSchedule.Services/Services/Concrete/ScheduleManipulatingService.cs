@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.ComTypes;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Utils;
@@ -118,6 +117,11 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
             invalidInput.Add(ErrorMessages.ScheduleDatesInvalid);
         }
 
+        if (newRepeat.RepeatDayOfWeek == 0)
+        {
+            invalidInput.Add(ErrorMessages.RepeatDaysInvalid);
+        }
+
         if (newRepeat.TimeOfDay == TimeOfDay.None && newRepeat.Time == null)
         {
             invalidInput.Add(ErrorMessages.ScheduleDatesInvalid);
@@ -148,17 +152,25 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         {
             return new NotFound(ErrorMessages.UserDoesntHaveRepeat);
         }
-
+        
+        var invalidInput = new InvalidInput();
         if (repeatUpdate.EndDate != null && repeatUpdate.EndDate <= repeatUpdate.BeginDate)
         {
-            return new InvalidInput(ErrorMessages.ScheduleDatesInvalid);
+            invalidInput.Add(ErrorMessages.ScheduleDatesInvalid);
+        }
+
+        if (repeatUpdate.RepeatDayOfWeek == 0)
+        {
+            invalidInput.Add(ErrorMessages.RepeatDaysInvalid);
         }
 
         var hasConfirmations = await _confirmationRepository.AnyConfirmationExistsAsync(new () {repeatUpdate.Id}, cancellationToken);
         if (hasConfirmations)
         {
-            return new InvalidInput(ErrorMessages.RepeatCannotBeUpdated);
+            invalidInput.Add(ErrorMessages.RepeatCannotBeUpdated);
         }
+
+        if (invalidInput.HasMessages) return invalidInput;
 
         var repeat = new ScheduleRepeatPlain
         {
