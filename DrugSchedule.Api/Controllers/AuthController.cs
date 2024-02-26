@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using Mapster;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DrugSchedule.Api.Controllers;
 
@@ -63,6 +64,15 @@ public class AuthController : ControllerBase
         return newTokenModel.Match<IActionResult>(
             tokenModel => Ok(tokenModel.Adapt<TokenDto>()),
             error => BadRequest(error.ToDto()));
+    }
+
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> RevokeTokens([FromBody] TokenDto tokenDto, [FromServices] ICurrentUserIdentifier currentUserIdentifier, CancellationToken cancellationToken)
+    {
+        await _tokenService.RevokeRefreshTokenAsync(currentUserIdentifier.IdentityGuid, tokenDto.RefreshToken, cancellationToken);
+        return Ok();
     }
 
 

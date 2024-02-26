@@ -55,12 +55,4 @@
     <ProjectReference Include="..\DrugSchedule.Api.Shared\DrugSchedule.Api.Shared.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Networking\specification.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>specification.json</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
 </Project>

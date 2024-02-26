@@ -2,7 +2,7 @@
 
 public enum StringSearch : byte
 {
-    StartsWith,
-    Contains,
-    EndsWith,
+    StartsWith = 0,
+    Contains = 1,
+    EndsWith = 2,
 }

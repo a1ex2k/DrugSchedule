@@ -1,21 +1,19 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
 namespace DrugSchedule.Client.Networking;
 
-public class ApiCallResult<T>
+public class ApiCallResult
 {
     public bool IsOk { get; init; }
-
-    public T Result { get; init; } = default!;
 
     public InvalidInputDto? InvalidInput { get; init; }
 
     public NotFoundDto? NotFound { get; init; }
 
-    public ApiCallResult(T result)
+    public ApiCallResult()
     {
-        Result = result;
+        IsOk = true;
     }
-
+    
     public ApiCallResult(InvalidInputDto invalidInput)
     {
         InvalidInput = invalidInput;
@@ -28,28 +26,20 @@ public class ApiCallResult<T>
 }
 
 
-public class ApiCallResult<T>
+public class ApiCallResult<T> : ApiCallResult
 {
-    public bool IsOk { get; init; }
-
     public T Result { get; init; } = default!;
 
-    public InvalidInputDto? InvalidInput { get; init; }
-
-    public NotFoundDto? NotFound { get; init; }
-
-    public ApiCallResult(T result)
+    public ApiCallResult(T result) : base()
     {
         Result = result;
     }
 
-    public ApiCallResult(InvalidInputDto invalidInput)
+    public ApiCallResult(InvalidInputDto invalidInput) : base(invalidInput)
     {
-        InvalidInput = invalidInput;
     }
 
-    public ApiCallResult(NotFoundDto notFound)
+    public ApiCallResult(NotFoundDto notFound) : base(notFound)
     {
-        NotFound = notFound;
     }
 }

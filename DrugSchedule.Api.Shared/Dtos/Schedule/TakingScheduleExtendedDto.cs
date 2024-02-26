@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace DrugSchedule.Api.Shared.Dtos;
 
-public class TakingScheduleExtendedDto
+public class ScheduleExtendedDto
 {
     public long Id { get; set; }
 

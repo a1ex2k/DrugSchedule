@@ -34,6 +34,7 @@ internal static class ErrorMessages
     public const string SearchValueMustBeThreeChars = "Search value must be at least 3 not whitespace characters long";
     public const string SharedUserMedicamentNotFoundOrNoPermissions = "Shared user medicament not found or current user doesn't have permissions to access";
     public const string StreamCannotBeRead = "Input data stream cannot be read";
+    public const string RepeatDaysInvalid = "At least single day of week must be defined";
     public const string UserDoesntHaveConfirmation = "User doesn't have specified confirmation";
     public const string UserDoesntHaveMedicament = "User doesn't have specified medicament";
     public const string UserDoesntHaveRepeat = "User doesn't have specified repeat";
