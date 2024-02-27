@@ -45,7 +45,7 @@ public class RepeatDayOfWeekDtoConverter : JsonConverter<RepeatDayOfWeekDto>
         {
             if ((intValue & (1 << d)) != 0)
             {
-                daysOfWeekStrings.Add(Days[1 << d]);
+                daysOfWeekStrings.Add(Days[d]);
             }
         }
 
