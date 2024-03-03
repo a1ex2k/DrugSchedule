@@ -34,11 +34,11 @@ public class ContactsControllerClient : IContactsControllerClient
 
     public async Task<ApiCallResult> AddOrUpdateAsync(NewUserContactDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<NewUserContactDto>(body, EndpointsPaths.Contacts_AddOrUpdate, cancellationToken);
+        return await _client.PostAsync(body, EndpointsPaths.Contacts_AddOrUpdate, cancellationToken);
     }
 
     public async Task<ApiCallResult> RemoveAsync(UserIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<UserIdDto>(body, EndpointsPaths.Contacts_Remove, cancellationToken);
+        return await _client.PostAsync(body, EndpointsPaths.Contacts_Remove, cancellationToken);
     }
 }

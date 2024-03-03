@@ -14,7 +14,7 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services
     .AddBlazorise(options =>
     {
-        options.DebounceInterval = 300;
+        options.DebounceInterval = 500;
     })
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons();

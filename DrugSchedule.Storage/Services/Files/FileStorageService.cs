@@ -19,25 +19,25 @@ public class FileStorageService : IFileStorage
         _directoryPath = options.Value.DirectoryPath;
     }
 
-    public async Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo,
+    public Task<Stream?> GetReadStreamAsync(Contract.FileInfo fileInfo,
         CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(fileInfo);
         var fileStream = GetReadStreamInternal(filePath);
-        return fileStream;
+        return Task.FromResult(fileStream);
     }
 
-    public async Task<Stream?> GetThumbnailStreamAsync(Contract.FileInfo fileInfo,
+    public Task<Stream?> GetThumbnailStreamAsync(Contract.FileInfo fileInfo,
         CancellationToken cancellationToken = default)
     {
         var filePath = GetThumbnailPath(fileInfo);
         if (!File.Exists(filePath))
         {
-            return null;
+            return Task.FromResult<Stream?>(null);
         }
 
         var fileStream = GetReadStreamInternal(filePath);
-        return fileStream;
+        return Task.FromResult(fileStream);
     }
 
     public async Task<bool> WriteFileAsync(Contract.FileInfo fileInfo, Stream stream,
@@ -56,7 +56,7 @@ public class FileStorageService : IFileStorage
         return saved;
     }
 
-    public async Task<bool> RemoveFileAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
+    public Task<bool> RemoveFileAsync(Contract.FileInfo fileInfo, CancellationToken cancellationToken = default)
     {
         var filePath = GetFilePath(fileInfo);
         var deleted = false;
@@ -85,7 +85,7 @@ public class FileStorageService : IFileStorage
             }
         }
 
-        return deleted;
+        return Task.FromResult(deleted);
     }
 
 

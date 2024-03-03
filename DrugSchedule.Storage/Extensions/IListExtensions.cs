@@ -20,7 +20,7 @@ public static class IListExtensions
         }
 
         var commonKeys = sourceList.Select(sourceKeySelector)
-            .Except(newItemList.Select(newKeySelector)).ToList();
+            .Except(newItemList!.Select(newKeySelector)).ToList();
         sourceList.RemoveAll(i => commonKeys.Contains(sourceKeySelector(i)));
         var newExceptCommon = newItemList.Where(i => commonKeys.Contains(newKeySelector(i)));
         sourceList.AddRange(newExceptCommon.Select(convertor));
