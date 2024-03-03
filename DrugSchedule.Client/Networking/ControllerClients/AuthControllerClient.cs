@@ -23,11 +23,11 @@ public class AuthControllerClient : IAuthControllerClient
 
     public async Task<ApiCallResult> RegisterAsync(RegisterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<RegisterDto>(body, EndpointsPaths.Auth_Register, cancellationToken);
+        return await _client.PostAsync(body, EndpointsPaths.Auth_Register, cancellationToken);
     }
 
     public async Task<ApiCallResult<AvailableUsernameDto>> UsernameAvailableAsync(UsernameDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<UsernameDto, AvailableUsernameDto>(body, EndpointsPaths.Auth_Register, cancellationToken);
+        return await _client.PostAsync<UsernameDto, AvailableUsernameDto>(body, EndpointsPaths.Auth_UsernameAvailable, cancellationToken);
     }
 }

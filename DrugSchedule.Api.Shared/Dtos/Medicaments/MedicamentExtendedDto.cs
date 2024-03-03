@@ -8,8 +8,8 @@ namespace DrugSchedule.Api.Shared.Dtos
         public string Name { get; set; }
         public string? Composition { get; set; }
         public string? Description { get; set; }
-        public MedicamentReleaseFormDto ReleaseForm { get; set; }
+        public MedicamentReleaseFormDto ReleaseForm { get; set; } = default!;
         public ManufacturerDto? Manufacturer { get; set; }
-        public FileCollectionDto FileCollection { get; set; }
+        public FileCollectionDto FileCollection { get; set; } = default!;
     }
 }

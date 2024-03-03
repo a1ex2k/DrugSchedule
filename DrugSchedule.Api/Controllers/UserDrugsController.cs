@@ -1,5 +1,4 @@
-﻿using DrugSchedule.Api.ServerOnlyDtos;
-using DrugSchedule.Api.Shared.Dtos;
+﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.Services.Models;
@@ -86,17 +85,17 @@ public class UserDrugsController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> AddImage([FromQuery] NewUserMedicamentImageDto dto, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddImage([FromForm] UserMedicamentIdDto userMedicamentId, [FromForm] IFormFile file, CancellationToken cancellationToken)
     {
         var inputFile = new InputFile
         {
-            NameWithExtension = dto.FormFile.Name,
-            MediaType = dto.FormFile.ContentType,
-            Stream = dto.FormFile.OpenReadStream()
+            NameWithExtension = file.Name,
+            MediaType = file.ContentType,
+            Stream = file.OpenReadStream()
         };
 
         var addResult =
-            await _drugLibraryService.AddImageAsync(dto.UserMedicamentId.UserMedicamentId, inputFile, cancellationToken);
+            await _drugLibraryService.AddImageAsync(userMedicamentId.UserMedicamentId, inputFile, cancellationToken);
         return addResult.Match<IActionResult>(
             f => Ok(f.Adapt<DownloadableFileDto>()),
             error => NotFound(error.ToDto()),

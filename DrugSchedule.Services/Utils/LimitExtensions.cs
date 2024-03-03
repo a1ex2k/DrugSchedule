@@ -37,7 +37,7 @@ public static class LimitExtensions
 
     public static string Limit(this string? str, int sizeLimit)
     {
-        if (str == null) return null;
+        if (str == null) return null!;
         if (str.Length <= sizeLimit) return str;
         return str.Substring(sizeLimit);
     }

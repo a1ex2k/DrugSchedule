@@ -1,13 +1,8 @@
-﻿using DrugSchedule.Api.ServerOnlyDtos;
-using DrugSchedule.Api.Shared.Dtos;
+﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.Services.Models;
-using DrugSchedule.Services.Services.Abstractions;
-using DrugSchedule.StorageContract.Data;
 using Mapster;
-using Microsoft.AspNetCore.Authorization;
-using DrugSchedule.Services.Services;
 
 namespace DrugSchedule.Api.Controllers;
 
@@ -131,16 +126,16 @@ public partial class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddConfirmationImage([FromBody] NewConfirmationImageDto dto, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AddConfirmationImage([FromForm] ConfirmationId confirmationId, [FromForm] IFormFile file, CancellationToken cancellationToken = default)
     {
         var inputFile = new InputFile
         {
-            NameWithExtension = dto.FormFile.Name,
-            MediaType = dto.FormFile.ContentType,
-            Stream = dto.FormFile.OpenReadStream()
+            NameWithExtension = file.Name,
+            MediaType = file.ContentType,
+            Stream = file.OpenReadStream()
         };
 
-        var result = await _confirmationManipulating.AddConfirmationImageAsync(dto.ConfirmationId.Adapt<ConfirmationId>(), inputFile, cancellationToken);
+        var result = await _confirmationManipulating.AddConfirmationImageAsync(confirmationId.Adapt<ConfirmationId>(), inputFile, cancellationToken);
         return result.Match<IActionResult>(
             file => Ok(file.Adapt<DownloadableFileDto>()),
             notFound => NotFound(notFound.ToDto()),
