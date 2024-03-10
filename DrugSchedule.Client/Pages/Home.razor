@@ -1,106 +1,13 @@
 ﻿@page "/"
-@using BarsuActivity.Components
-
-<PageTitle>Home</PageTitle>
-
-<DataGrid TItem="Employee4"
-          @bind-Data="@employees"
-          Editable="false"
-          Sortable="true"
-          FilterMethod="DataGridFilterMethod.Contains"
-          Responsive="true"
-          Hoverable="true"
-          PageSize="@employees.Count" Striped="true">
-    <DataGridColumns>
-        <DataGridMultiSelectColumn Width="5rem"></DataGridMultiSelectColumn>
-        <DataGridColumn Field="Id" Caption="ID" />
-        <DataGridColumn Field="Name" Caption="Name" />
-        <DataGridColumn Field="Designation" Caption="Designation" />
-        <DataGridColumn Field="DOJ" Caption="DOJ" />
-        <DataGridColumn Caption="DOJ"  >
-        <DisplayTemplate>
-            <CustomButton Text="edit" Icon="fa-pen" Clicked="() => { e = context; _editModal.Show(); }"></CustomButton>
-        </DisplayTemplate>
-        </DataGridColumn>
-    </DataGridColumns>
-</DataGrid>
-
-<EditorModal @ref="_editModal" 
-             Delete="@DeleteAsync"
-             Save="@SaveAsync"
-             ItemText="@e.Name">
-
-<EditorModalBody>
-
-    <Field>
-        <FieldLabel>Is</FieldLabel>
-        <Select TValue="bool"
-                @bind-SelectedValue="e.IsActive">
-            <SelectItem Value="true">+</SelectItem>
-            <SelectItem Value="false">-</SelectItem>
-        </Select>
-    </Field>
-
-    <Validation Validator="@ValidationRule.IsNotEmpty">
-        <Field>
-            <FieldLabel>Наименование показателя</FieldLabel>
-            <TextEdit @bind-Text="e.Name" />
-        </Field>
-    </Validation>
-</EditorModalBody>
-</EditorModal>
-
 <div>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam pretium tempor velit, vel lobortis lacus hendrerit non. Sed sollicitudin, lorem ut luctus eleifend, metus tellus facilisis leo, ut iaculis urna nulla vitae nulla. Nunc aliquet pellentesque ante eget mollis. Morbi a ultricies urna, sed scelerisque velit. Praesent a tristique orci, dictum consectetur ante. Sed nunc augue, faucibus non sapien vel, dapibus varius magna. Morbi tristique aliquet sollicitudin. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Maecenas auctor convallis orci, et gravida sem placerat non. Proin id lectus leo. Quisque consequat libero pellentesque magna fermentum eleifend. Nam molestie lectus ac ipsum ultrices, in sagittis enim imperdiet. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.
-
-    Nulla non diam a turpis scelerisque cursus at ut risus. Nam congue risus et volutpat venenatis. Nam pellentesque lobortis placerat. Suspendisse potenti. Donec eros elit, finibus eu gravida in, ultrices ac lectus. Quisque mattis dictum iaculis. Mauris et luctus lacus. Proin et mi eu sem porttitor pharetra. Maecenas ut tellus viverra, lacinia quam varius, semper risus. Ut felis dolor, suscipit eu massa congue, scelerisque auctor mi.
-
+        Nulla non diam a turpis scelerisque cursus at ut risus. Nam congue risus et volutpat venenatis. Nam pellentesque lobortis placerat. Suspendisse potenti. Donec eros elit, finibus eu gravida in, ultrices ac lectus. Quisque mattis dictum iaculis. Mauris et luctus lacus. Proin et mi eu sem porttitor pharetra. Maecenas ut tellus viverra, lacinia quam varius, semper risus. Ut felis dolor, suscipit eu massa congue, scelerisque auctor mi.
     Integer non condimentum urna, nec lobortis nibh. Vivamus suscipit, arcu vitae mattis malesuada, nisi est ullamcorper erat, sit amet finibus lorem ligula nec turpis. Aliquam at gravida mi. Nunc risus ipsum, pellentesque sit amet faucibus sed, mattis nec leo. Mauris vel sollicitudin ante. Integer tempor diam nec arcu tempor molestie. Interdum et malesuada fames ac ante ipsum primis in faucibus. Nulla ut sapien volutpat, pulvinar metus et, cursus felis. Vestibulum non lectus suscipit felis tempus pretium. Ut aliquet feugiat mi. Curabitur sed nunc eu libero maximus auctor. Mauris hendrerit, diam ut pellentesque tincidunt, neque lacus lacinia purus, vitae congue sapien odio ornare urna. In cursus nisl ipsum, eleifend cursus neque semper sit amet. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ut magna sapien.
-
-    Vivamus sapien nulla, sagittis at augue malesuada, vehicula volutpat turpis. Donec bibendum, ligula lobortis dapibus sollicitudin, dui dui blandit mauris, non scelerisque dui eros a enim. Vivamus vitae venenatis sapien. Integer consectetur mollis erat, vitae facilisis neque volutpat et. Ut venenatis rhoncus libero eu volutpat. Phasellus dictum fringilla odio, at commodo enim tempus aliquet. Nulla vitae dui in felis finibus malesuada. Vestibulum eu nulla sit amet velit iaculis lacinia. Pellentesque eu leo malesuada nisi placerat finibus. Vivamus a ullamcorper felis. Duis condimentum bibendum congue.
-
+        Vivamus sapien nulla, sagittis at augue malesuada, vehicula volutpat turpis. Donec bibendum, ligula lobortis dapibus sollicitudin, dui dui blandit mauris, non scelerisque dui eros a enim. Vivamus vitae venenatis sapien. Integer consectetur mollis erat, vitae facilisis neque volutpat et. Ut venenatis rhoncus libero eu volutpat. Phasellus dictum fringilla odio, at commodo enim tempus aliquet. Nulla vitae dui in felis finibus malesuada. Vestibulum eu nulla sit amet velit iaculis lacinia. Pellentesque eu leo malesuada nisi placerat finibus. Vivamus a ullamcorper felis. Duis condimentum bibendum congue.
     Donec et turpis pellentesque, viverra ante sit amet, aliquet tortor. Duis pulvinar est non metus fermentum viverra. Duis tincidunt magna sollicitudin luctus mollis. Cras et magna nibh. Sed lacinia in tellus et faucibus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Aliquam erat volutpat. Quisque quis maximus velit. Duis vel suscipit magna. Maecenas eget diam ut nulla cursus pulvinar. Vestibulum feugiat ultrices pretium.
-
-    Generated 5 paragraphs, 464 words, 3189 bytes of Lorem Ipsum
+        Generated 5 paragraphs, 464 words, 3189 bytes of Lorem Ipsum
 </div>
 
 @code {
 
-    private List<Employee4> employees =
-    new List<Employee4>
-        {
-            new Employee4 { Id = 107, Name = "Alice", Designation = "AI Engineer", DOJ = new DateOnly(1998, 11, 17), IsActive = true },
-            new Employee4 { Id = 497, Name = "Bob", Designation = "Senior DevOps Engineer", DOJ = new DateOnly(1985, 1, 5), IsActive = true },
-            new Employee4 { Id = 106, Name = "John", Designation = "Data Engineer", DOJ = new DateOnly(1995, 4, 17), IsActive = true },
-            new Employee4 { Id = 104, Name = "Pop", Designation = "Associate Architect", DOJ = new DateOnly(1985, 6, 8), IsActive = false },
-            new Employee4 { Id = 105, Name = "Ronald", Designation = "Senior Data Engineer", DOJ = new DateOnly(1991, 8, 23), IsActive = true },
-            new Employee4 { Id = 102, Name = "Line", Designation = "Architect", DOJ = new DateOnly(1977, 1, 12), IsActive = true },
-            new Employee4 { Id = 101, Name = "Daniel", Designation = "Architect", DOJ = new DateOnly(1977, 1, 12), IsActive = true },
-            new Employee4 { Id = 108, Name = "Zayne", Designation = "Data Analyst", DOJ = new DateOnly(1991, 1, 1), IsActive = true },
-            new Employee4 { Id = 109, Name = "Isha", Designation = "App Maker", DOJ = null, IsActive = true },
-            new Employee4 { Id = 110, Name = "Vijay", Designation = null, DOJ = new DateOnly(1990, 7, 1), IsActive = true },
-        };
-
-
-    private record Employee4
-    {
-        public int Id;
-        public string Name;
-        public string Designation;
-        public DateOnly? DOJ;
-        public bool IsActive;
-    }
-
-    private Employee4 e = new();
-    private EditorModal _editModal;
-
-    private async Task<EditorModal.ModalResult> SaveAsync()
-    {
-        return new EditorModal.ModalResult(true, "ok");
-    }
-
-    private async Task<EditorModal.ModalResult> DeleteAsync()
-    {
-        return new EditorModal.ModalResult(false, "error");
-    }
 }

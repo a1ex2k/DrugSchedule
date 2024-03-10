@@ -1,4 +1,4 @@
-﻿namespace DrugSchedule.Client.Networking;
+﻿namespace DrugSchedule.Client.Auth;
 
 public interface ITokenStorage
 {

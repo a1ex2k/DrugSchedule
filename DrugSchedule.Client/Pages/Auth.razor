@@ -1,0 +1,115 @@
+﻿@page "/auth"
+@inherits DrugSchedule.Client.ViewModels.AuthViewModel
+
+<PageTitle>Auth - DrugSchedule</PageTitle>
+
+<div Class="d-flex justify-content-between">
+    <h3 class="d-block">@(IsRegistration ? "Sign up" : "Log in")</h3>
+
+    <CustomButton Clicked="ChangeView" Class="d-block"
+                  Color="Color.Secondary"
+                  Text="@(IsRegistration ? "Log in instead" : "Sign up instead")" />
+</div>
+
+
+<div class="login-form">
+
+    @if (IsRegistration)
+    {
+        <Form Class="animate">
+            <Validations @ref="RegistrationValidations" Mode="ValidationMode.Auto" ValidateOnLoad=false>
+                <Validation Validator="@ValidateEmail">
+                    <Field>
+                        <FieldLabel>Email</FieldLabel>
+                        <FieldBody>
+                            <TextEdit @bind-Text=RegisterDto.Email
+                                      Placeholder="someone@example.com"
+                                      Role="TextRole.Email" autocomplete="email">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+
+                <Validation AsyncValidator="@ValidateNewUsernameAsync">
+                    <Field>
+                        <FieldLabel>Username</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Username"
+                                      autocomplete="username"
+                                      @bind-Text=RegisterDto.Username>
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+
+                <Validation Validator="@ValidatePassword">
+                    <Field>
+                        <FieldLabel>Password</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Password"
+                                      @bind-Text=RegisterDto.Password
+                                      Role="TextRole.Password" autocomplete="password">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+            </Validations>
+
+            <Field>
+                <CustomButton Clicked="RegisterAsync" Size="Size.Default" Text="Sign up" Icon="fa-user-plus" />
+            </Field>
+        </Form>
+    }
+    else
+    {
+        <Form Class="animate">
+            <Validations @ref="LoginValidations" Mode="ValidationMode.Auto" ValidateOnLoad="false">
+
+                <Validation Validator=@ValidateUsername>
+                    <Field>
+                        <FieldLabel>Username</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Username"
+                                      autocomplete="username"
+                                      @bind-Text=LoginDto.Username>
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+
+                <Validation Validator="@ValidatePassword">
+                    <Field>
+                        <FieldLabel>Password</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Password"
+                                      Role="TextRole.Password" autocomplete="password"
+                                      @bind-Text=LoginDto.Password>
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+            </Validations>
+            <Field>
+                <CustomButton Clicked="LoginAsync" Size="Size.Default" Text="Log in" Icon="fa-key" />
+            </Field>
+        </Form>
+    }
+
+</div>
+
+

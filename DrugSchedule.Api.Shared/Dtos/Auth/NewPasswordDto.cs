@@ -5,9 +5,8 @@ namespace DrugSchedule.Api.Shared.Dtos;
 public class NewPasswordDto
 {
     [Required]
-    public required string OldPassword { get; set; }
+    public string OldPassword { get; set; } = default!;
 
     [Required]
-
-    public required string NewPassword { get; set; }
+    public string NewPassword { get; set; } = default!;
 }

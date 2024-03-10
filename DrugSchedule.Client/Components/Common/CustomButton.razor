@@ -3,56 +3,17 @@
 
 @if (Displayable)
 {
-    <div style="@($"display: inline-block; margin-left: 0.1rem; margin-right: 0.1rem; {(Hidden ? "visibility: hidden" : null)}")">
-        <Button Color="@Color"
-                Outline="@Outline"
-                Size="@Size"
-                Clicked="@Clicked"
-                Class="@Class"
-                Style="@($"width: {Width}")">
-            @if (!string.IsNullOrWhiteSpace(Icon))
-            {
-                <i class="@($"fa-solid {Icon}")" style="margin-left: auto; width: 1.2em"></i>
-            }
-            @Text
-        </Button>
-    </div>
-}
-
-
-@code {
-    [Parameter]
-    public Blazorise.Size Size { get; set; } = Blazorise.Size.Small;
-
-    [Parameter]
-    public string Class { get; set; } = default!;
-
-    [Parameter]
-    public string Style { get; set; } = default!;
-
-    [Parameter]
-    public bool Outline { get; set; } = default!;
-
-    [Parameter]
-    public string Width { get; set; } = default!;
-
-    [Parameter]
-    public bool Displayable { get; set; } = true;
-
-    [Parameter]
-    public string Text { get; set; } = default!;
-
-    [Parameter]
-    public EventCallback Clicked { get; set; }
-
-    [Parameter]
-    public string Icon { get; set; } = default!;
-
-    [Parameter]
-    public Blazorise.Color Color { get; set; } = Color.Primary;
-
-    [Parameter]
-    public bool Hidden { get; set; } = false;
-
-
+    <Button Color="@Color"
+            Outline="@Outline"
+            Size="@Size"
+            Clicked="@Clicked"
+            Class="@Class"
+            Style="@($"width: {Width};  {(Hidden ? "visibility: hidden" : null)}; margin: 0.1rem")"
+            Type="@Type">
+        @if (!string.IsNullOrWhiteSpace(Icon))
+        {
+            <i class="@($"fa-solid {Icon}")" style="width: 1.6em"></i>
+        }
+        @Text
+    </Button>
 }

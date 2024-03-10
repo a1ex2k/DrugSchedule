@@ -3,42 +3,35 @@ using DrugSchedule.Client.Networking;
 
 namespace DrugSchedule.Client.Networking;
 
-public class ContactsControllerClient : IContactsControllerClient
-{
-    private readonly IApiClient _client;
-
-    public ContactsControllerClient(IApiClient client)
+public static class ContactsControllerClient
+{ 
+    public static async Task<ApiCallResult<UserContactsSimpleCollectionDto>> GetAllContactsAsync(this IApiClient client, CancellationToken cancellationToken = default)
     {
-        _client = client;
+        return await client.PostAsync<UserContactsSimpleCollectionDto>(EndpointsPaths.Contacts_GetAll, cancellationToken);
     }
 
-    public async Task<ApiCallResult<UserContactsSimpleCollectionDto>> GetAllAsync(CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<UserContactsSimpleCollectionDto>> GetCommonContactsAsync(this IApiClient client, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<UserContactsSimpleCollectionDto>(EndpointsPaths.Contacts_GetAll, cancellationToken);
+        return await client.PostAsync<UserContactsSimpleCollectionDto>(EndpointsPaths.Contacts_GetCommon, cancellationToken);
     }
 
-    public async Task<ApiCallResult<UserContactsSimpleCollectionDto>> GetCommonAsync(CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<UserContactDto>> GetSingleExtendedContactAsync(this IApiClient client, UserIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<UserContactsSimpleCollectionDto>(EndpointsPaths.Contacts_GetCommon, cancellationToken);
+        return await client.PostAsync<UserIdDto, UserContactDto>(body, EndpointsPaths.Contacts_GetSingleExtended, cancellationToken);
     }
 
-    public async Task<ApiCallResult<UserContactDto>> GetSingleExtendedAsync(UserIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<UserContactsCollectionDto>> GetManyExtendedContactsAsync(this IApiClient client, UserContactFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<UserIdDto, UserContactDto>(body, EndpointsPaths.Contacts_GetSingleExtended, cancellationToken);
+        return await client.PostAsync<UserContactFilterDto, UserContactsCollectionDto>(body, EndpointsPaths.Contacts_GetManyExtended, cancellationToken);
     }
 
-    public async Task<ApiCallResult<UserContactsCollectionDto>> GetManyExtendedAsync(UserContactFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> AddOrUpdateContactAsync(this IApiClient client, NewUserContactDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<UserContactFilterDto, UserContactsCollectionDto>(body, EndpointsPaths.Contacts_GetManyExtended, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Contacts_AddOrUpdate, cancellationToken);
     }
 
-    public async Task<ApiCallResult> AddOrUpdateAsync(NewUserContactDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RemoveContactAsync(this IApiClient client, UserIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Contacts_AddOrUpdate, cancellationToken);
-    }
-
-    public async Task<ApiCallResult> RemoveAsync(UserIdDto body, CancellationToken cancellationToken = default)
-    {
-        return await _client.PostAsync(body, EndpointsPaths.Contacts_Remove, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Contacts_Remove, cancellationToken);
     }
 }

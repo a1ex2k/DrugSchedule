@@ -1,6 +1,6 @@
 ﻿using Blazored.LocalStorage;
 
-namespace DrugSchedule.Client.Networking;
+namespace DrugSchedule.Client.Auth;
 
 public class TokenStorage : ITokenStorage
 {
@@ -25,11 +25,11 @@ public class TokenStorage : ITokenStorage
             _refreshToken = await _localStorage.GetItemAsStringAsync(LocalStorageRefreshTokenKey);
         }
     }
-    
+
     public async ValueTask<bool> IsSetAsync()
     {
         await ReadFromLocalStorageIfNotSet();
-        return _accessToken == null || _refreshToken == null;
+        return !string.IsNullOrWhiteSpace(_accessToken) && !string.IsNullOrWhiteSpace(_refreshToken);
     }
 
     public string GetAccessToken()
@@ -46,7 +46,7 @@ public class TokenStorage : ITokenStorage
     {
         _refreshToken = null;
         _accessToken = null;
-        await _localStorage.RemoveItemsAsync(new[] {LocalStorageAccessTokenKey, LocalStorageRefreshTokenKey});
+        await _localStorage.RemoveItemsAsync(new[] { LocalStorageAccessTokenKey, LocalStorageRefreshTokenKey });
     }
 
     public async ValueTask WriteTokensAsync(string accessToken, string refreshToken)

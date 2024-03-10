@@ -28,11 +28,11 @@ public class ApiCallResult
 
 public class ApiCallResult<T> : ApiCallResult
 {
-    public T Result { get; init; } = default!;
+    public T ResponseDto { get; init; } = default!;
 
-    public ApiCallResult(T result) : base()
+    public ApiCallResult(T responseDto) : base()
     {
-        Result = result;
+        ResponseDto = responseDto;
     }
 
     public ApiCallResult(InvalidInputDto invalidInput) : base(invalidInput)

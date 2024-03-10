@@ -9,7 +9,7 @@ public static class CridentialsValidator
     public const int MinPasswordLength = 8;
     public const int MinUsernameLength = 4;
 
-    public const string PasswordRegexString = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,32}$";
+    public const string PasswordRegexString = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&+~|{}:;<>/])[A-Za-z\d$@$!%*?&+~|{}:;<>/]{8,32}";
     public const string UsernameRegexString = @"^(?=.*[A-Za-z])[A-Za-z\d_]{4,32}$";
 
     private static readonly Regex PasswordRegex =
