@@ -1,43 +1,22 @@
-﻿
+﻿@using Microsoft.AspNetCore.Components.Authorization;
+
 <div class="nav-items">
-
-    <NavLink ActiveClass="current" href="a" class="nav-item" Match="NavLinkMatch.All">
-        <i class="icon fa-solid fa-house"></i>
-        <div class="text">Главная</div>
-    </NavLink>
-    <NavLink ActiveClass="current" href="/" class="nav-item" Match="NavLinkMatch.All">
-        <i class="icon fa-solid fa-house"></i>
-        <div class="text">Главная</div>
-    </NavLink>
-    <NavLink ActiveClass="current" href="a" class="nav-item" Match="NavLinkMatch.All">
-        <i class="icon fa-solid fa-house"></i>
-        <div class="text">Главная</div>
-    </NavLink>
-    <NavLink ActiveClass="current" href="a" class="nav-item" Match="NavLinkMatch.All">
-        <i class="icon fa-solid fa-house"></i>
-        <div class="text">Главная</div>
-    </NavLink>
-    <NavLink ActiveClass="current" href="a" class="nav-item" Match="NavLinkMatch.All">
-        <i class="icon fa-solid fa-house"></i>
-        <div class="text">Главная</div>
-    </NavLink>
-    <NavLink ActiveClass="current" href="a" class="nav-item" Match="NavLinkMatch.All">
-        <i class="icon fa-solid fa-house"></i>
-        <div class="text">Главная</div>
-    </NavLink>
+    <AuthorizeView Context="authContext">
+    <Authorized>
+            <NavLink ActiveClass="current" href="/" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-house"></i>
+                <div class="text">Home</div>
+            </NavLink>
+            <NavLink ActiveClass="current" href="/user" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-circle-user"></i>
+                <div class="text">User</div>
+            </NavLink>
+        </Authorized>
+        <NotAuthorized>
+            <NavLink ActiveClass="current" href="/auth" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-key"></i>
+                <div class="text">Auth</div>
+            </NavLink>
+        </NotAuthorized>  
+    </AuthorizeView>
 </div>
-
-@code {
-
-    //[CascadingParameter] public MainLayout MainLayout { get; set; }
-
-    async Task Logout()
-    {
-        //var result = await MainLayout.Alert.ShowYesNo("Будет выполнен выход из системы. Вы будете перенаправлены на страницу входа. Продолжить?", "Выйти?");
-        // if (result == CustomAlert.ModalResult.Yes)
-        // {
-        //     var baseUri = _navigationManager.BaseUri;
-        //   _navigationManager.NavigateTo($"{baseUri}account/logout", true);
-        // }
-    }
-}

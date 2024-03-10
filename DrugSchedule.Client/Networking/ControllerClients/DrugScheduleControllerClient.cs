@@ -4,111 +4,104 @@ using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.Client.Networking;
 
-public class DrugScheduleControllerClient : IDrugScheduleControllerClient
+public static class DrugScheduleControllerClient
 {
-    private readonly IApiClient _client;
-
-    public DrugScheduleControllerClient(IApiClient client)
+    public static async Task<ApiCallResult<ScheduleSimpleCollectionDto>> SearchForScheduleAsync(this IApiClient client, ScheduleSearchDto body, CancellationToken cancellationToken = default)
     {
-        _client = client;
+        return await client.PostAsync<ScheduleSearchDto, ScheduleSimpleCollectionDto>(body, EndpointsPaths.Schedule_SearchForSchedule, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleSimpleCollectionDto>> SearchForScheduleAsync(ScheduleSearchDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ScheduleSimpleDto>> GetScheduleSimpleAsync(this IApiClient client, ScheduleIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ScheduleSearchDto, ScheduleSimpleCollectionDto>(body, EndpointsPaths.Schedule_SearchForSchedule, cancellationToken);
+        return await client.PostAsync<ScheduleIdDto, ScheduleSimpleDto>(body, EndpointsPaths.Schedule_GetScheduleSimple, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleSimpleDto>> GetScheduleSimpleAsync(ScheduleIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ScheduleSimpleCollectionDto>> GetSchedulesSimpleAsync(this IApiClient client, TakingScheduleFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ScheduleIdDto, ScheduleSimpleDto>(body, EndpointsPaths.Schedule_GetScheduleSimple, cancellationToken);
+        return await client.PostAsync<TakingScheduleFilterDto, ScheduleSimpleCollectionDto>(body, EndpointsPaths.Schedule_GetSchedulesSimple, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleSimpleCollectionDto>> GetSchedulesSimpleAsync(TakingScheduleFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ScheduleExtendedDto>> GetScheduleExtendedAsync(this IApiClient client, ScheduleIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<TakingScheduleFilterDto, ScheduleSimpleCollectionDto>(body, EndpointsPaths.Schedule_GetSchedulesSimple, cancellationToken);
+        return await client.PostAsync<ScheduleIdDto, ScheduleExtendedDto>(body, EndpointsPaths.Schedule_GetScheduleExtended, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleExtendedDto>> GetScheduleExtendedAsync(ScheduleIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ScheduleExtendedCollectionDto>> GetSchedulesExtendedAsync(this IApiClient client, TakingScheduleFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ScheduleIdDto, ScheduleExtendedDto>(body, EndpointsPaths.Schedule_GetScheduleExtended, cancellationToken);
+        return await client.PostAsync<TakingScheduleFilterDto, ScheduleExtendedCollectionDto>(body, EndpointsPaths.Schedule_GetSchedulesExtended, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleExtendedCollectionDto>> GetSchedulesExtendedAsync(TakingScheduleFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<TakingСonfirmationCollectionDto>> GetTakingConfirmationsAsync(this IApiClient client, TakingConfirmationFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<TakingScheduleFilterDto, ScheduleExtendedCollectionDto>(body, EndpointsPaths.Schedule_GetSchedulesExtended, cancellationToken);
+        return await client.PostAsync<TakingConfirmationFilterDto, TakingСonfirmationCollectionDto>(body, EndpointsPaths.Schedule_GetTakingConfirmations, cancellationToken);
     }
 
-    public async Task<ApiCallResult<TakingСonfirmationCollectionDto>> GetTakingConfirmationsAsync(TakingConfirmationFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ScheduleIdDto>> CreateScheduleAsync(this IApiClient client, NewScheduleDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<TakingConfirmationFilterDto, TakingСonfirmationCollectionDto>(body, EndpointsPaths.Schedule_GetTakingConfirmations, cancellationToken);
+        return await client.PostAsync<NewScheduleDto, ScheduleIdDto>(body, EndpointsPaths.Schedule_CreateSchedule, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleIdDto>> CreateScheduleAsync(NewScheduleDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ScheduleIdDto>> UpdateScheduleAsync(this IApiClient client, ScheduleUpdateDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<NewScheduleDto, ScheduleIdDto>(body, EndpointsPaths.Schedule_CreateSchedule, cancellationToken);
+        return await client.PostAsync<ScheduleUpdateDto, ScheduleIdDto>(body, EndpointsPaths.Schedule_UpdateSchedule, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ScheduleIdDto>> UpdateScheduleAsync(ScheduleUpdateDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RemoveScheduleAsync(this IApiClient client, ScheduleIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ScheduleUpdateDto, ScheduleIdDto>(body, EndpointsPaths.Schedule_UpdateSchedule, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveSchedule, cancellationToken);
     }
 
-    public async Task<ApiCallResult> RemoveScheduleAsync(ScheduleIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<RepeatIdDto>> CreateRepeatAsync(this IApiClient client, NewScheduleRepeatDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Schedule_RemoveSchedule, cancellationToken);
+        return await client.PostAsync<NewScheduleRepeatDto, RepeatIdDto>(body, EndpointsPaths.Schedule_CreateRepeat, cancellationToken);
     }
 
-    public async Task<ApiCallResult<RepeatIdDto>> CreateRepeatAsync(NewScheduleRepeatDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<RepeatIdDto>> UpdateRepeatAsync(this IApiClient client, ScheduleRepeatUpdateDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<NewScheduleRepeatDto, RepeatIdDto>(body, EndpointsPaths.Schedule_CreateRepeat, cancellationToken);
+        return await client.PostAsync<ScheduleRepeatUpdateDto, RepeatIdDto>(body, EndpointsPaths.Schedule_UpdateRepeat, cancellationToken);
     }
 
-    public async Task<ApiCallResult<RepeatIdDto>> UpdateRepeatAsync(ScheduleRepeatUpdateDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RemoveRepeatAsync(this IApiClient client, RepeatIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ScheduleRepeatUpdateDto, RepeatIdDto>(body, EndpointsPaths.Schedule_UpdateRepeat, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveRepeat, cancellationToken);
     }
 
-    public async Task<ApiCallResult> RemoveRepeatAsync(RepeatIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> AddOrUpdateShareAsync(this IApiClient client, ScheduleShareUpdateDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Schedule_RemoveRepeat, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_AddOrUpdateShare, cancellationToken);
     }
 
-    public async Task<ApiCallResult> AddOrUpdateShareAsync(ScheduleShareUpdateDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RemoveShareAsync(this IApiClient client, ScheduleShareRemoveDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Schedule_AddOrUpdateShare, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveShare, cancellationToken);
     }
 
-    public async Task<ApiCallResult> RemoveShareAsync(ScheduleShareRemoveDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ConfirmationIdDto>> CreateConfirmationAsync(this IApiClient client, NewTakingСonfirmationDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Schedule_RemoveShare, cancellationToken);
+        return await client.PostAsync<NewTakingСonfirmationDto, ConfirmationIdDto>(body, EndpointsPaths.Schedule_CreateConfirmation, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ConfirmationIdDto>> CreateConfirmationAsync(NewTakingСonfirmationDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ConfirmationIdDto>> UpdateConfirmationAsync(this IApiClient client, TakingСonfirmationUpdateDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<NewTakingСonfirmationDto, ConfirmationIdDto>(body, EndpointsPaths.Schedule_CreateConfirmation, cancellationToken);
+        return await client.PostAsync<TakingСonfirmationUpdateDto, ConfirmationIdDto>(body, EndpointsPaths.Schedule_UpdateConfirmation, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ConfirmationIdDto>> UpdateConfirmationAsync(TakingСonfirmationUpdateDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RemoveConfirmationAsync(this IApiClient client, ConfirmationIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<TakingСonfirmationUpdateDto, ConfirmationIdDto>(body, EndpointsPaths.Schedule_UpdateConfirmation, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveConfirmation, cancellationToken);
     }
 
-    public async Task<ApiCallResult> RemoveConfirmationAsync(ConfirmationIdDto body, CancellationToken cancellationToken = default)
-    {
-        return await _client.PostAsync(body, EndpointsPaths.Schedule_RemoveConfirmation, cancellationToken);
-    }
-
-    public async Task<ApiCallResult<DownloadableFileDto>> AddConfirmationImageAsync(ConfirmationIdDto confirmationId, UploadFile uploadFile, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<DownloadableFileDto>> AddConfirmationImageAsync(this IApiClient client, ConfirmationIdDto confirmationId, UploadFile uploadFile, CancellationToken cancellationToken = default)
     {
         using var content = new MultipartFormDataContent();
         content.Add(new StreamContent(uploadFile.Stream), "file", uploadFile.Name);
         var confirmationIdString = JsonSerializer.Serialize(confirmationId);
         content.Add(new StringContent(confirmationIdString), "confirmationId", uploadFile.Name);
-        return await _client.PostAsync<DownloadableFileDto>(content, EndpointsPaths.Schedule_AddConfirmationImage, cancellationToken);
+        return await client.PostAsync<DownloadableFileDto>(content, EndpointsPaths.Schedule_AddConfirmationImage, cancellationToken);
     }
 
-    public async Task<ApiCallResult> RemoveConfirmationImageAsync(ConfirmationImageRemoveDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RemoveConfirmationImageAsync(this IApiClient client, ConfirmationImageRemoveDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Schedule_RemoveConfirmation, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveConfirmation, cancellationToken);
     }
 }

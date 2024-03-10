@@ -1,5 +1,8 @@
 ﻿@inherits LayoutComponentBase
 @inject IJSRuntime JsRuntime
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.Authorization;
+
 
 <div class="viewport-box">
 
@@ -34,5 +37,4 @@
         }
         await base.OnAfterRenderAsync(firstRender);
     }
-
-    }
+}

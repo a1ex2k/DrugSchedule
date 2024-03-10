@@ -183,6 +183,14 @@ if (useSwagger)
 #endregion
 
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(p =>
+        p.WithOrigins(builder.Configuration.GetValue<string>("CorsOrigins")!)
+            .AllowAnyMethod()
+            .AllowAnyHeader());
+});
+
 var app = builder.Build();
 if (useSwagger)
 {
@@ -190,6 +198,7 @@ if (useSwagger)
     app.UseSwaggerUI();
 }
 
+app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<CurrentUserMiddleware>();

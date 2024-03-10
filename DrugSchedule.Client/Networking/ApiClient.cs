@@ -1,25 +1,25 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
-using System.Threading;
 using DrugSchedule.Api.Shared.Dtos;
-using DrugSchedule.Client.Networking.Exceptions;
+using DrugSchedule.Client.Auth;
 
 namespace DrugSchedule.Client.Networking;
 
 public class ApiClient : IApiClient
 {
     private readonly ITokenStorage _tokenStorage;
+    private readonly CustomAuthStateProvider _authStateProvider;
     private readonly HttpClient _httpClient;
 
-    public ApiClient(HttpClient httpClient, ITokenStorage tokenStorage)
+    public ApiClient(HttpClient httpClient, ITokenStorage tokenStorage, CustomAuthStateProvider authStateProvider)
     {
         _httpClient = httpClient;
         _tokenStorage = tokenStorage;
+        _authStateProvider = authStateProvider;
     }
 
     public async Task<ApiCallResult<TResponse>> PostAsync<TResponse>(string uri, CancellationToken cancellationToken = default)
     {
-        await AssertTokensAsync(cancellationToken);
         var response = await _httpClient.PostAsync(uri, null, cancellationToken);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -32,7 +32,6 @@ public class ApiClient : IApiClient
     public async Task<ApiCallResult<TResponse>> PostAsync<TRequest, TResponse>(
         TRequest requestBody, string uri, CancellationToken cancellationToken = default)
     {
-        await AssertTokensAsync(cancellationToken);
         var response = await _httpClient.PostAsJsonAsync(uri, requestBody, cancellationToken);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -46,7 +45,6 @@ public class ApiClient : IApiClient
     public async Task<ApiCallResult> PostAsync<TRequest>(
         TRequest requestBody, string uri, CancellationToken cancellationToken = default)
     {
-        await AssertTokensAsync(cancellationToken);
         var response = await _httpClient.PostAsJsonAsync(uri, requestBody, cancellationToken);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -59,7 +57,6 @@ public class ApiClient : IApiClient
     public async Task<ApiCallResult<TResponse>> PostAsync<TResponse>(
         MultipartFormDataContent formDataContent, string uri, CancellationToken cancellationToken = default)
     {
-        await AssertTokensAsync(cancellationToken);
         var response = await _httpClient.PostAsync(uri, formDataContent, cancellationToken);
         if (response.StatusCode == HttpStatusCode.Unauthorized)
         {
@@ -74,10 +71,10 @@ public class ApiClient : IApiClient
     {
         var response = await _httpClient.PostAsJsonAsync(EndpointsPaths.Auth_Login, loginDto, cancellationToken);
         var result = await BuildResultAsync<TokenDto>(response, cancellationToken);
-
         if (result.IsOk)
         {
-            SetHttpClientToken(result.Result.AccessToken);
+            await _tokenStorage.WriteTokensAsync(result.ResponseDto!.AccessToken, result.ResponseDto.RefreshToken);
+            await _authStateProvider.UpdateStateFromTokensAsync();
         }
 
         return result;
@@ -92,7 +89,7 @@ public class ApiClient : IApiClient
         },  cancellationToken);
 
         await _tokenStorage.RemoveTokensAsync();
-        SetHttpClientToken(null);
+        await _authStateProvider.UpdateStateFromTokensAsync();
     }
 
 
@@ -114,10 +111,6 @@ public class ApiClient : IApiClient
                 {
                     var invalidInput = await response.Content.ReadFromJsonAsync<InvalidInputDto>(cancellationToken);
                     return new ApiCallResult<TResponse>(invalidInput!);
-                }
-            case HttpStatusCode.Unauthorized:
-                {
-                    throw new UnauthorizedException();
                 }
             default:
                 throw new InvalidDataException("Response not recognized");
@@ -143,24 +136,9 @@ public class ApiClient : IApiClient
                 var invalidInput = await response.Content.ReadFromJsonAsync<InvalidInputDto>(cancellationToken);
                 return new ApiCallResult(invalidInput!);
             }
-            case HttpStatusCode.Unauthorized:
-            {
-                throw new UnauthorizedException();
-            }
             default:
                 throw new InvalidDataException("Response not recognized");
         }
-    }
-
-
-    private async Task AssertTokensAsync(CancellationToken cancellationToken)
-    {
-        if (!await _tokenStorage.IsSetAsync())
-        {
-            throw new UnauthorizedException();
-        }
-
-        SetHttpClientToken(_tokenStorage.GetAccessToken());
     }
 
 
@@ -176,19 +154,12 @@ public class ApiClient : IApiClient
         if (response.StatusCode != HttpStatusCode.OK)
         {
             await _tokenStorage.RemoveTokensAsync();
-            throw new UnauthorizedException();
+            await _authStateProvider.UpdateStateFromTokensAsync();
+            return;
         }
 
         var tokenResponseDto = await response.Content.ReadFromJsonAsync<TokenDto>(cancellationToken);
         await _tokenStorage.WriteTokensAsync(tokenResponseDto!.AccessToken, tokenResponseDto.RefreshToken);
+        await _authStateProvider.UpdateStateFromTokensAsync();
     }
-
-
-    private void SetHttpClientToken(string? authToken)
-    {
-        _httpClient.DefaultRequestHeaders.Remove("Authorization");
-        if (authToken == null) return;
-        _httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer " + authToken);
-    }
-
 }

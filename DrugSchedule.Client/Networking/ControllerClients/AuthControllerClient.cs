@@ -2,32 +2,25 @@
 
 namespace DrugSchedule.Client.Networking;
 
-public class AuthControllerClient : IAuthControllerClient
+public static class AuthControllerApiClient
 {
-    private readonly IApiClient _client;
-
-    public AuthControllerClient(IApiClient client)
+    public static async Task<ApiCallResult> LoginAsync(this IApiClient client, LoginDto body, CancellationToken cancellationToken = default)
     {
-        _client = client;
+        return await client.LogInAsync(body, cancellationToken);
     }
 
-    public async Task<ApiCallResult> LoginAsync(LoginDto body, CancellationToken cancellationToken = default)
+    public static async Task LogoutAsync(this IApiClient client, CancellationToken cancellationToken = default)
     {
-        return await _client.LogInAsync(body, cancellationToken);
+        await client.LogOutAsync(cancellationToken);
     }
 
-    public async Task LogoutAsync(CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> RegisterAsync(this IApiClient client, RegisterDto body, CancellationToken cancellationToken = default)
     {
-        await _client.LogOutAsync(cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Auth_Register, cancellationToken);
     }
 
-    public async Task<ApiCallResult> RegisterAsync(RegisterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<AvailableUsernameDto>> UsernameAvailableAsync(this IApiClient client, UsernameDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync(body, EndpointsPaths.Auth_Register, cancellationToken);
-    }
-
-    public async Task<ApiCallResult<AvailableUsernameDto>> UsernameAvailableAsync(UsernameDto body, CancellationToken cancellationToken = default)
-    {
-        return await _client.PostAsync<UsernameDto, AvailableUsernameDto>(body, EndpointsPaths.Auth_UsernameAvailable, cancellationToken);
+        return await client.PostAsync<UsernameDto, AvailableUsernameDto>(body, EndpointsPaths.Auth_UsernameAvailable, cancellationToken);
     }
 }

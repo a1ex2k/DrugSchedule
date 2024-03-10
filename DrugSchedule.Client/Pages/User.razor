@@ -1,0 +1,80 @@
+﻿@page "/user"
+@using DrugSchedule.Api.Shared.Dtos
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits DrugSchedule.Client.ViewModels.UserViewModel
+
+<AuthorizeView>
+    <Authorized>
+        <PageTitle>User - DrugSchedule</PageTitle>
+
+        <div Class="d-flex justify-content-between">
+            <h3 class="d-block">User</h3>
+            <CustomButton Clicked="@(async () => await LogOutAsync())"
+                          Class="d-block"
+                          Color="Color.Secondary"
+                          Text="Log out" />
+        </div>
+
+        @if (NowLoading)
+        {
+            <h5 class="animate text-primary">Loading...</h5>
+        }
+        else
+        {
+            <div class="animate mb-5 d-flex flex-wrap align-items-center">
+                <div class="me-4 mb-2">
+                    @if (CurrentUser.Avatar == null)
+                    {
+                        <div class="my-auto text-secondary" style="font-size: 150px; line-height: 150px">
+                            <i class="fa-solid fa-circle-user"></i>
+                        </div>
+                    }
+                    else
+                    {
+                        <ImagePreview TImageModel="DownloadableFileDto"
+                                      ThumbnailUrl="@(x => x.ThumbnailUrl)"
+                                      FullImageUrl="@(x => x.DownloadUrl)"
+                                      Alt="@(x => x.Name)"
+                                      PreviewSize="150px">
+                        </ImagePreview>
+                    }
+                </div>
+                <div class="me-3 mb-2">
+                    <div class="h3 mb-2 text-primary">@CurrentUser.Username</div>
+                    <a href="@("mailto:"+CurrentUser.Email)">@CurrentUser.Email</a>
+                </div>
+
+                <div class="me-3 mb-2">
+                    <div>
+                        <b>Real name:</b> @(CurrentUser.RealName ?? "Undefined")
+                    </div>
+                    <div>
+                        <b>Sex:</b> @CurrentUser.Sex.ToString()
+                    </div>
+                    <div>
+                        <b>Date of birth: </b> @(CurrentUser.DateOfBirth?.ToString() ?? "Undefined")
+                    </div>
+                </div>
+
+                <div class="mb-2 w-100"></div>
+                <div>
+                    <CustomButton Text="Change password" Color="Color.Secondary" Icon="fa-key" Clicked="OpenPasswordModalAsync"></CustomButton>
+                    <CustomButton Text="Edit profile" Color="Color.Secondary" Icon="fa-pen" ></CustomButton>
+                </div>
+
+            </div>
+
+            <div class="animate mb-4">
+                <h3>@($"Contacts ({Contacts.Count})")</h3>
+            </div>
+        }
+        
+        <PasswordModal @ref=PasswordModal/>
+    
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo("/auth");
+        }
+    </NotAuthorized>
+</AuthorizeView>

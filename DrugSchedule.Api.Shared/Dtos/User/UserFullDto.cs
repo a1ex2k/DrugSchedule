@@ -4,11 +4,11 @@ namespace DrugSchedule.Api.Shared.Dtos;
 
 public class UserFullDto
 {
-    public required long Id { get; set; }
+    public long Id { get; set; }
 
-    public required string Username { get; set; }
+    public string Username { get; set; } = default!;
 
-    public required string Email { get; set; }
+    public string Email { get; set; } = default!;
 
     public string? RealName { get; set; }
 

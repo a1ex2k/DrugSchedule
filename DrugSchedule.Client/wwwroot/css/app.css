@@ -1,5 +1,3 @@
-@import url('css/all.min.css');
-
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }
@@ -95,13 +93,18 @@ code {
     --tint-color: #ebebeb;
 }
 
+.modal.show .modal-dialog {
+    transform: none;
+    height: 90vh;
+    height: 90svh;
+}
+
 .modal-content {
     box-shadow: 4px 4px 56px 2px rgba(0, 0, 0, 0.25) !important;
 }
 
-
 .modal-backdrop {
-    background-color: var(--bs-body-bg);
+    background-color: var(--bs-secondary);
 }
 
 
@@ -157,6 +160,38 @@ html {
 
     }
 
+.login-form {
+    max-width: 400px;
+}
+
+.animate {
+    animation: append-animate 0.2s
+}
+
+.form-control:focus, button:focus {
+    box-shadow: none;
+}
+
+.form-label {
+    margin-bottom: 0.2rem;
+}
+
+.form-group {
+    margin-bottom: 0.5rem;
+}
+
+
+
+@keyframes append-animate {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
 @media (max-width: 768px) {
     .nav-items {
         flex-direction: row;
@@ -186,4 +221,9 @@ html {
             font-size: 0.8rem;
             line-height: 0.8rem;
         }
+
+
+
+
+
 }

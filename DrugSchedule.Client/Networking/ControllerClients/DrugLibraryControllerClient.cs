@@ -2,47 +2,40 @@
 
 namespace DrugSchedule.Client.Networking;
 
-public class DrugLibraryControllerClient : IDrugLibraryControllerClient
+public static class DrugLibraryControllerClient 
 {
-    private readonly IApiClient _client;
-
-    public DrugLibraryControllerClient(IApiClient client)
+    public static async Task<ApiCallResult<MedicamentSimpleDto>> GetMedicamentAsync(this IApiClient client, MedicamentIdDto body, CancellationToken cancellationToken = default)
     {
-        _client = client;
+        return await client.PostAsync<MedicamentIdDto, MedicamentSimpleDto>(body, EndpointsPaths.DrugLibrary_GetMedicament, cancellationToken);
     }
 
-    public async Task<ApiCallResult<MedicamentSimpleDto>> GetMedicamentAsync(MedicamentIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<MedicamentExtendedDto>> GetMedicamentExtendedAsync(this IApiClient client, MedicamentIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<MedicamentIdDto, MedicamentSimpleDto>(body, EndpointsPaths.DrugLibrary_GetMedicament, cancellationToken);
+        return await client.PostAsync<MedicamentIdDto, MedicamentExtendedDto>(body, EndpointsPaths.DrugLibrary_GetMedicamentExtended, cancellationToken);
     }
 
-    public async Task<ApiCallResult<MedicamentExtendedDto>> GetMedicamentExtendedAsync(MedicamentIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<MedicamentSimpleCollectionDto>> GetMedicamentsAsync(this IApiClient client, MedicamentFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<MedicamentIdDto, MedicamentExtendedDto>(body, EndpointsPaths.DrugLibrary_GetMedicamentExtended, cancellationToken);
+        return await client.PostAsync<MedicamentFilterDto, MedicamentSimpleCollectionDto>(body, EndpointsPaths.DrugLibrary_GetMedicaments, cancellationToken);
     }
 
-    public async Task<ApiCallResult<MedicamentSimpleCollectionDto>> GetMedicamentsAsync(MedicamentFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<MedicamentExtendedCollectionDto>> GetMedicamentsExtendedAsync(this IApiClient client, MedicamentFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<MedicamentFilterDto, MedicamentSimpleCollectionDto>(body, EndpointsPaths.DrugLibrary_GetMedicaments, cancellationToken);
+        return await client.PostAsync<MedicamentFilterDto, MedicamentExtendedCollectionDto>(body, EndpointsPaths.DrugLibrary_GetMedicamentsExtended, cancellationToken);
     }
 
-    public async Task<ApiCallResult<MedicamentExtendedCollectionDto>> GetMedicamentsExtendedAsync(MedicamentFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ManufacturerDto>> GetManufacturerAsync(this IApiClient client, ManufacturerIdDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<MedicamentFilterDto, MedicamentExtendedCollectionDto>(body, EndpointsPaths.DrugLibrary_GetMedicamentsExtended, cancellationToken);
+        return await client.PostAsync<ManufacturerIdDto, ManufacturerDto>(body, EndpointsPaths.DrugLibrary_GetManufacturer, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ManufacturerDto>> GetManufacturerAsync(ManufacturerIdDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ManufacturerCollectionDto>> GetManufacturersAsync(this IApiClient client, ManufacturerFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ManufacturerIdDto, ManufacturerDto>(body, EndpointsPaths.DrugLibrary_GetManufacturer, cancellationToken);
+        return await client.PostAsync<ManufacturerFilterDto, ManufacturerCollectionDto>(body, EndpointsPaths.DrugLibrary_GetManufacturers, cancellationToken);
     }
 
-    public async Task<ApiCallResult<ManufacturerCollectionDto>> GetManufacturersAsync(ManufacturerFilterDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult<ReleaseFormCollectionDto>> GetReleaseFormsAsync(this IApiClient client, MedicamentReleaseFormFilterDto body, CancellationToken cancellationToken = default)
     {
-        return await _client.PostAsync<ManufacturerFilterDto, ManufacturerCollectionDto>(body, EndpointsPaths.DrugLibrary_GetManufacturers, cancellationToken);
-    }
-
-    public async Task<ApiCallResult<ReleaseFormCollectionDto>> GetReleaseFormsAsync(MedicamentReleaseFormFilterDto body, CancellationToken cancellationToken = default)
-    {
-        return await _client.PostAsync<MedicamentReleaseFormFilterDto, ReleaseFormCollectionDto>(body, EndpointsPaths.DrugLibrary_GetReleaseForms, cancellationToken);
+        return await client.PostAsync<MedicamentReleaseFormFilterDto, ReleaseFormCollectionDto>(body, EndpointsPaths.DrugLibrary_GetReleaseForms, cancellationToken);
     }
 }
