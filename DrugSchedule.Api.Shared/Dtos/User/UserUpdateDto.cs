@@ -8,5 +8,5 @@ public class UserUpdateDto
 
     public DateOnly? DateOfBirth { get; set; }
 
-    public SexDto? Sex { get; set; }
+    public SexDto Sex { get; set; }
 }

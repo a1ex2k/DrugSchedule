@@ -98,22 +98,22 @@ public class ApiClient : IApiClient
         switch (response.StatusCode)
         {
             case HttpStatusCode.OK:
-                {
-                    var deserializedObject = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
-                    return new ApiCallResult<TResponse>(deserializedObject!);
-                }
+            {
+                var deserializedObject = await response.Content.ReadFromJsonAsync<TResponse>(cancellationToken);
+                return new ApiCallResult<TResponse>(deserializedObject!);
+            }
             case HttpStatusCode.NotFound:
-                {
-                    var notFound = await response.Content.ReadFromJsonAsync<NotFoundDto>(cancellationToken);
-                    return new ApiCallResult<TResponse>(notFound!);
-                }
+            {
+                var notFound = await response.Content.ReadFromJsonAsync<NotFoundDto>(cancellationToken);
+                return new ApiCallResult<TResponse>(notFound!);
+            }
             case HttpStatusCode.BadRequest:
-                {
-                    var invalidInput = await response.Content.ReadFromJsonAsync<InvalidInputDto>(cancellationToken);
-                    return new ApiCallResult<TResponse>(invalidInput!);
-                }
+            {
+                var invalidInput = await response.Content.ReadFromJsonAsync<InvalidInputDto>(cancellationToken);
+                return new ApiCallResult<TResponse>(invalidInput!);
+            }
             default:
-                throw new InvalidDataException("Response not recognized");
+                return new ApiCallResult<TResponse>();
         }
     }
 
@@ -137,7 +137,7 @@ public class ApiClient : IApiClient
                 return new ApiCallResult(invalidInput!);
             }
             default:
-                throw new InvalidDataException("Response not recognized");
+                return new ApiCallResult(false);
         }
     }
 

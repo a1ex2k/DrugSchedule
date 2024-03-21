@@ -3,10 +3,6 @@
 <div class="card" style="@($"width: {PreviewSize}")">
     <img src="@(ThumbnailUrl(ImageModel))" class="card-img-top" alt="@Alt(ImageModel)">
     <div class="card-body d-flex justify-content-between" style="@($"width: {PreviewSize}; height: {PreviewSize}")">
-        @if (AllowEdit && OnEdit != null)
-        {
-            <CustomButton Color=Color.Secondary Clicked="@(async() => await OnEdit(ImageModel))" Icon="fa-pen"></CustomButton>
-        }
         @if (AllowDelete && OnDelete != null)
         {
             <CustomButton Color=Color.Danger Clicked="@(async() => await OnDelete(ImageModel))" Icon="fa-trash-can"></CustomButton>

@@ -49,6 +49,6 @@ public class RepeatDayOfWeekDtoConverter : JsonConverter<RepeatDayOfWeekDto>
             }
         }
 
-        JsonSerializer.Serialize(writer, daysOfWeekStrings, options);
+        JsonSerializer.Serialize(writer, daysOfWeekStrings.ToArray(), options);
     }
 }

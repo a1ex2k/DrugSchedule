@@ -25,7 +25,7 @@ public class AuthViewModel : PageViewModelBase
     {
         if (!await LoginValidations.ValidateAll())
         {
-            await NotificationService.Error(Credentials.FormInvalid, "Error");
+            await NotificationService.Error(User.FormInvalid, "Error");
             return;
         }
 
@@ -43,7 +43,7 @@ public class AuthViewModel : PageViewModelBase
     {
         if (!await RegistrationValidations.ValidateAll())
         {
-            await NotificationService.Error(Credentials.FormInvalid, "Error");
+            await NotificationService.Error(User.FormInvalid, "Error");
             return;
         }
 
@@ -62,10 +62,10 @@ public class AuthViewModel : PageViewModelBase
     protected async Task ValidateNewUsernameAsync(ValidatorEventArgs args, CancellationToken cancellationToken)
     {
         var value = (string)args.Value;
-        if (value == null || value.Length > Credentials.MaxLength || !Regex.IsMatch(value, Credentials.UsernamePattern))
+        if (value == null || value.Length > User.MaxLength || !Regex.IsMatch(value, User.UsernamePattern))
         {
             args.Status = ValidationStatus.Error;
-            args.ErrorText = Credentials.UsernameRequirements;
+            args.ErrorText = User.UsernameRequirements;
             return;
         }
 
@@ -75,7 +75,7 @@ public class AuthViewModel : PageViewModelBase
         if(result.ResponseDto?.IsAvailable != true)
         { 
             args.Status = ValidationStatus.Error;
-            args.ErrorText = Credentials.UsernameTaken;
+            args.ErrorText = User.UsernameTaken;
         }
 
         args.Status = ValidationStatus.None;
@@ -84,10 +84,10 @@ public class AuthViewModel : PageViewModelBase
     protected void ValidateUsername(ValidatorEventArgs args)
     {
         var value = (string)args.Value;
-        if (value == null || value.Length > Credentials.MaxLength || !Regex.IsMatch(value, Credentials.UsernamePattern))
+        if (value == null || value.Length > User.MaxLength || !Regex.IsMatch(value, User.UsernamePattern))
         {
             args.Status = ValidationStatus.Error;
-            args.ErrorText = Credentials.UsernameRequirements;
+            args.ErrorText = User.UsernameRequirements;
             return;
         }
 
@@ -97,10 +97,10 @@ public class AuthViewModel : PageViewModelBase
     protected void ValidatePassword(ValidatorEventArgs args)
     { 
         var value = (string)args.Value;
-        if (value == null || value.Length > Credentials.MaxLength || !Regex.IsMatch(value, Credentials.PasswordPattern))
+        if (value == null || value.Length > User.MaxLength || !Regex.IsMatch(value, User.PasswordPattern))
         {
             args.Status = ValidationStatus.Error;
-            args.ErrorText = Credentials.PasswordRequirements;
+            args.ErrorText = User.PasswordRequirements;
             return;
         }
 
@@ -114,7 +114,7 @@ public class AuthViewModel : PageViewModelBase
         if (!validator.IsValid(value))
         {
             args.Status = ValidationStatus.Error;
-            args.ErrorText = Credentials.EmailInvalid;
+            args.ErrorText = User.EmailInvalid;
             return;
         }
 

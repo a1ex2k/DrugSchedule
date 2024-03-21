@@ -1,0 +1,54 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+@using DrugSchedule.Client.Constants
+@using System.Text.RegularExpressions
+@using DrugSchedule.Client.Networking
+
+<EditorModal @ref=EditModal
+             AllowRemove="false"
+             Save="UpdateProfileAsync"
+             ItemText="@($"@{CurrentUser.Username} - edit")"
+             AfterSave="AfterSave">
+    <EditorModalBody>
+            <div class="d-flex align-items-center mb-3">
+                <ImagePreview TImageModel="DownloadableFileDto"
+                              ImageModel="CurrentUser.Avatar"
+                              ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                              FullImageUrl="@(x => x?.DownloadUrl)"
+                              Alt="@(x => x?.Name)"
+                              PreviewSize="100px">
+                </ImagePreview>
+                <div class="ms-3">
+                    <Field>
+                        <FieldLabel>Set new one</FieldLabel>
+                        <FileEdit Changed="@SetAvatarAsync" Filter="@_avatarFilter"/>
+                    </Field>
+                    <CustomButton Text="Remove avatar" Color="Color.Danger" Icon="fa-trash-can" Clicked="DeleteAvatarAsync" />
+                </div>
+            </div>
+           
+        <Field>
+            <FieldLabel>Real name</FieldLabel>
+            <TextEdit Placeholder="Optional" @bind-Text=UserUpdateDto.RealName />
+        </Field>
+        
+        <Field>
+            <FieldLabel>Sex</FieldLabel>
+            <Select TValue="SexDto" @bind-SelectedValue="UserUpdateDto.Sex">
+                <SelectItem Value="SexDto.Undefined">Undefined</SelectItem>
+                <SelectItem Value="SexDto.Male">Male</SelectItem>
+                <SelectItem Value="SexDto.Female">Female</SelectItem>
+            </Select>
+        </Field>
+        
+        <Field>
+            <FieldLabel>Date of birth</FieldLabel>
+            <FieldBody>
+                <DatePicker TValue="DateOnly?" @bind-Date="UserUpdateDto.DateOfBirth"
+                            InputMode="DateInputMode.Date"
+                            Max="@_maxBirthDate" />
+            </FieldBody>
+            <FieldHelp>Optional. Format: dd.MM.yyyy</FieldHelp>
+        </Field>
+
+    </EditorModalBody>
+</EditorModal>
