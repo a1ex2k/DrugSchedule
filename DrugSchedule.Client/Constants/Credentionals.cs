@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.Client.Constants;
 
-public static class Credentials
+public static class User
 {
     public const string UsernamePattern = @"^(?=.*[A-Za-z])[A-Za-z\d_]{4,32}$";
     public const string UsernameTaken = "Username already taken";
@@ -10,4 +10,5 @@ public static class Credentials
     public const string FormInvalid = "Values not valid";
     public const string EmailInvalid = "Email not valid";
     public const int MaxLength = 32;
+    public const int MinAgeYears = 5;
 }

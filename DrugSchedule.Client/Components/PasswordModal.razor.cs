@@ -30,10 +30,10 @@ public partial class PasswordModal
     protected void ValidateNewPassword(ValidatorEventArgs args)
     {
         var value = (string)args.Value;
-        if (value == null || value.Length > Credentials.MaxLength || !Regex.IsMatch(value, Credentials.PasswordPattern))
+        if (value == null || value.Length > User.MaxLength || !Regex.IsMatch(value, User.PasswordPattern))
         {
             args.Status = ValidationStatus.Error;
-            args.ErrorText = Credentials.PasswordRequirements;
+            args.ErrorText = User.PasswordRequirements;
             return;
         }
 
@@ -56,6 +56,6 @@ public partial class PasswordModal
             return;
         }
 
-        await NotificationService.Error(string.Join("<br>", result.InvalidInput?.Messages ?? []), "Error");
+        await NotificationService.Error(string.Join("<br>", result.Messages), "Error");
     }
 }

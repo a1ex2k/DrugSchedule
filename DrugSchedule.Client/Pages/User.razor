@@ -23,21 +23,13 @@
         {
             <div class="animate mb-5 d-flex flex-wrap align-items-center">
                 <div class="me-4 mb-2">
-                    @if (CurrentUser.Avatar == null)
-                    {
-                        <div class="my-auto text-secondary" style="font-size: 150px; line-height: 150px">
-                            <i class="fa-solid fa-circle-user"></i>
-                        </div>
-                    }
-                    else
-                    {
-                        <ImagePreview TImageModel="DownloadableFileDto"
-                                      ThumbnailUrl="@(x => x.ThumbnailUrl)"
-                                      FullImageUrl="@(x => x.DownloadUrl)"
-                                      Alt="@(x => x.Name)"
-                                      PreviewSize="150px">
-                        </ImagePreview>
-                    }
+                    <ImagePreview TImageModel="DownloadableFileDto"
+                                  ImageModel="CurrentUser.Avatar"
+                                  ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                                  FullImageUrl="@(x => x?.DownloadUrl)"
+                                  Alt="@(x => x?.Name)"
+                                  PreviewSize="150px">
+                    </ImagePreview>
                 </div>
                 <div class="me-3 mb-2">
                     <div class="h3 mb-2 text-primary">@CurrentUser.Username</div>
@@ -58,8 +50,8 @@
 
                 <div class="mb-2 w-100"></div>
                 <div>
-                    <CustomButton Text="Change password" Color="Color.Secondary" Icon="fa-key" Clicked="OpenPasswordModalAsync"></CustomButton>
-                    <CustomButton Text="Edit profile" Color="Color.Secondary" Icon="fa-pen" ></CustomButton>
+                    <CustomButton Text="Change password" Color="Color.Secondary" Icon="fa-key" Clicked="OpenPasswordModalAsync" />
+                    <CustomButton Text="Edit profile" Color="Color.Secondary" Icon="fa-pen" Clicked="OpenProfileEditorModalAsync" />
                 </div>
 
             </div>
@@ -68,9 +60,10 @@
                 <h3>@($"Contacts ({Contacts.Count})")</h3>
             </div>
         }
-        
-        <PasswordModal @ref=PasswordModal/>
-    
+
+        <PasswordModal @ref=PasswordModal />
+        <ProfileEditorModal @ref=ProfileEditorModal CurrentUser="CurrentUser" AfterSave="AfterSave"/>
+
     </Authorized>
     <NotAuthorized>
         @{

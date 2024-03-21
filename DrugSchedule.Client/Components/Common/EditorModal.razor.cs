@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.Components.Common;
 
-public partial class EditorModal
+public partial class EditorModal 
 {
-    public record ModalResult(bool Ok, string Message);
+    public record ModalResult(bool Ok, IEnumerable<string> Messages);
 
     private Validations _validations = default!;
     private Modal _editModal = default!;
@@ -13,17 +13,13 @@ public partial class EditorModal
     private const string DefaultDeleteAlert = $"Removing cant be undone. Continue?";
     private bool _isValid = true;
 
-    [Parameter] public bool AllowToSave { get; set; } = true;
-
     [Inject] private INotificationService NotificationService { get; set; } = default!;
 
     [Parameter, EditorRequired] public RenderFragment EditorModalBody { get; set; } = default!;
 
-    [Parameter, EditorRequired] public RenderFragment ViewerModalBody { get; set; } = default!;
-
-    public bool IsNewItem { get; set; } = false;
-
     [Parameter] public bool AllowRemove { get; set; } = true;
+
+    [Parameter] public EventCallback AfterSave { get; set; }
 
     [Parameter] public bool AllowSave { get; set; } = true;
 
@@ -32,8 +28,6 @@ public partial class EditorModal
     [Parameter] public Func<Task<ModalResult>> Save { get; set; } = default!;
 
     [Parameter, EditorRequired] public string ItemText { get; set; } = default!;
-
-    [Parameter] public int EditingId { get; set; } = -1;
 
     private async Task ConfirmDeleteAsync()
     {
@@ -48,7 +42,7 @@ public partial class EditorModal
             }
             else
             {
-                await _alert.ShowOk(deleted.Message, "Error");
+                await _alert.ShowOk(string.Join("<br>", deleted.Messages), "Error");
                 await _editModal.Show();
             }
         }
@@ -61,7 +55,6 @@ public partial class EditorModal
     private async Task ConfirmSaveAsync()
     {
         bool isOk = await _validations.ValidateAll();
-        await Hide();
         if (!isOk)
         {
             await NotificationService.Error("Invalid fields values", "Error");
@@ -73,11 +66,15 @@ public partial class EditorModal
         if (saved.Ok)
         {
             await NotificationService.Success(ItemText, $"Saved");
+            await _editModal.Close(CloseReason.UserClosing);
+            if (AfterSave.HasDelegate)
+            {
+                await AfterSave.InvokeAsync();
+            }
         }
         else
         {
-            await _alert.ShowOk(saved.Message, "Error");
-            await Show();
+            await NotificationService.Error(string.Join("<br>", saved.Messages), "Error");
         }
     }
 

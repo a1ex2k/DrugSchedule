@@ -14,9 +14,9 @@ public static class UsersControllerClient
         return await client.PostAsync<UserSearchDto, UserPublicCollectionDto>(body, EndpointsPaths.User_Search, cancellationToken);
     }
 
-    public static async Task<ApiCallResult<UserIdDto>> UpdateProfileAsync(this IApiClient client, UserUpdateDto body, CancellationToken cancellationToken = default)
+    public static async Task<ApiCallResult> UpdateProfileAsync(this IApiClient client, UserUpdateDto body, CancellationToken cancellationToken = default)
     {
-        return await client.PostAsync<UserUpdateDto, UserIdDto>(body, EndpointsPaths.User_UpdateProfile, cancellationToken);
+        return await client.PostAsync<UserUpdateDto>(body, EndpointsPaths.User_UpdateProfile, cancellationToken);
     }
 
     public static async Task<ApiCallResult> ChangePasswordAsync(this IApiClient client, NewPasswordDto body, CancellationToken cancellationToken = default)

@@ -17,14 +17,14 @@
         </ModalBody>
         <ModalFooter Style="justify-content: normal;" Class="d-flex align-content-around flex-wrap">
 
-            <CustomButton Displayable="@(AllowRemove && Delete != null && !IsNewItem)"
-                          Text="Удалить" Color="Color.Danger" Icon="fa-trash-can"
+            <CustomButton Displayable="@(AllowRemove && Delete != null)"
+                          Text="Remove" Color="Color.Danger" Icon="fa-trash-can"
                           Clicked="@ConfirmDeleteAsync" Width="8rem" />
 
             <div class="ms-auto d-flex">
                 <CustomButton Displayable="@(AllowSave && Save != null && _isValid)"
-                              Text="Сохранить" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="10rem" />
-                <CustomButton Text="Закрыть" Color="Color.Secondary" Icon="fa-ban" Clicked="@Hide" Width="7rem" />
+                              Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="10rem" />
+                <CustomButton Text="Cancel" Color="Color.Secondary" Icon="fa-ban" Clicked="@Hide" Width="7rem" />
             </div>
 
         </ModalFooter>
