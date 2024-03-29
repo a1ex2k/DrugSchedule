@@ -1,4 +1,5 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
+using System.Net.Http.Headers;
 
 namespace DrugSchedule.Client.Networking;
 
@@ -27,7 +28,9 @@ public static class UsersControllerClient
     public static async Task<ApiCallResult<DownloadableFileDto>> SetAvatarAsync(this IApiClient client, UploadFile uploadFile, CancellationToken cancellationToken = default)
     {
         using var content = new MultipartFormDataContent();
-        content.Add(new StreamContent(uploadFile.Stream), "file", uploadFile.Name);
+        var fileContent = new StreamContent(uploadFile.Stream);
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(uploadFile.ContentType);
+        content.Add(fileContent, "file", uploadFile.Name);
         return await client.PostAsync<DownloadableFileDto>(content, EndpointsPaths.User_SetAvatar, cancellationToken);
     }
 

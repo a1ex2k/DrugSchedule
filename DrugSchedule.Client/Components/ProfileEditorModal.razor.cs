@@ -75,7 +75,8 @@ public partial class ProfileEditorModal
             var uploadFile = new UploadFile
             {
                 Name = file.Name,
-                Stream = stream
+                Stream = stream,
+                ContentType = file.Type
             };
 
             var result = await ApiClient.SetAvatarAsync(uploadFile);

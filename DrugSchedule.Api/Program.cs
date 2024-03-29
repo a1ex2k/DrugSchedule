@@ -18,6 +18,7 @@ using TokenService = DrugSchedule.Api.Jwt.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", true);
+builder.WebHost.UseUrls(builder.Configuration.GetValue<string>("Url")!);
 
 var useSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
 var dbContextPoolSize = builder.Configuration.GetValue<int>("DbContextPoolSize");

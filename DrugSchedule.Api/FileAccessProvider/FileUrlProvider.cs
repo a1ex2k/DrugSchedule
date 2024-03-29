@@ -1,6 +1,4 @@
 ﻿using DrugSchedule.Services.Services.Abstractions;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
 
 namespace DrugSchedule.Api.FileAccessProvider;
 
@@ -8,12 +6,14 @@ public class FileUrlProvider : IFileUrlProvider
 {
     private readonly IFileAccessService _accessService;
     private readonly LinkGenerator _linkGenerator;
+    private readonly Uri _baseUri;
 
 
-    public FileUrlProvider(LinkGenerator linkGenerator, IHttpContextAccessor contextAccessor, IFileAccessService accessService)
+    public FileUrlProvider(LinkGenerator linkGenerator, IHttpContextAccessor contextAccessor, IFileAccessService accessService, IConfiguration configuration)
     {
         _linkGenerator = linkGenerator;
         _accessService = accessService;
+        _baseUri = new Uri(configuration.GetValue<string>("ApplicationUrl")!);
     }
 
     public string GetPrivateFileUri(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -27,7 +27,7 @@ public class FileUrlProvider : IFileUrlProvider
                 expiry = accessParams.ExpiryTime,
                 signature = accessParams.Signature
             });
-        return link!;
+        return GetAbsoluteUrl(link)!;
     }
 
     public string GetPublicFileUri(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -37,7 +37,7 @@ public class FileUrlProvider : IFileUrlProvider
             controller: "Files",
             values: new { fileGuid = fileGuid.ToString() }
         );
-        return link!;
+        return GetAbsoluteUrl(link)!;
     }
 
     public string GetPrivateFileThumbnailUri(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -52,7 +52,7 @@ public class FileUrlProvider : IFileUrlProvider
                 signature = accessParams.Signature,
                 thumb = true
             });
-        return link!;
+        return GetAbsoluteUrl(link)!;
     }
 
     public string GetPublicFileThumbnailUri(Guid fileGuid, CancellationToken cancellationToken = default)
@@ -62,6 +62,12 @@ public class FileUrlProvider : IFileUrlProvider
             controller: "Files",
             values: new { fileGuid = fileGuid.ToString(), thumb = true }
         );
-        return link!;
+        return GetAbsoluteUrl(link)!;
+    }
+
+    private string? GetAbsoluteUrl(string? relativeUrl)
+    {
+        Uri.TryCreate(_baseUri, relativeUrl, out var absoluteUrl);
+        return absoluteUrl?.ToString();
     }
 }

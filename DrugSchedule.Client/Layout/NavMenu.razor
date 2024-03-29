@@ -1,15 +1,32 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization;
+@using DrugSchedule.Client.Constants
 
 <div class="nav-items">
     <AuthorizeView Context="authContext">
-    <Authorized>
+        <Authorized>
             <NavLink ActiveClass="current" href="/" class="nav-item animate" Match="NavLinkMatch.All">
                 <i class="icon fa-solid fa-house"></i>
                 <div class="text">Home</div>
             </NavLink>
-            <NavLink ActiveClass="current" href="/user" class="nav-item animate" Match="NavLinkMatch.All">
+            <NavLink ActiveClass="current" href="@PagesRouts.Schedule" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-calendar-days"></i>
+                <div class="text">Schedule</div>
+            </NavLink>
+            <NavLink ActiveClass="current" href="@PagesRouts.GlobalDrugs" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-book-medical"></i>
+                <div class="text">Drug library</div>
+            </NavLink>
+            <NavLink ActiveClass="current" href="@PagesRouts.UserDrugs" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-pills"></i>
+                <div class="text">User drugs</div>
+            </NavLink>
+            <NavLink ActiveClass="current" href="/@PagesRouts.Profile" class="nav-item animate" Match="NavLinkMatch.All">
                 <i class="icon fa-solid fa-circle-user"></i>
-                <div class="text">User</div>
+                <div class="text">Profile</div>
+            </NavLink>
+            <NavLink ActiveClass="current" href="/@PagesRouts.Contacts" class="nav-item animate" Match="NavLinkMatch.All">
+                <i class="icon fa-solid fa-address-book"></i>
+                <div class="text">Contacts</div>
             </NavLink>
         </Authorized>
         <NotAuthorized>
@@ -17,6 +34,6 @@
                 <i class="icon fa-solid fa-key"></i>
                 <div class="text">Auth</div>
             </NavLink>
-        </NotAuthorized>  
+        </NotAuthorized>
     </AuthorizeView>
 </div>

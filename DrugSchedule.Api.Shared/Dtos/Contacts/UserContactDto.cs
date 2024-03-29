@@ -4,17 +4,17 @@ namespace DrugSchedule.Api.Shared.Dtos;
 
 public class UserContactDto
 {
-    public required long UserProfileId { get; set; }
+    public long UserProfileId { get; set; }
 
-    public required string Username { get; set; }
+    public string Username { get; set; } = default!;
 
-    public required string СontactName { get; set; }
+    public string СontactName { get; set; } = default!;
 
-    public required DateOnly? DateOfBirth { get; set; }
+    public DateOnly? DateOfBirth { get; set; }
 
-    public required SexDto? Sex { get; set; }
+    public SexDto? Sex { get; set; }
 
-    public required string? RealName { get; set; }
+    public string? RealName { get; set; }
 
     public bool IsCommon { get; set; }
 

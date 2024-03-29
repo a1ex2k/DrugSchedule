@@ -7,14 +7,14 @@ public static class FileAvailability
 {
     private static AwaitableFileParams UserAvatarFileParams => new AwaitableFileParams
     {
-        MaxSize = 4 * 1024 * 1024,
+        MaxSize = 5 * 1024 * 1024,
         FileExtensions = new[] { ".jpeg", ".jpg", ".png" },
         TryCreateThumbnail = true,
     };
 
     private static AwaitableFileParams UserMedicamentFileParams => new AwaitableFileParams
     {
-        MaxSize = 4 * 1024 * 1024,
+        MaxSize = 5 * 1024 * 1024,
         FileExtensions = new[] { ".jpeg", ".jpg", ".png", ".gif" },
         TryCreateThumbnail = true,
     };
@@ -33,7 +33,7 @@ public static class FileAvailability
         {
             FileCategory.None => false,
             FileCategory.MedicamentImage => true,
-            FileCategory.UserAvatar => false,
+            FileCategory.UserAvatar => true,
             FileCategory.DrugConfirmation => false,
             FileCategory.UserMedicamentImage => false,
             _ => throw new ArgumentOutOfRangeException()

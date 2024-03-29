@@ -1,11 +1,11 @@
-﻿@page "/user"
+﻿@attribute [Route(PagesRouts.Profile)]
 @using DrugSchedule.Api.Shared.Dtos
 @using Microsoft.AspNetCore.Components.Authorization
-@inherits DrugSchedule.Client.ViewModels.UserViewModel
+@inherits DrugSchedule.Client.ViewModels.ProfileViewModel
 
 <AuthorizeView>
     <Authorized>
-        <PageTitle>User - DrugSchedule</PageTitle>
+        <PageTitle>Profile - DrugSchedule</PageTitle>
 
         <div Class="d-flex justify-content-between">
             <h3 class="d-block">User</h3>
@@ -55,10 +55,6 @@
                 </div>
 
             </div>
-
-            <div class="animate mb-4">
-                <h3>@($"Contacts ({Contacts.Count})")</h3>
-            </div>
         }
 
         <PasswordModal @ref=PasswordModal />
@@ -67,7 +63,7 @@
     </Authorized>
     <NotAuthorized>
         @{
-            NavigationManager.NavigateTo("/auth");
+            NavigationManager.NavigateTo(PagesRouts.Auth);
         }
     </NotAuthorized>
 </AuthorizeView>

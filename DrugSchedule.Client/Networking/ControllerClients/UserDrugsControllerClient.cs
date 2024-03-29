@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Net.Http.Headers;
+using System.Text.Json;
 using DrugSchedule.Api.Shared.Dtos;
 
 namespace DrugSchedule.Client.Networking;
@@ -38,7 +39,10 @@ public static class UserDrugsControllerClient
     public static async Task<ApiCallResult<DownloadableFileDto>> AddUserMedicamentImage(this IApiClient client, UserMedicamentIdDto userMedicamentId, UploadFile uploadFile, CancellationToken cancellationToken)
     {
         using var content = new MultipartFormDataContent();
-        content.Add(new StreamContent(uploadFile.Stream), "file", uploadFile.Name);
+        var fileContent = new StreamContent(uploadFile.Stream);
+        fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(uploadFile.ContentType);
+        content.Add(fileContent, "file", uploadFile.Name);
+
         var userMedicamentIdString = JsonSerializer.Serialize(userMedicamentId);
         content.Add(new StringContent(userMedicamentIdString), "userMedicamentId", uploadFile.Name);
         return await client.PostAsync<DownloadableFileDto>(content, EndpointsPaths.UserDrugs_AddImage, cancellationToken);
