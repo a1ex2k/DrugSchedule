@@ -1,0 +1,26 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<div class="card flex-row">
+    <ImagePreview TImageModel="string"
+                  ImageModel="Contact.ThumbnailUrl"
+                  ThumbnailUrl="@(x => x)"
+                  PreviewSize="64px">
+    </ImagePreview>
+    <div class="card-body d-flex">
+        <div class="flex-grow-1">@Contact.СontactName</div>
+        @if (Contact.IsCommon)
+        {
+            <div>
+                <i class="fa-solid fa-arrow-right-arrow-left text-secondary"></i>
+            </div>
+        }
+        @if (Navigable)
+        {
+            <CustomButton Text="Open" Class="d-block" Icon="fa-arrow-up-right-from-square" Clicked="Navigate" />
+        }
+        @if (Selectable)
+        {
+            <CustomButton Text="@SelectButtonText" Class="d-block" Icon="fa-check" Clicked="SelectAsync" />
+        }
+    </div>
+</div>

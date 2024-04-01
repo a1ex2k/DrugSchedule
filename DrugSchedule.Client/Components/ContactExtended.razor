@@ -1,0 +1,42 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<div class="mb-5 d-flex flex-wrap align-items-center">
+    <div class="me-4 mb-2">
+        <ImagePreview TImageModel="DownloadableFileDto"
+                      ImageModel="Contact.Avatar"
+                      ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                      FullImageUrl="@(x => x?.DownloadUrl)"
+                      Alt="@(x => x?.Name)"
+                      PreviewSize="150px">
+        </ImagePreview>
+    </div>
+    <div class="me-3 mb-2">
+        <div class="h3 mb-2 text-primary">@Contact.СontactName</div>
+        <div>
+            <span>&#64;</span>
+            <span>@Contact.Username</span>
+        </div>
+        @if (Contact.IsCommon)
+        {
+            <div class="text-secondary">
+                <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>
+                <span>Common contact</span>
+            </div>
+        }
+    </div>
+</div>
+
+@if (Contact.IsCommon)
+{
+    <div class="me-3 mb-2">
+        <div>
+            <b>Real name:</b> @(Contact.RealName ?? "Undefined")
+        </div>
+        <div>
+            <b>Sex:</b> @Contact.Sex?.ToString()
+        </div>
+        <div>
+            <b>Date of birth: </b> @(Contact.DateOfBirth?.ToString() ?? "Undefined")
+        </div>
+    </div>
+}

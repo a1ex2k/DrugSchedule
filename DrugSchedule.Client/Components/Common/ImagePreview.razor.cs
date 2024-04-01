@@ -6,11 +6,11 @@ public partial class ImagePreview<TImageModel>
 {
     [Parameter, EditorRequired] public TImageModel? ImageModel { get; set; }
 
-    [Parameter, EditorRequired] public Func<TImageModel?, string?> ThumbnailUrl { get; set; } = default!;
+    [Parameter] public Func<TImageModel?, string?> ThumbnailUrl { get; set; } = default!;
 
-    [Parameter, EditorRequired] public Func<TImageModel?, string?> FullImageUrl { get; set; } = default!;
+    [Parameter] public Func<TImageModel?, string?> FullImageUrl { get; set; } = default!;
 
-    [Parameter, EditorRequired] public Func<TImageModel?, string?> Alt { get; set; } = default!;
+    [Parameter] public Func<TImageModel?, string?> Alt { get; set; } = default!;
 
     [Parameter, EditorRequired] public string PreviewSize { get; set; } = default!;
 

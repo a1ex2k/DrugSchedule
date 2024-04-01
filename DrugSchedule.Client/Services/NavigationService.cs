@@ -19,21 +19,21 @@ public class NavigationService
 
     public void NavigateToAuth()
     {
-        _navigationManager.NavigateTo(PagesRouts.Auth);
+        _navigationManager.NavigateTo(Routes.Auth);
     }
 
     public void NavigateToSchedule()
     {
-        _navigationManager.NavigateTo(PagesRouts.Schedule);
+        _navigationManager.NavigateTo(Routes.Schedule);
     }
 
     public void NavigateToContacts()
     {
-        _navigationManager.NavigateTo(PagesRouts.Contacts);
+        _navigationManager.NavigateTo(Routes.Contacts);
     }
 
     public void NavigateToContact(long contactProfileId)
     {
-        _navigationManager.NavigateTo($"{PagesRouts.Contacts}/{contactProfileId}");
+        _navigationManager.NavigateTo($"{Routes.Contacts}/{contactProfileId}");
     }
 }

@@ -1,73 +1,70 @@
-﻿@attribute [Route(PagesRouts.Contacts)]
+﻿@attribute [Route(Routes.Contacts)]
 @using DrugSchedule.Api.Shared.Dtos
 @using Microsoft.AspNetCore.Components.Authorization
 @inherits DrugSchedule.Client.ViewModels.ContactsViewModel
 
+<PageTitle>Contacts - DrugSchedule</PageTitle>
+
 <AuthorizeView>
     <Authorized>
-        <PageTitle>User - DrugSchedule</PageTitle>
+        
+        <div class="d-flex flex-column gap-5">
 
-        <div Class="d-flex justify-content-between">
-            <h3 class="d-block">User</h3>
-            <CustomButton Clicked="@(async () => await LogOutAsync())"
-                          Class="d-block"
-                          Color="Color.Secondary"
-                          Text="Log out" />
-        </div>
-
-        @if (NowLoading)
-        {
-            <h5 class="animate text-primary">Loading...</h5>
-        }
-        else
-        {
-            <div class="animate mb-5 d-flex flex-wrap align-items-center">
-                <div class="me-4 mb-2">
-                    <ImagePreview TImageModel="DownloadableFileDto"
-                                  ImageModel="CurrentUser.Avatar"
-                                  ThumbnailUrl="@(x => x?.ThumbnailUrl)"
-                                  FullImageUrl="@(x => x?.DownloadUrl)"
-                                  Alt="@(x => x?.Name)"
-                                  PreviewSize="150px">
-                    </ImagePreview>
+            @if (IsDetailedView)
+            {
+                <div Class="d-flex mb-4 gap-3">
+                    <CustomButton Clicked="ToContactsHome" Class="d-block" Color="Color.Secondary" Text="Back" Icon="fa-chevron-left"/>
+                    <h3 class="d-block">Contact: @Contact.СontactName</h3>
                 </div>
-                <div class="me-3 mb-2">
-                    <div class="h3 mb-2 text-primary">@CurrentUser.Username</div>
-                    <a href="@("mailto:"+CurrentUser.Email)">@CurrentUser.Email</a>
+            
+                <ContactExtended Contact="Contact" />
+
+                <CustomButton Clicked="ShowEditorAsync" Class="d-block" Color="Color.Secondary" Text="Edit or remove contact" Icon="fa-pen" />
+            }
+            else
+            {
+                <div Class="d-flex mb-4 gap-3">
+                    <h3 class="d-block">Contact: @Contact.СontactName</h3>
                 </div>
 
-                <div class="me-3 mb-2">
-                    <div>
-                        <b>Real name:</b> @(CurrentUser.RealName ?? "Undefined")
-                    </div>
-                    <div>
-                        <b>Sex:</b> @CurrentUser.Sex.ToString()
-                    </div>
-                    <div>
-                        <b>Date of birth: </b> @(CurrentUser.DateOfBirth?.ToString() ?? "Undefined")
-                    </div>
-                </div>
-
-                <div class="mb-2 w-100"></div>
                 <div>
-                    <CustomButton Text="Change password" Color="Color.Secondary" Icon="fa-key" Clicked="OpenPasswordModalAsync" />
-                    <CustomButton Text="Edit profile" Color="Color.Secondary" Icon="fa-pen" Clicked="OpenProfileEditorModalAsync" />
+                    <h4 class="h4 text-primary">Find new contacts:</h4>
+                    <UsersList Selectable="true" OnSelect="OnUserSelectAsync" /> 
                 </div>
 
-            </div>
-
-            <div class="animate mb-4">
-                <h3>@($"Contacts ({Contacts.Count})")</h3>
-            </div>
-        }
-
-        <PasswordModal @ref=PasswordModal />
-        <ProfileEditorModal @ref=ProfileEditorModal CurrentUser="CurrentUser" AfterSave="AfterSave"/>
+                <div>
+                    <h4 class="h4 text-primary">Manage contacts:</h4>
+                    <ContactsList Selectable="true" OnSelect="OnContactSelectAsync" />
+                </div>
+            }
+        </div>
+        
+        <EditorModal
+            ItemText="@(IsDetailedView ? "Add new contact: " : "Edit contact: ") + Contact.Username)"
+            AllowSave
+            AllowRemove="IsDetailedView"
+            Save="UpdateContactAsync"
+            Delete="RemoveContactAsync">
+            <EditorModalBody>
+                <Validation Validator="ValidationRule.IsNotEmpty">
+                    <Field>
+                        <FieldLabel>Contact name (seen only by you)</FieldLabel>
+                        <FieldBody>
+                            <TextEdit Placeholder="Name" @bind-Text="NewUserContact.СontactName" >
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </FieldBody>
+                    </Field>
+                </Validation>
+            </EditorModalBody>
+        </EditorModal>
 
     </Authorized>
     <NotAuthorized>
         @{
-            NavigationManager.NavigateTo("/auth");
+            NavigationManager.NavigateTo(Routes.Auth);
         }
     </NotAuthorized>
 </AuthorizeView>

@@ -1,6 +1,6 @@
 ﻿namespace DrugSchedule.Client.Constants;
 
-public static class PagesRouts
+public static class Routes
 {
     public const string Auth = "/auth";
     public const string Profile = "/profile";

@@ -5,8 +5,6 @@ using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Microsoft.JSInterop;
-using System;
-using System.Runtime.InteropServices.ComTypes;
 using DrugSchedule.Client.Utils;
 
 namespace DrugSchedule.Client.ViewModels;
@@ -20,6 +18,7 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
 
     protected bool NowLoading = false;
     private Dictionary<string, StringValues> _queryParameters;
+    
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

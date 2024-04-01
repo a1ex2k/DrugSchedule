@@ -1,0 +1,13 @@
+﻿
+<div class="d-flex gap-3 mb-4">
+    <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by username..."/>
+</div>
+
+<Virtualize Items="@Users" OverscanCount="10">
+    <ItemContent>
+        <UserListElement PublicUser="@context" SelectButtonText="@SelectButtonText" Selectable="@Selectable" OnSelect="OnSelect"/>
+    </ItemContent>
+    <EmptyContent>
+        <p>There are no users to display</p>
+    </EmptyContent>
+</Virtualize>

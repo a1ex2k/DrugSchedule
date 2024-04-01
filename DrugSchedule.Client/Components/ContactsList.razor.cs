@@ -1,5 +1,4 @@
-﻿using Blazorise;
-using DrugSchedule.Api.Shared.Dtos;
+﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Networking;
 using Microsoft.AspNetCore.Components;
 
@@ -10,19 +9,28 @@ public partial class ContactsList
     [Inject] public IApiClient ApiClient { get; set; } = default!;
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
 
-    [Parameter] public UserContactSimpleDto? SelectedContact { get; set; }
-    [Parameter] public EventCallback<UserContactSimpleDto> SelectedContactChanged { get; set; }
+    [Parameter] public EventCallback<UserContactSimpleDto> OnSelect { get; set; }
+    [Parameter] public string SelectButtonText { get; set; } = "Select";
 
     [Parameter] public bool Navigable { get; set; }
+    [Parameter] public bool Selectable { get; set; }
     [Parameter] public bool CommonOnly { get; set; }
 
-    private List<UserContactSimpleDto> Contacts { get; set; } = new();
+    private List<UserContactSimpleDto>? Contacts { get; set; }
+    private string? SearchValue { get; set; }
+    private bool Common { get; set; }
+
+    private List<UserContactSimpleDto>? _contactListInternal;
 
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await LoadContactsAsync();
-        await base.OnInitializedAsync();
+        if (firstRender)
+        {
+            await LoadContactsAsync();
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
     }
 
 
@@ -31,51 +39,30 @@ public partial class ContactsList
         var result = CommonOnly ? await ApiClient.GetCommonContactsAsync() : await ApiClient.GetAllContactsAsync();
         if (result.IsOk)
         {
-            Contacts = result.ResponseDto.Contacts;
+            _contactListInternal = result.ResponseDto.Contacts;
+            ApplyLocalFilter();
         }
     }
 
 
-    private void NavigateAsync(UserContactSimpleDto contact)
+    private void SearchValueChanged(string value)
     {
-        if (!Navigable) return;
-        NavigationManager.NavigateTo
+        SearchValue = value;
+        ApplyLocalFilter();
+    }
+
+    private void CommonChanged(bool value)
+    {
+        Common = value;
+        ApplyLocalFilter();
     }
 
 
-    private async Task UpdateContactAsync(ContactElementModel contactElement)
+    private void ApplyLocalFilter()
     {
-        if (string.IsNullOrWhiteSpace(contactElement.NewContactName)) return;
-
-        var result = await ApiClient.AddOrUpdateContactAsync(new NewUserContactDto {
-            UserProfileId = contactElement.ContactExtended!.UserProfileId,
-            СontactName = contactElement.NewContactName         
-        });
-
-
-        if (!result.IsOk)
-        {
-            await NotificationService.Success(string.Join("<br>", result.Messages), "Cannot update name");
-            return;
-        }
-
-        contactElement.ContactSimple.СontactName = contactElement.NewContactName!;
-        contactElement.ContactExtended.СontactName = contactElement.NewContactName!;
-        contactElement.NewContactName = null;
-        await NotificationService.Success("Contact name updated", "Success");
-    }
-
-
-    private async Task RemoveContactAsync(ContactElementModel contactElement)
-    {
-        var result = await ApiClient.RemoveContactAsync(new UserIdDto { UserProfileId = contactElement.ContactSimple.UserProfileId });
-        if (!result.IsOk)
-        {
-            await NotificationService.Success(string.Join("<br>", result.Messages), "Cannot remove contact");
-            return;
-        }
-
-        Contacts.Remove(contactElement);
-        await NotificationService.Success("Contact removed", "Success");
+        Contacts = _contactListInternal?.Where(c =>
+                c.СontactName.Contains(SearchValue, StringComparison.InvariantCultureIgnoreCase)
+                && c.IsCommon == (CommonOnly || Common))
+            .ToList();
     }
 }

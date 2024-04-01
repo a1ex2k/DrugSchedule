@@ -1,112 +1,106 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.Client.Components.Common;
+using DrugSchedule.Client.Constants;
 using DrugSchedule.Client.Networking;
-using DrugSchedule.Client.Components;
-using Microsoft.AspNetCore.Components;
+using DrugSchedule.Client.Pages;
 
 namespace DrugSchedule.Client.ViewModels;
 
 public class ContactsViewModel : PageViewModelBase
 {
-    [Parameter] public UserContactSimpleDto? SelectedContact { get; set; }
-    [Parameter] public EventCallback<UserContactSimpleDto> SelectedContactChanged { get; set; }
+    private long _contactIdParameter;
 
-    [Parameter] public bool Navigable { get; set; }
-    [Parameter] public bool CommonOnly { get; set; }
+    protected bool IsDetailedView => _contactIdParameter != default && Contact != null;
+    protected UserContactDto? Contact { get; private set; }
+    protected NewUserContactDto NewUserContact { get; private set; } = new(){ UserProfileId = 0, СontactName = null };
 
-    private class ContactElementModel
+    protected EditorModal EditorModal { get; set; } = default!;
+
+    protected override Task ProcessQueryAsync()
     {
-        public required UserContactSimpleDto ContactSimple { get; set; }
-        public UserContactDto? ContactExtended { get; set; }
-        public string? NewContactName { get; set; }
-        public bool IsExpanded { get; set; }
+        TryGetParameter("id", out long value);
+        return base.ProcessQueryAsync();
     }
 
-    private List<ContactElementModel> Contacts { get; set; } = new();
-
-
-    protected override async Task OnInitializedAsync()
+    protected override async Task LoadAsync()
     {
-        await LoadAllContactsAsync();
-        await base.OnInitializedAsync();
-    }
-
-
-    private async Task LoadAllContactsAsync()
-    {
-        var result = CommonOnly ? await ApiClient.GetCommonContactsAsync() : await ApiClient.GetAllContactsAsync();
-        if (result.IsOk)
+        if (_contactIdParameter == default)
         {
-            Contacts = result.ResponseDto.Contacts
-                .Select(x => new ContactElementModel
-                {
-                    ContactSimple = x
-                }).ToList();
-        }
-    }
-
-
-    private async Task InvertExpandAsync(ContactElementModel contactElement)
-    {
-        if (contactElement.IsExpanded)
-        {
-            contactElement.IsExpanded = false;
-            contactElement.ContactExtended = null;
+            NewUserContact.UserProfileId = 0;
+            NewUserContact.СontactName = null;
             return;
         }
 
-        if (contactElement.ContactExtended != null)
+        var contactResult = await ApiClient.GetSingleExtendedContactAsync(new UserIdDto { UserProfileId = _contactIdParameter });
+        if (!contactResult.IsOk)
         {
-            contactElement.IsExpanded = true;
+            _contactIdParameter = default!;
+            await ServeApiCallResult(contactResult);
             return;
         }
 
-        var result = await ApiClient.GetSingleExtendedContactAsync(new UserIdDto { UserProfileId = contactElement.ContactSimple.UserProfileId });
-        if (!result.IsOk)
+        Contact = contactResult.ResponseDto;
+        NewUserContact = new NewUserContactDto
         {
-            await NotificationService.Error("Contact not found");
-            return;
-        }
-
-        contactElement.ContactExtended = result.ResponseDto;
-        contactElement.NewContactName = null;
-        contactElement.IsExpanded = true;
+            UserProfileId = Contact.UserProfileId,
+            СontactName = Contact.Username
+        };
     }
 
-
-    private async Task UpdateContactAsync(ContactElementModel contactElement)
+    protected async Task<EditorModal.ModalResult> UpdateContactAsync()
     {
-        if (string.IsNullOrWhiteSpace(contactElement.NewContactName)) return;
+        if (string.IsNullOrWhiteSpace(NewUserContact.СontactName))
+            return new EditorModal.ModalResult(false, ["Name was empty"]);
 
-        var result = await ApiClient.AddOrUpdateContactAsync(new NewUserContactDto
+        var result = await ApiClient.AddOrUpdateContactAsync(NewUserContact);
+        if (result.IsOk && IsDetailedView)
         {
-            UserProfileId = contactElement.ContactExtended!.UserProfileId,
-            СontactName = contactElement.NewContactName
-        });
-
-
-        if (!result.IsOk)
-        {
-            await NotificationService.Success(string.Join("<br>", result.Messages), "Cannot update name");
-            return;
+            Contact.СontactName = NewUserContact.СontactName;
         }
 
-        contactElement.ContactSimple.СontactName = contactElement.NewContactName!;
-        contactElement.ContactExtended.СontactName = contactElement.NewContactName!;
-        contactElement.NewContactName = null;
-        await NotificationService.Success("Contact name updated", "Success");
+        var text = result.IsOk ? ["Contact saved"] : result.Messages;
+        return new EditorModal.ModalResult(result.IsOk, text);
     }
 
-
-    private async Task RemoveContactAsync(ContactElementModel contactElement)
+    protected async Task<EditorModal.ModalResult> RemoveContactAsync()
     {
-        var result = await ApiClient.RemoveContactAsync(new UserIdDto { UserProfileId = contactElement.ContactSimple.UserProfileId });
-        if (!result.IsOk)
+        var result = await ApiClient.RemoveContactAsync(new UserIdDto { UserProfileId = NewUserContact.UserProfileId });
+        if (result.IsOk && IsDetailedView)
         {
-            await NotificationService.Success(string.Join("<br>", result.Messages), "Cannot remove contact");
-            return;
+            ToContactsHome();
         }
 
-        Contacts.Remove(contactElement);
-        await NotificationService.Success("Contact removed", "Success");
+        var text = result.IsOk ? ["Contact removed"] : result.Messages;
+        return new EditorModal.ModalResult(result.IsOk, text);
+    }
+
+    protected async Task OnUserSelectAsync(PublicUserDto user)
+    {
+        NewUserContact = new NewUserContactDto
+        {
+            UserProfileId = user.Id,
+            СontactName = null
+        };
+
+        await EditorModal.Show();
+    }
+
+    protected async Task OnContactSelectAsync(UserContactSimpleDto contact)
+    {
+        NewUserContact = new NewUserContactDto
+        {
+            UserProfileId = contact.UserProfileId,
+            СontactName = contact.СontactName
+        };
+    }
+
+    protected async Task ShowEditorAsync()
+    {
+        await EditorModal.Show();
+    }
+
+    protected void ToContactsHome()
+    {
+        NavigationManager.NavigateTo(Routes.Contacts);
     }
 }

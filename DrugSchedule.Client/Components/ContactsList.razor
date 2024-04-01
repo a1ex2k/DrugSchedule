@@ -1,10 +1,14 @@
-﻿@using DrugSchedule.Api.Shared.Dtos
+﻿
+<div class="d-flex gap-3 mb-4">
+    <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..."/>
+    <Check TValue="bool" Checked="@Common" CheckedChanged="CommonChanged" Disabled="CommonOnly" />
+</div>
 
-<ListGroup Mode="@(Selectable ? ListGroupMode.Selectable : ListGroupMode.Static)" 
-           SelectedItemChanged="SelectItem">
-    <ListGroupItem Name="first">An item</ListGroupItem>
-    <ListGroupItem Name="second">A second item</ListGroupItem>
-    <ListGroupItem Name="third">A third item</ListGroupItem>
-    <ListGroupItem Name="fourth">A fourth item</ListGroupItem>
-    <ListGroupItem Name="fifth" Disabled>A disabled item</ListGroupItem>
-</ListGroup>
+<Virtualize Items="@Contacts" OverscanCount="25">
+    <ItemContent>
+        <ContactsListElement Contact="@context" Navigable="Navigable" Selectable="Selectable" SelectButtonText="@SelectButtonText" OnSelect="SelectAsync" />
+    </ItemContent>
+    <EmptyContent>
+        <p>There are no contacts to display</p>
+    </EmptyContent>
+</Virtualize>

@@ -192,6 +192,11 @@ html {
     }
 }
 
+.card:hover {
+    border-color: var(--bs-primary);
+    box-shadow: var(--bs-box-shadow);
+}
+
 @media (max-width: 768px) {
     .nav-items {
         flex-direction: row;
@@ -221,9 +226,4 @@ html {
             font-size: 0.8rem;
             line-height: 0.8rem;
         }
-
-
-
-
-
 }
