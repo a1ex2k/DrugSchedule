@@ -1,11 +1,14 @@
 ﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Constants;
+using DrugSchedule.Client.Utils;
 using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.Components;
 
 public partial class ContactsListElement
 {
+    [Inject] NavigationManager NavigationManager { get; set; } = default!;
+
     [Parameter, EditorRequired] public UserContactSimpleDto Contact { get; set; } = default!;
 
     [Parameter] public bool Navigable { get; set; } = true;
@@ -16,7 +19,7 @@ public partial class ContactsListElement
     private void Navigate()
     {
         if (!Navigable) return;
-        NavigationManager.NavigateTo(Routes.Contacts, "id", Contact.UserProfileId.ToString());
+        NavigationManager.NavigateWithParameter(Routes.Contacts, "id", Contact.UserProfileId.ToString());
     }
 
     private async Task SelectAsync()

@@ -1,6 +1,9 @@
 ﻿
 <div class="d-flex gap-3 mb-4">
-    <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by username..."/>
+    <Field>
+        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by username..."/>
+        <FieldHelp>Minimum 3 characters</FieldHelp>
+    </Field>
 </div>
 
 <Virtualize Items="@Users" OverscanCount="10">

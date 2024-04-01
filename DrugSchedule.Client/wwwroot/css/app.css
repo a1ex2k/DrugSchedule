@@ -192,7 +192,12 @@ html {
     }
 }
 
-.card:hover {
+.list-element {
+    margin-bottom: 0.5rem;
+}
+
+
+.list-element:hover {
     border-color: var(--bs-primary);
     box-shadow: var(--bs-box-shadow);
 }

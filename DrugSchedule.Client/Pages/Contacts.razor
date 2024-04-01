@@ -24,12 +24,12 @@
             else
             {
                 <div Class="d-flex mb-4 gap-3">
-                    <h3 class="d-block">Contact: @Contact.СontactName</h3>
+                    <h3 class="d-block">Contact: @Contact?.СontactName</h3>
                 </div>
 
                 <div>
                     <h4 class="h4 text-primary">Find new contacts:</h4>
-                    <UsersList Selectable="true" OnSelect="OnUserSelectAsync" /> 
+                    <UsersList Selectable="true" OnSelect="OnUserSelectAsync" SelectButtonText="Add"/> 
                 </div>
 
                 <div>
@@ -40,7 +40,7 @@
         </div>
         
         <EditorModal
-            ItemText="@(IsDetailedView ? "Add new contact: " : "Edit contact: ") + Contact.Username)"
+            ItemText="@((IsDetailedView ? "Add new contact: " : "Edit contact: ") + Contact?.Username)"
             AllowSave
             AllowRemove="IsDetailedView"
             Save="UpdateContactAsync"

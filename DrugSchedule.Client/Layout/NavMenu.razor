@@ -20,17 +20,17 @@
                 <i class="icon fa-solid fa-pills"></i>
                 <div class="text">User drugs</div>
             </NavLink>
-            <NavLink ActiveClass="current" href="/@Routes.Profile" class="nav-item animate" Match="NavLinkMatch.All">
+            <NavLink ActiveClass="current" href="@Routes.Profile" class="nav-item animate" Match="NavLinkMatch.All">
                 <i class="icon fa-solid fa-circle-user"></i>
                 <div class="text">Profile</div>
             </NavLink>
-            <NavLink ActiveClass="current" href="/@Routes.Contacts" class="nav-item animate" Match="NavLinkMatch.All">
+            <NavLink ActiveClass="current" href="@Routes.Contacts" class="nav-item animate" Match="NavLinkMatch.All">
                 <i class="icon fa-solid fa-address-book"></i>
                 <div class="text">Contacts</div>
             </NavLink>
         </Authorized>
         <NotAuthorized>
-            <NavLink ActiveClass="current" href="/auth" class="nav-item animate" Match="NavLinkMatch.All">
+            <NavLink ActiveClass="current" href="@Routes.Auth" class="nav-item animate" Match="NavLinkMatch.All">
                 <i class="icon fa-solid fa-key"></i>
                 <div class="text">Auth</div>
             </NavLink>

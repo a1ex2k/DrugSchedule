@@ -17,7 +17,7 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
     [Inject] protected IApiClient ApiClient { get; set; } = default!;
 
     protected bool NowLoading = false;
-    private Dictionary<string, StringValues> _queryParameters;
+    private Dictionary<string, StringValues> _queryParameters = new();
     
 
     protected override async Task OnAfterRenderAsync(bool firstRender)

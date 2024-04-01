@@ -6,7 +6,7 @@
 
 <Virtualize Items="@Contacts" OverscanCount="25">
     <ItemContent>
-        <ContactsListElement Contact="@context" Navigable="Navigable" Selectable="Selectable" SelectButtonText="@SelectButtonText" OnSelect="SelectAsync" />
+        <ContactsListElement Contact="@context" Navigable="Navigable" Selectable="Selectable" SelectButtonText="@SelectButtonText" OnSelect="OnSelect" />
     </ItemContent>
     <EmptyContent>
         <p>There are no contacts to display</p>

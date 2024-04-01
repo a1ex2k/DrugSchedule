@@ -255,6 +255,7 @@ public class UserService : IIdentityService, IUserService
         var usersList = (
                 from p in profiles
                 join i in identities on p.UserIdentityGuid equals i.Guid
+                where p.UserProfileId != _currentUserIdentifier.UserId
                 select new PublicUser()
                 {
                     Id = p.UserProfileId,

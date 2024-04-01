@@ -16,7 +16,7 @@ public partial class ContactsList
     [Parameter] public bool Selectable { get; set; }
     [Parameter] public bool CommonOnly { get; set; }
 
-    private List<UserContactSimpleDto>? Contacts { get; set; }
+    private List<UserContactSimpleDto> Contacts { get; set; } = new();
     private string? SearchValue { get; set; }
     private bool Common { get; set; }
 
@@ -63,6 +63,6 @@ public partial class ContactsList
         Contacts = _contactListInternal?.Where(c =>
                 c.СontactName.Contains(SearchValue, StringComparison.InvariantCultureIgnoreCase)
                 && c.IsCommon == (CommonOnly || Common))
-            .ToList();
+            .ToList() ?? new();
     }
 }
