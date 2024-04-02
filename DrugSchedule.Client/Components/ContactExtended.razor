@@ -16,27 +16,54 @@
             <span>&#64;</span>
             <span>@Contact.Username</span>
         </div>
-        @if (Contact.IsCommon)
-        {
-            <div class="text-secondary">
-                <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>
-                <span>Common contact</span>
-            </div>
-        }
-    </div>
-</div>
-
-@if (Contact.IsCommon)
-{
-    <div class="me-3 mb-2">
         <div>
             <b>Real name:</b> @(Contact.RealName ?? "Undefined")
         </div>
+    </div>
+</div>
+
+    <div>
         <div>
             <b>Sex:</b> @Contact.Sex?.ToString()
         </div>
         <div>
             <b>Date of birth: </b> @(Contact.DateOfBirth?.ToString() ?? "Undefined")
         </div>
+        <div class="text-secondary">
+            <div>
+                <b>Common contact: </b> 
+                <span>
+                    @if (Contact.IsCommon)
+                    {
+                        <i class="fa-solid fa-arrow-right-arrow-left me-2"></i>
+                        <span>Yes</span>
+                    }
+                    else
+                    {
+                        <span>No</span>
+                    }
+                </span>
+            </div>
+            <div class="text-secondary">If the user adds you to contacts himself, you both will be able to share schedules</div>
+        </div>
     </div>
-}
+
+<div class="text-secondary">
+    @if (Contact.HasSharedBy)
+    {
+        <div>User shared one or more schedules with you</div>
+    }
+    else
+    {
+        <div>User doesn't share any schedules with you</div>
+    }
+
+    @if (Contact.HasSharedWith)
+    {
+        <div>You share one or more schedules with user</div>
+    }
+    else
+    {
+        <div>You don't share any schedules with user</div>
+    }
+</div>

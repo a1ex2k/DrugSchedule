@@ -1,0 +1,36 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<div class="d-flex flex-wrap align-items-center">
+    <div class="d-flex flex-row gap-1">
+        @foreach (var image in Images)
+        {
+            <ImagePreview TImageModel="DownloadableFileDto"
+                          ImageModel="image"
+                          ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                          FullImageUrl="@(x => x?.DownloadUrl)"
+                          Alt="@(x => x?.Name)"
+                          PreviewSize="150px">
+            </ImagePreview>
+        }
+    </div>
+</div>
+
+<div>
+    <div>
+        <b>Release form: </b> @Medicament?.ReleaseForm.Name (<Link Clicked="NavigateToReleaseForm">Search...</Link>)
+    </div>
+    <div>
+        <b>Release form: </b> @Medicament?.ReleaseForm.Name (<Link Clicked="NavigateToManufacturer">Search...</Link>)
+    </div>
+</div>
+
+
+<div>
+    <div class="h5">Description</div>
+    <div>@((MarkupString)(Medicament?.Description ?? "No description"))</div>
+</div>
+
+<div>
+    <div class="h5 text-primary">Composition</div>
+    <div>@((MarkupString)(Medicament?.Composition ?? "No composition info"))</div>
+</div>

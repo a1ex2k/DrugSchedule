@@ -17,31 +17,28 @@ public partial class ContactsList
     [Parameter] public bool CommonOnly { get; set; }
 
     private List<UserContactSimpleDto> Contacts { get; set; } = new();
-    private string? SearchValue { get; set; }
+    private string SearchValue { get; set; } = String.Empty;
     private bool Common { get; set; }
 
     private List<UserContactSimpleDto>? _contactListInternal;
 
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            await LoadContactsAsync();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
+        await LoadContactsAsync();
+        await base.OnInitializedAsync();
     }
 
 
-    private async Task LoadContactsAsync()
+    public async Task LoadContactsAsync()
     {
         var result = CommonOnly ? await ApiClient.GetCommonContactsAsync() : await ApiClient.GetAllContactsAsync();
         if (result.IsOk)
         {
             _contactListInternal = result.ResponseDto.Contacts;
-            ApplyLocalFilter();
         }
+
+        ApplyLocalFilter();
     }
 
 
@@ -53,13 +50,19 @@ public partial class ContactsList
 
     private void CommonChanged(bool value)
     {
-        Common = value;
+        Common = CommonOnly || value;
         ApplyLocalFilter();
     }
 
 
     private void ApplyLocalFilter()
     {
+        if (string.IsNullOrWhiteSpace(SearchValue))
+        {
+            Contacts = _contactListInternal ?? new();
+            return;
+        }
+
         Contacts = _contactListInternal?.Where(c =>
                 c.СontactName.Contains(SearchValue, StringComparison.InvariantCultureIgnoreCase)
                 && c.IsCommon == (CommonOnly || Common))

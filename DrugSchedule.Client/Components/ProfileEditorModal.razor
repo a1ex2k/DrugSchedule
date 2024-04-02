@@ -45,6 +45,7 @@
             <FieldBody>
                 <DatePicker TValue="DateOnly?" @bind-Date="UserUpdateDto.DateOfBirth"
                             InputMode="DateInputMode.Date"
+                            InputFormat="dd.MM.yyyy" DisplayFormat="dd.MM.yyyy"
                             Max="@_maxBirthDate" />
             </FieldBody>
             <FieldHelp>Optional. Format: dd.MM.yyyy</FieldHelp>

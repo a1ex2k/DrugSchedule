@@ -47,7 +47,7 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
     
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        _queryParameters = QueryHelpers.ParseQuery(NavigationManager.Uri);
+        _queryParameters = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query);
         Task.Run(async () => await ProcessQueryAsync());
     }
 

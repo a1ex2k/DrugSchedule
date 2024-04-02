@@ -1,10 +1,10 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
-<div class="card list-element flex-row">
+<div class="card list-element flex-row animate">
     <ImagePreview TImageModel="UserContactSimpleDto"
                   ImageModel="Contact"
                   ThumbnailUrl="@(x => x?.ThumbnailUrl)"
-                  PreviewSize="64px">
+                  PreviewSize="48px">
     </ImagePreview>
     <div class="card-body d-flex">
         <div class="flex-grow-1">@Contact.СontactName</div>
@@ -16,11 +16,11 @@
         }
         @if (Navigable)
         {
-            <CustomButton Text="Open" Class="d-block" Icon="fa-arrow-up-right-from-square" Clicked="Navigate" />
+            <CustomButton Text="Open" Class="d-block" Outline Icon="fa-arrow-up-right-from-square" Clicked="Navigate" />
         }
         @if (Selectable)
         {
-            <CustomButton Text="@SelectButtonText" Class="d-block" Icon="fa-check" Clicked="SelectAsync" />
+            <CustomButton Text="@SelectButtonText" Outline Class="d-block" Icon="fa-check" Clicked="SelectAsync" />
         }
     </div>
 </div>

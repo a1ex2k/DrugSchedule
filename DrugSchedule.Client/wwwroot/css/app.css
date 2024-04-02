@@ -196,6 +196,10 @@ html {
     margin-bottom: 0.5rem;
 }
 
+.list-element .card-body {
+    margin: auto 0.5rem;
+    padding: 0;
+}
 
 .list-element:hover {
     border-color: var(--bs-primary);
