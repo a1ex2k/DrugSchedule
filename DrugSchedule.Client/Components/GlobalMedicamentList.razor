@@ -3,15 +3,30 @@
 <div class="d-flex gap-3 mb-4">
     <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..." />
     <Field>
+        <FieldLabel>Release form</FieldLabel>
+        <Autocomplete TItem="MedicamentReleaseFormDto"
+                      TValue="int"
+                      Data="@ReleaseForms"
+                      ReadData="@SearchForReleaseFormsAsync"
+                      TextField="@(item => item.Name)"
+                      SelectionMode="AutocompleteSelectionMode.Checkbox"
+                      CloseOnSelection="false"
+                      @bind-SelectedValues="SearchReleaseFormIds"
+                      Placeholder="Search..."
+                      FreeTyping>
+            <NotFoundContent> Sorry... nothing was not found!</NotFoundContent>
+        </Autocomplete>
+    </Field>
+    <Field>
         <FieldLabel>Manufacturer</FieldLabel>
         <Autocomplete TItem="ManufacturerDto"
                       TValue="int"
                       Data="@Manufacturers"
-                      ReadData="@SearchManufacturersAsync"
-                      TextField="@((item) => item.Name)"
+                      ReadData="@SearchForManufacturersAsync"
+                      TextField="@(item => item.Name)"
                       SelectionMode="AutocompleteSelectionMode.Checkbox"
                       CloseOnSelection="false"
-                      @bind-SelectedValues="SearchManufacturers"
+                      @bind-SelectedValues="SearchManufacturerIds"
                       Placeholder="Search..."
                       FreeTyping>
             <NotFoundContent> Sorry... nothing was not found!</NotFoundContent>
@@ -19,11 +34,14 @@
     </Field>
 </div>
 
-<Virtualize Items="@Contacts" OverscanCount="25">
+<Virtualize Items="@Medicaments" OverscanCount="25">
     <ItemContent>
-        <ContactsListElement Contact="@context" Navigable="Navigable" Selectable="Selectable" SelectButtonText="@SelectButtonText" OnSelect="OnSelect" />
+        <GlobalMedicamentListElement Medicament="@context"
+                                     Selectable="Selectable" OnSelect="OnSelect"
+                                     Navigable="Navigable" 
+                                     SelectButtonText="@SelectButtonText"  />
     </ItemContent>
     <EmptyContent>
-        <p>There are no contacts to display</p>
+        <p>There are no medicaments to display</p>
     </EmptyContent>
 </Virtualize>

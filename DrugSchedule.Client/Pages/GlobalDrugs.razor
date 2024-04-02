@@ -1,0 +1,44 @@
+﻿@attribute [Route(Routes.GlobalDrugs)]
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits DrugSchedule.Client.ViewModels.GlobalDrugsViewModel
+
+<AuthorizeView>
+    <Authorized>
+       
+        <div class="d-flex flex-column gap-4">
+            @if (IsDetailedView)
+            {
+                <PageTitle>@Medicament!.Name | Drugs library - DrugSchedule</PageTitle>
+
+                <div class="h4 mb-0">@Medicament!.Name</div>
+
+                <div>
+                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
+                </div>
+            
+                <GlobalMedicamentExtended Medicament="Medicament"
+                                          AllowSearchActions
+                                          ManufacturerSearch="ToSearchOfManufacturer"
+                                          ReleaseFormSearch="ToSearchOfForm" />
+            }
+            else
+            {
+                <PageTitle>Drugs library - DrugSchedule</PageTitle>
+
+                <div Class="h4 mb-0">Drug library</div>
+
+                <div>
+                    <GlobalMedicamentList Selectable="false" Navigable
+                        ManufacturerId="ManufacturerId"
+                        ReleaseFormId="ReleaseFormId" /> 
+                </div>
+            }
+        </div>
+        
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo(Routes.Auth);
+        }
+    </NotAuthorized>
+</AuthorizeView>

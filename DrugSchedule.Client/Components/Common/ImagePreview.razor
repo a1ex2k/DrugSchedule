@@ -1,7 +1,12 @@
 ﻿@typeparam TImageModel
 
-<div class="card bg-secondary" style="@($"width: {PreviewSize}; height: {PreviewSize}")">
-    <img src="@GetThumbnailUrl()" class="card-img-top bg-secondary" alt="@GetAltText()">
+<div class="card bg-light overflow-hidden">
+    @if (ImageIsSet)
+    {
+        <img style="@($"width: {PreviewSize}; height: {PreviewSize}")"
+             src="@GetThumbnailUrl()" class="card-img-top bg-secondary" alt="@GetAltText()">
+    }
+
     @if (AllowDelete && OnDelete != null)
     {
         <div class="card-body d-flex justify-content-between">

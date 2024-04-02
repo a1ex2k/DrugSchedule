@@ -202,7 +202,6 @@ html {
 }
 
 .list-element:hover {
-    border-color: var(--bs-primary);
     box-shadow: var(--bs-box-shadow);
 }
 

@@ -11,21 +11,21 @@ public partial class GlobalMedicamentExtended
     [Parameter, EditorRequired] public MedicamentExtendedDto Medicament { get; set; } = default!;
     [Parameter, EditorRequired] public EventCallback<ManufacturerDto> ManufacturerSearch { get; set; }
     [Parameter, EditorRequired] public EventCallback<MedicamentReleaseFormDto> ReleaseFormSearch { get; set; }
-    [Parameter] public bool Navigable { get; set; }
+    [Parameter] public bool AllowSearchActions { get; set; }
 
-    public IEnumerable<DownloadableFileDto> Images => Medicament?.FileCollection.Files
+    public IEnumerable<DownloadableFileDto> Images => Medicament?.FileCollection?.Files
         .Where(f => f.MediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
         ?? Enumerable.Empty<DownloadableFileDto>();
 
     private async Task NavigateToManufacturer()
     {
-        if (!Navigable || !ManufacturerSearch.HasDelegate) return;
+        if (!AllowSearchActions || !ManufacturerSearch.HasDelegate) return;
         await ManufacturerSearch.InvokeAsync(Medicament.Manufacturer);
     }
 
     private async Task NavigateToReleaseForm()
     {
-        if (!Navigable || !ManufacturerSearch.HasDelegate) return;
+        if (!AllowSearchActions || !ManufacturerSearch.HasDelegate) return;
         await ReleaseFormSearch.InvokeAsync(Medicament.ReleaseForm);
     }
 }

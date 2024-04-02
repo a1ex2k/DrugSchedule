@@ -16,16 +16,14 @@ public partial class GlobalMedicamentList
 
     [Parameter] public bool Navigable { get; set; }
     [Parameter] public bool Selectable { get; set; }
-    [Parameter] public int ReleaseFormId { get; set; }
-    [Parameter] public int ManufacturerId { get; set; }
 
     private List<MedicamentSimpleDto> Medicaments { get; set; } = new();
     private List<ManufacturerDto> Manufacturers { get; set; } = new();
     private List<MedicamentReleaseFormDto> ReleaseForms { get; set; } = new();
 
     private string SearchValue { get; set; } = String.Empty;
-    private List<int> SearchManufacturers { get; set; } = new();
-    private List<int> SearchReleaseForms { get; set; } = new();
+    private List<int> SearchManufacturerIds { get; set; } = new();
+    private List<int> SearchReleaseFormIds { get; set; } = new();
 
 
     protected override async Task OnInitializedAsync()
@@ -34,7 +32,7 @@ public partial class GlobalMedicamentList
         await base.OnInitializedAsync();
     }
 
-    private async Task SearchManufacturersAsync(AutocompleteReadDataEventArgs args)
+    private async Task SearchForManufacturersAsync(AutocompleteReadDataEventArgs args)
     {
         var filter = new ManufacturerFilterDto
         {
@@ -56,7 +54,7 @@ public partial class GlobalMedicamentList
         }
     }
 
-    private async Task SearchReleaseFormsAsync(AutocompleteReadDataEventArgs args)
+    private async Task SearchForReleaseFormsAsync(AutocompleteReadDataEventArgs args)
     {
         var filter = new MedicamentReleaseFormFilterDto()
         {
@@ -85,17 +83,17 @@ public partial class GlobalMedicamentList
             NameFilter = string.IsNullOrWhiteSpace(SearchValue)
                 ? null
                 : new StringFilterDto { StringSearchType = StringSearchDto.Contains, SubString = SearchValue.Trim() },
-            ManufacturerFilter = SearchManufacturers.Count == 0
+            ManufacturerFilter = SearchManufacturerIds.Count == 0
                 ? null
                 : new ManufacturerFilterDto
                 {
-                    IdFilter = SearchManufacturers
+                    IdFilter = SearchManufacturerIds
                 },
-            MedicamentReleaseFormFilter = SearchManufacturers.Count == 0
+            MedicamentReleaseFormFilter = SearchManufacturerIds.Count == 0
                 ? null
                 : new MedicamentReleaseFormFilterDto
                 {
-                    IdFilter = SearchReleaseForms
+                    IdFilter = SearchReleaseFormIds
                 },
             Take = 30
         };

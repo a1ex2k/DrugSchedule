@@ -1,19 +1,17 @@
 ﻿@attribute [Route(Routes.Contacts)]
-@using DrugSchedule.Api.Shared.Dtos
 @using Microsoft.AspNetCore.Components.Authorization
 @inherits DrugSchedule.Client.ViewModels.ContactsViewModel
 
-<PageTitle>Contacts - DrugSchedule</PageTitle>
-
 <AuthorizeView>
     <Authorized>
-        
         <div class="d-flex flex-column gap-4">
 
             @if (IsDetailedView)
             {
+                <PageTitle>@Contact!.СontactName | Contacts - DrugSchedule</PageTitle>
+
                 <div>
-                    <CustomButton Clicked="ToContactsHome" Class="d-block" Color="Color.Secondary" Text="Back" Icon="fa-chevron-left"/>
+                    <CustomButton Clicked="ToContactsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
                 </div>
             
                 <ContactExtended Contact="Contact" />
@@ -24,15 +22,16 @@
             }
             else
             {
+                <PageTitle>Contacts - DrugSchedule</PageTitle>
                 <div Class="h4">Contacts</div>
 
                 <div>
-                    <h4 class="h4 text-primary">Find new contacts:</h4>
+                    <h4 class="h5 text-primary">Find new contacts</h4>
                     <UsersList Selectable="true" OnSelect="OnUserSelectAsync" SelectButtonText="Add"/> 
                 </div>
 
                 <div>
-                    <h4 class="h4 text-primary">Manage contacts:</h4>
+                    <h4 class="h5 text-primary">Manage contacts</h4>
                     <ContactsList @ref=ContactsList Selectable="false" Navigable="true" OnSelect="OnContactSelectAsync" />
                 </div>
             }

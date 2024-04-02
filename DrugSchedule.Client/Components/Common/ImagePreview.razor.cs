@@ -18,9 +18,16 @@ public partial class ImagePreview<TImageModel>
 
     [Parameter] public Func<TImageModel?, Task>? OnDelete { get; set; } = default;
 
+    private bool ImageIsSet { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        ImageIsSet = !string.IsNullOrWhiteSpace(GetThumbnailUrl());
+    }
+
 
     private string? GetAltText() => Alt?.Invoke(ImageModel);
-    private string? GetThumbnailUrl() => ThumbnailUrl?.Invoke(ImageModel);
+    private string? GetThumbnailUrl() => ThumbnailUrl?.Invoke(ImageModel) ?? GetFullImageUrl();
     private string? GetFullImageUrl() => FullImageUrl?.Invoke(ImageModel);
 
 }

@@ -17,16 +17,21 @@
 
 <div>
     <div>
-        <b>Release form: </b> @Medicament?.ReleaseForm.Name (<Link Clicked="NavigateToReleaseForm">Search...</Link>)
+        <b>Release form: </b> @Medicament?.ReleaseForm.Name 
+        <span>|</span>
+        <Link Clicked="NavigateToReleaseForm">Search by</Link>
     </div>
     <div>
-        <b>Release form: </b> @Medicament?.ReleaseForm.Name (<Link Clicked="NavigateToManufacturer">Search...</Link>)
+        <b>Manufacturer: </b>
+        <span>@Medicament?.Manufacturer?.Name</span> 
+        <span>(@Medicament?.Manufacturer?.AdditionalInfo)</span> 
+        <span>|</span>
+        <Link Clicked="NavigateToManufacturer">Search by</Link>
     </div>
 </div>
 
-
 <div>
-    <div class="h5">Description</div>
+    <div class="h5 text-primary">Description</div>
     <div>@((MarkupString)(Medicament?.Description ?? "No description"))</div>
 </div>
 

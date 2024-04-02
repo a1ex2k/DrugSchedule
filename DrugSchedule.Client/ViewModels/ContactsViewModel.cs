@@ -3,7 +3,6 @@ using DrugSchedule.Client.Components;
 using DrugSchedule.Client.Components.Common;
 using DrugSchedule.Client.Constants;
 using DrugSchedule.Client.Networking;
-using DrugSchedule.Client.Pages;
 using DrugSchedule.Client.Utils;
 
 namespace DrugSchedule.Client.ViewModels;

@@ -21,6 +21,10 @@
         {
             <CustomButton Text="@SelectButtonText" Class="d-block" Outline Icon="fa-check" Clicked="SelectAsync"/>
         }
+        @if (Navigable)
+        {
+            <CustomButton Text="Open" Class="d-block" Outline Icon="fa-arrow-up-right-from-square" Clicked="Navigate" />
+        }
     </div>
 
 
