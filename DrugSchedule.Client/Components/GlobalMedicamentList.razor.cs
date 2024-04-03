@@ -3,6 +3,7 @@ using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Networking;
 using Microsoft.AspNetCore.Components;
 using System;
+using DrugSchedule.Client.Constants;
 
 namespace DrugSchedule.Client.Components;
 
@@ -29,6 +30,7 @@ public partial class GlobalMedicamentList
     protected override async Task OnInitializedAsync()
     {
         await SearchForMedicamentsAsync();
+        await LoadReleaseFormsAsync();
         await base.OnInitializedAsync();
     }
 
@@ -36,7 +38,6 @@ public partial class GlobalMedicamentList
     {
         var filter = new ManufacturerFilterDto
         {
-            IdFilter = ManufacturerId == default ? null : [ManufacturerId],
             NameFilter = string.IsNullOrWhiteSpace(args.SearchValue)
                 ? null
                 : new StringFilterDto
@@ -44,7 +45,7 @@ public partial class GlobalMedicamentList
                     StringSearchType = StringSearchDto.Contains,
                     SubString = args.SearchValue.Trim()
                 },
-            Take = 30
+            Take = Numbers.ManufacturersLoadCount
         };
 
         var result = await ApiClient.GetManufacturersAsync(filter);
@@ -54,29 +55,28 @@ public partial class GlobalMedicamentList
         }
     }
 
-    private async Task SearchForReleaseFormsAsync(AutocompleteReadDataEventArgs args)
+    private async Task LoadReleaseFormsAsync()
     {
-        var filter = new MedicamentReleaseFormFilterDto()
-        {
-            IdFilter = ManufacturerId == default ? null : [ReleaseFormId],
-            NameFilter = string.IsNullOrWhiteSpace(args.SearchValue)
-                ? null
-                : new StringFilterDto
-                {
-                    StringSearchType = StringSearchDto.Contains,
-                    SubString = args.SearchValue.Trim()
-                },
-            Take = 30
-        };
-
-        var result = await ApiClient.GetReleaseFormsAsync(filter);
+        var result = await ApiClient.GetReleaseFormsAsync(new MedicamentReleaseFormFilterDto());
         if (result.IsOk)
         {
             ReleaseForms = result.ResponseDto.ReleaseForms;
         }
     }
 
-    public async Task SearchForMedicamentsAsync()
+    private async Task SearchForMedicamentsAsync()
+    {
+        Medicaments = await LoadMedicamentsAsync();
+    }
+
+    private async Task MoreMedicamentsAsync()
+    {
+        var newItems = await LoadMedicamentsAsync(Medicaments.Count);
+        Medicaments.AddRange(newItems);
+    }
+
+
+    public async Task<List<MedicamentSimpleDto>> LoadMedicamentsAsync(int skipCount = 0)
     {
         var filter = new MedicamentFilterDto
         {
@@ -89,22 +89,32 @@ public partial class GlobalMedicamentList
                 {
                     IdFilter = SearchManufacturerIds
                 },
-            MedicamentReleaseFormFilter = SearchManufacturerIds.Count == 0
+            MedicamentReleaseFormFilter = SearchReleaseFormIds.Count == 0
                 ? null
                 : new MedicamentReleaseFormFilterDto
                 {
                     IdFilter = SearchReleaseFormIds
                 },
-            Take = 30
+            Take = Numbers.MedicamentLoadCount,
+            Skip = skipCount
         };
 
         var result = await ApiClient.GetMedicamentsAsync(filter);
-        if (result.IsOk)
-        {
-            Medicaments = result.ResponseDto.Medicaments;
-        }
+        return result.IsOk ? result.ResponseDto.Medicaments : new();
     }
 
+
+    private async Task ReleaseFormIdsChanged(List<int> values)
+    {
+        SearchReleaseFormIds = values;
+        await SearchForMedicamentsAsync();
+    }
+
+    private async Task ManufacturerIdsChanged(List<int> values)
+    {
+        SearchManufacturerIds = values;
+        await SearchForMedicamentsAsync();
+    }
 
     private async Task SearchValueChanged(string value)
     {

@@ -1,6 +1,6 @@
 ﻿@attribute [Route(Routes.GlobalDrugs)]
 @using Microsoft.AspNetCore.Components.Authorization
-@inherits DrugSchedule.Client.ViewModels.GlobalDrugsViewModel
+@inherits DrugSchedule.Client.ViewModels.UserDrugsViewModel
 
 <AuthorizeView>
     <Authorized>
@@ -9,17 +9,11 @@
             @if (IsDetailedView)
             {
                 <PageTitle>@Medicament!.Name | Drugs library - DrugSchedule</PageTitle>
-
                 <div class="h4 mb-0">@Medicament!.Name</div>
-
                 <div>
                     <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
                 </div>
-            
-                <GlobalMedicamentExtended Medicament="Medicament"
-                                          AllowSearchActions
-                                          ManufacturerSearch="ToSearchOfManufacturer"
-                                          ReleaseFormSearch="ToSearchOfForm" />
+                <UserMedicamentExtended Medicament="Medicament" />
             }
             else
             {
@@ -28,9 +22,7 @@
                 <div Class="h4 mb-0">Drug library</div>
 
                 <div>
-                    <GlobalMedicamentList Selectable="false" Navigable
-                        ManufacturerId="ManufacturerId"
-                        ReleaseFormId="ReleaseFormId" /> 
+                    <GlobalMedicamentList Selectable="false" Navigable /> 
                 </div>
             }
         </div>

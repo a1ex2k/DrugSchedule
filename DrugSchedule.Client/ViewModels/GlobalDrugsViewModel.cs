@@ -10,8 +10,6 @@ public class GlobalDrugsViewModel : PageViewModelBase
 
     protected bool IsDetailedView => _medicamentIdParameter != default && Medicament != null;
     protected MedicamentExtendedDto? Medicament { get; private set; }
-    protected int ManufacturerId { get; private set; }
-    protected int ReleaseFormId { get; private set; }
  
 
     protected override async Task ProcessQueryAsync()
@@ -37,24 +35,6 @@ public class GlobalDrugsViewModel : PageViewModelBase
         }
 
         Medicament = medicamentResult.ResponseDto;
-    }
-
-    protected void ToSearchOfManufacturer()
-    {
-        _medicamentIdParameter = default;
-        Medicament = null;
-        ManufacturerId = Medicament?.Manufacturer?.Id ?? default;
-        ReleaseFormId = default;
-        ToDrugsHome();
-    }
-
-    protected void ToSearchOfForm()
-    {
-        _medicamentIdParameter = default;
-        Medicament = null;
-        ManufacturerId = default;
-        ReleaseFormId = Medicament?.ReleaseForm.Id ?? default;
-        ToDrugsHome();
     }
 
     protected void ToDrugsHome()

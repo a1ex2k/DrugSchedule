@@ -1,10 +1,10 @@
 ﻿@typeparam TImageModel
 
-<div class="card bg-light overflow-hidden">
+<div class="card overflow-hidden" style="@($"min-width: {PreviewSize}; min-height: {PreviewSize}")">
     @if (ImageIsSet)
     {
         <img style="@($"width: {PreviewSize}; height: {PreviewSize}")"
-             src="@GetThumbnailUrl()" class="card-img-top bg-secondary" alt="@GetAltText()">
+             src="@GetThumbnailUrl()" class="card-img-top bg-light" alt="@GetAltText()">
     }
 
     @if (AllowDelete && OnDelete != null)

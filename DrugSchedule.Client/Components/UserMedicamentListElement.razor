@@ -1,0 +1,31 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<div class="card list-element flex-row animate">
+    <ImagePreview TImageModel="UserMedicamentSimpleDto"
+                  ImageModel="Medicament"
+                  ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                  PreviewSize="48px">
+    </ImagePreview>
+
+    <div class="card-body d-flex">
+        <div class="flex-grow-1">
+            <span>@Medicament.Name</span>
+            <div class="text-secondary">
+                <span>@Medicament.ReleaseForm</span>
+                <span>|</span>
+                <span>@Medicament.ManufacturerName</span>
+            </div>
+        </div>
+        
+        @if (Selectable)
+        {
+            <CustomButton Text="@SelectButtonText" Class="d-block" Outline Icon="fa-check" Clicked="SelectAsync"/>
+        }
+        @if (Navigable)
+        {
+            <CustomButton Text="Open" Class="d-block" Outline Icon="fa-arrow-up-right-from-square" Clicked="Navigate" />
+        }
+    </div>
+
+
+</div>

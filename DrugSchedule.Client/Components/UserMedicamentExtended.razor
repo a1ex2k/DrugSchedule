@@ -17,13 +17,10 @@
 
 <div>
     <div>
-        <b>Release form: </b> @Medicament?.ReleaseForm.Name 
+        <b>Release form:</b> @Medicament?.ReleaseForm 
     </div>
     <div>
-        <b>Manufacturer: </b>
-        <span>@Medicament?.Manufacturer?.Name</span>
-        <span>|</span>
-        <span>@Medicament?.Manufacturer?.AdditionalInfo</span> 
+        <b>Manufacturer: </b> @Medicament?.ManufacturerName
     </div>
 </div>
 
@@ -35,4 +32,19 @@
 <div>
     <div class="h5 text-primary">Composition</div>
     <div>@((MarkupString)(Medicament?.Composition ?? "No composition info"))</div>
+</div>
+
+
+<div>
+    <div class="h5 text-primary">Base global medicament</div>
+    @if (Medicament?.BasicMedicament != null)
+    {
+        <div class="card">
+            <GlobalMedicamentExtended Medicament="Medicament.BasicMedicament" />
+        </div>
+    }
+    else
+    {
+        <div>Not defined</div>
+    }
 </div>
