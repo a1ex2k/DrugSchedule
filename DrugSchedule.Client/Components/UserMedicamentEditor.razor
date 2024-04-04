@@ -1,0 +1,98 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<EmbeddedEditor @ref=EmbeddedEditor
+             AllowRemove="Editing"
+             Save="SaveMedicamentAsync"
+             Delete="DeleteMedicamentAsync"
+             ItemText="@(Editing ? $"Edit medicament" : "New user medicament")"
+             AfterSave="AfterSave">
+    <EditorModalBody>
+        <div class="d-flex align-items-center mb-3">
+            @foreach (var image in Model.ExistingImages)
+            {
+                <ImagePreview TImageModel="DownloadableFileDto"
+                              ImageModel="image"
+                              ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                              FullImageUrl="@(x => x?.DownloadUrl)"
+                              Alt="@(x => x?.Name)"
+                              PreviewSize="100px"
+                              AllowDelete
+                              OnDelete="DeleteImage" />
+            }
+        </div>
+        <div class="ms-3">
+            <Field>
+                <FieldLabel>Add image</FieldLabel>
+
+                <ListView TItem="IFileEntry"
+                          Data="Model.NewImages"
+                          TextField="(item) => item.Name"
+                          ValueField="(item) => item.Name"
+                          Mode="ListGroupMode.Selectable"
+                          MaxHeight="100px" />
+
+                <FileEdit Changed="@AddImageAsync" Filter="@ImageFilter" Multiple />
+            </Field>
+        </div>
+        
+        <Field>
+            <FieldLabel>
+                <div>Basic medicament</div>
+                @if (Model.BasicMedicament != null)
+                {
+                    <div>
+                        <GlobalMedicamentListElement Medicament="Model.BasicMedicament" Selectable Navigable="false"/>
+                    </div>
+                }
+                
+                <Accordion>
+                    <AccordionItem>
+                        <AccordionHeader>
+                            <Heading Size="HeadingSize.Is5">
+                                <AccordionToggle>Select basic global medicament</AccordionToggle>
+                            </Heading>
+                        </AccordionHeader>
+                        <AccordionBody Style="max-height: 200px">
+                            <GlobalMedicamentList Selectable OnSelect="(item) => Model.BasicMedicament = item" />
+                        </AccordionBody>
+                    </AccordionItem>
+                </Accordion>
+            </FieldLabel>
+
+            <div style="max-height: 100px"></div>
+        </Field>
+
+       
+        <Validation Validator="ValidationRule.IsNotEmpty">
+            <Field>
+                <FieldLabel>Name</FieldLabel>
+                <TextEdit @bind-Text="Model.Name" />
+            </Field>
+        </Validation>
+        <Fields>
+            <Validation Validator="ValidationRule.IsNotEmpty">
+                <Field ColumnSize="ColumnSize.Is6.OnTablet">
+                    <FieldLabel>Release form</FieldLabel>
+                    <TextEdit @bind-Text="Model.ReleaseForm" />
+                </Field>
+            </Validation>
+            <Validation Validator="ValidationRule.IsNotEmpty">
+                <Field ColumnSize="ColumnSize.Is6.OnTablet">
+                    <FieldLabel>Name</FieldLabel>
+                    <TextEdit @bind-Text="Model.ManufacturerName" />
+                </Field>
+            </Validation>
+        </Fields>
+
+        <Field>
+            <FieldLabel>Description</FieldLabel>
+            <RichEditor @bind-Content="Model.Description" />
+        </Field>
+
+        <Field>
+            <FieldLabel>Composition</FieldLabel>
+            <RichEditor @bind-Content="Model.Composition" />
+        </Field>
+
+    </EditorModalBody>
+</EmbeddedEditor>

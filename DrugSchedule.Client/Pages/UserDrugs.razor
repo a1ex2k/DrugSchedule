@@ -1,0 +1,56 @@
+﻿@attribute [Route(Routes.UserDrugs)]
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits DrugSchedule.Client.ViewModels.UserDrugsViewModel
+
+<AuthorizeView>
+    <Authorized>
+        <div class="d-flex flex-column gap-4">
+            @if (PageState == PageState.Details)
+            {
+                <PageTitle>@Medicament!.Name | User drugs - DrugSchedule</PageTitle>
+                <div class="h4 mb-0">@Medicament!.Name</div>
+                <div>
+                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
+                    <CustomButton Clicked="CreateNew" Color="Color.Primary" Text="New" Icon="fa-plus"/>
+                </div>
+                <UserMedicamentExtended Medicament="Medicament" />
+
+                <Accordion>
+                    <AccordionItem>
+                        <AccordionHeader>
+                            <AccordionToggle>Manage item</AccordionToggle>
+                        </AccordionHeader>
+                        <AccordionBody>
+                            <UserMedicamentEditor ExistingMedicament="Medicament" AfterSave="AfterSave"/>
+                        </AccordionBody>
+                    </AccordionItem>
+                </Accordion>
+            }
+            else if (PageState == PageState.New)
+            {
+                <PageTitle>New user drugs - DrugSchedule</PageTitle>
+                <div class="h4 mb-0">@Medicament!.Name</div>
+                <div>
+                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
+                </div>
+                <div class="card">
+                    <UserMedicamentEditor ExistingMedicament="null" AfterSave="AfterSave"/>
+                </div>
+            }
+            else if (PageState == PageState.Details)
+            {
+                <PageTitle>User drugs - DrugSchedule</PageTitle>
+                <div Class="h4 mb-0">Drug library</div>
+                <div>
+                    <UserMedicamentList Selectable="false" Navigable /> 
+                </div>
+            }
+        </div>
+        
+    </Authorized>
+    <NotAuthorized>
+        @{
+            NavigationManager.NavigateTo(Routes.Auth);
+        }
+    </NotAuthorized>
+</AuthorizeView>

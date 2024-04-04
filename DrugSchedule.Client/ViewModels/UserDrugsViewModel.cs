@@ -5,10 +5,10 @@ using DrugSchedule.Client.Utils;
 
 namespace DrugSchedule.Client.ViewModels;
 
-public class GlobalDrugsViewModel : PageViewModelBase
+public class UserDrugsViewModel : PageViewModelBase
 {
-    private int _medicamentIdParameter;
-    protected MedicamentExtendedDto? Medicament { get; private set; }
+    private long _medicamentIdParameter;
+    protected UserMedicamentExtendedDto? Medicament { get; private set; }
  
 
     protected override async Task ProcessQueryAsync()
@@ -26,7 +26,7 @@ public class GlobalDrugsViewModel : PageViewModelBase
             return;
         }
 
-        var medicamentResult = await ApiClient.GetMedicamentExtendedAsync(new MedicamentIdDto { MedicamentId = _medicamentIdParameter });
+        var medicamentResult = await ApiClient.GetSingleExtendedUserMedicamentAsync(new UserMedicamentIdDto { UserMedicamentId = _medicamentIdParameter });
         if (!medicamentResult.IsOk)
         {
             _medicamentIdParameter = default!;
@@ -39,8 +39,26 @@ public class GlobalDrugsViewModel : PageViewModelBase
         PageState = PageState.Details;
     }
 
+    protected void AfterSave(bool exist)
+    {
+        if (exist && PageState == PageState.Editor)
+        {
+            StateHasChanged();
+        }
+        else
+        {
+            ToDrugsHome();
+        }
+    }
+
     protected void ToDrugsHome()
     {
         NavigationManager.NavigateTo(Routes.GlobalDrugs);
+    }
+
+    protected void CreateNew()
+    {
+        PageState = PageState.New;
+        StateHasChanged();
     }
 }

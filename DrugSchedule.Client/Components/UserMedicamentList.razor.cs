@@ -1,8 +1,6 @@
-﻿using Blazorise.Components;
-using DrugSchedule.Api.Shared.Dtos;
+﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Networking;
 using Microsoft.AspNetCore.Components;
-using System;
 using DrugSchedule.Client.Constants;
 
 namespace DrugSchedule.Client.Components;
@@ -12,7 +10,7 @@ public partial class UserMedicamentList
     [Inject] public IApiClient ApiClient { get; set; } = default!;
     [Inject] public NavigationManager NavigationManager { get; set; } = default!;
 
-    [Parameter] public EventCallback<MedicamentSimpleDto> OnSelect { get; set; }
+    [Parameter] public EventCallback<UserMedicamentSimpleDto> OnSelect { get; set; }
     [Parameter] public string SelectButtonText { get; set; } = "Select";
 
     [Parameter] public bool Navigable { get; set; }
@@ -41,22 +39,42 @@ public partial class UserMedicamentList
         Medicaments.AddRange(newItems);
     }
 
-
-    public async Task<List<UserMedicamentSimpleDto>> LoadMedicamentsAsync(int skipCount = 0)
+    private async Task NameSearchValueChanged(string value)
     {
+        NameSearchValue = value;
+        await SearchForMedicamentsAsync();
+    }
 
+    private async Task ReleaseFormSearchValueChanged(string value)
+    {
+        ReleaseFormSearchValue = value;
+        await SearchForMedicamentsAsync();
+    }
+    private async Task ManufacturerSearchValueChanged(string value)
+    {
+        ManufacturerSearchValue = value;
+        await SearchForMedicamentsAsync();
+    }
+
+    private async Task<List<UserMedicamentSimpleDto>> LoadMedicamentsAsync(int skipCount = 0)
+    {
         var filter = new UserMedicamentFilterDto
         {
             NameFilter = string.IsNullOrWhiteSpace(NameSearchValue)
                 ? null
                 : new StringFilterDto { StringSearchType = StringSearchDto.Contains, SubString = NameSearchValue.Trim() },
+            ManufacturerNameFilter = string.IsNullOrWhiteSpace(ManufacturerSearchValue)
+                ? null
+                : new StringFilterDto { StringSearchType = StringSearchDto.Contains, SubString = ManufacturerSearchValue.Trim() },
+            ReleaseFormNameFilter = string.IsNullOrWhiteSpace(ReleaseFormSearchValue)
+                ? null
+                : new StringFilterDto { StringSearchType = StringSearchDto.Contains, SubString = ReleaseFormSearchValue.Trim() },
 
             Take = Numbers.MedicamentLoadCount,
             Skip = skipCount
         };
 
-        var result = await ApiClient.GetMedicamentsAsync(filter);
+        var result = await ApiClient.GetManyUserMedicamentsAsync(filter);
         return result.IsOk ? result.ResponseDto.Medicaments : new();
     }
-
 }

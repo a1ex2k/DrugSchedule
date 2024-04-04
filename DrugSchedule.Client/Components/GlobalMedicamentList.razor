@@ -1,43 +1,48 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
 <div class="mb-4">
+
     <Field>
         <FieldLabel>Name</FieldLabel>
-        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..."/>
+        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..." />
     </Field>
-    <Field>
-        <FieldLabel>Release form</FieldLabel>
-        <Autocomplete TItem="MedicamentReleaseFormDto"
-                      TValue="int"
-                      Data="@ReleaseForms"
-                      TextField="@(item => item.Name)"
-                      ValueField="@(item => item.Id)"
-                      SelectionMode="AutocompleteSelectionMode.Multiple"
-                      CloseOnSelection="false"
-                      SelectedValues="SearchReleaseFormIds"
-                      SelectedValuesChanged="ReleaseFormIdsChanged"
-                      Placeholder="Search..."
-                      FreeTyping>
-            <NotFoundContent> Sorry... nothing was not found!</NotFoundContent>
-        </Autocomplete>
-    </Field>
-    <Field>
-        <FieldLabel>Manufacturer</FieldLabel>
-        <Autocomplete TItem="ManufacturerDto"
-                      TValue="int"
-                      Data="@Manufacturers"
-                      ReadData="@SearchForManufacturersAsync"
-                      TextField="@(item => item.Name)"
-                      ValueField="@(item => item.Id)"
-                      SelectionMode="AutocompleteSelectionMode.Multiple"
-                      CloseOnSelection="false"
-                      SelectedValues="SearchManufacturerIds"
-                      SelectedValuesChanged="ManufacturerIdsChanged"
-                      Placeholder="Search..."
-                      FreeTyping>
-            <NotFoundContent> Sorry... nothing was not found!</NotFoundContent>
-        </Autocomplete>
-    </Field>
+    <Fields>
+        <Field ColumnSize="ColumnSize.Is6.OnTablet">
+            <FieldLabel>Release form</FieldLabel>
+            <Autocomplete TItem="MedicamentReleaseFormDto"
+                          TValue="int"
+                          Data="@ReleaseForms"
+                          TextField="@(item => item.Name)"
+                          ValueField="@(item => item.Id)"
+                          SelectionMode="AutocompleteSelectionMode.Multiple"
+                          CloseOnSelection="false"
+                          SelectedValues="SearchReleaseFormIds"
+                          SelectedValuesChanged="ReleaseFormIdsChanged"
+                          Placeholder="Search..."
+                          FreeTyping>
+                <NotFoundContent> Sorry... nothing was not found!</NotFoundContent>
+            </Autocomplete>
+        </Field>
+        <Field ColumnSize="ColumnSize.Is6.OnTablet">
+            <FieldLabel>Manufacturer</FieldLabel>
+            <Autocomplete TItem="ManufacturerDto"
+                          TValue="int"
+                          Data="@Manufacturers"
+                          ReadData="@SearchForManufacturersAsync"
+                          TextField="@(item => item.Name)"
+                          ValueField="@(item => item.Id)"
+                          SelectionMode="AutocompleteSelectionMode.Multiple"
+                          CloseOnSelection="false"
+                          SelectedValues="SearchManufacturerIds"
+                          SelectedValuesChanged="ManufacturerIdsChanged"
+                          Placeholder="Search..."
+                          FreeTyping>
+                <NotFoundContent> Sorry... nothing was not found!</NotFoundContent>
+            </Autocomplete>
+        </Field>
+    </Fields>
+
+
 </div>
 
 <Virtualize Items="@Medicaments" OverscanCount="25">

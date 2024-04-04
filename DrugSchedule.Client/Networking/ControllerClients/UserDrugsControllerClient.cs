@@ -36,7 +36,7 @@ public static class UserDrugsControllerClient
         return await client.PostAsync<NewUserMedicamentDto, UserMedicamentIdDto>(body, EndpointsPaths.UserDrugs_Add, cancellationToken);
     }
 
-    public static async Task<ApiCallResult<DownloadableFileDto>> AddUserMedicamentImage(this IApiClient client, UserMedicamentIdDto userMedicamentId, UploadFile uploadFile, CancellationToken cancellationToken)
+    public static async Task<ApiCallResult<DownloadableFileDto>> AddUserMedicamentImage(this IApiClient client, UserMedicamentIdDto userMedicamentId, UploadFile uploadFile, CancellationToken cancellationToken = default)
     {
         using var content = new MultipartFormDataContent();
         var fileContent = new StreamContent(uploadFile.Stream);

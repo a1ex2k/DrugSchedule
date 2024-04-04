@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using Blazorise;
+﻿using Blazorise;
 using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Components.Common;
 using DrugSchedule.Client.Constants;
@@ -8,24 +7,19 @@ using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.Components;
 
-public partial class ProfileEditorModal
+public partial class ProfileEditor
 {
     [Inject] public INotificationService NotificationService { get; set; } = default!;
     [Inject] public IApiClient ApiClient { get; set; } = default!;
     [Parameter, EditorRequired] public UserFullDto CurrentUser { get; set; } = default!;
     [Parameter] public EventCallback AfterSave { get; set; }
+    
+    [Parameter] public IFileEntry? NewAvatar { get; set; }
     private UserUpdateDto UserUpdateDto { get; set; } = new();
-    private EditorModal EditModal { get; set; } = default!;
 
     private static string _avatarFilter = string.Join(", ", FileParameters.AvatarMimeTypes);
     private readonly DateTimeOffset _maxBirthDate = DateTime.Now.AddYears(-User.MinAgeYears);
     
-
-    public async Task Show()
-    {
-        UserUpdateDto = new();
-        await EditModal.Show();
-    }
 
     protected override Task OnParametersSetAsync()
     {
@@ -49,13 +43,19 @@ public partial class ProfileEditorModal
         {
             await NotificationService.Success("Avatar not removed", "Error");
         }
+
+        await AfterSave.InvokeAsync();
     }
 
-    protected async Task SetAvatarAsync(FileChangedEventArgs args)
+    protected async Task SelectAvatarAsync(FileChangedEventArgs args)
     {
-        if (args.Files.Length == 0) return;
-        var file = args.Files[0];
-        if (file == null) return;
+        if (args.Files.Length == 0 || args.Files[0] == null)
+        {
+            NewAvatar = null;
+            return;
+        }
+
+        var file = args.Files[0]!;
 
         if (file.Size == 0 || file.Size > FileParameters.MaxAvatarFileSize)
         {
@@ -69,14 +69,19 @@ public partial class ProfileEditorModal
             return;
         }
 
+        NewAvatar = file;
+    }
+
+    protected async Task SetAvatarAsync()
+    {
         try
         {
-            await using var stream = file.OpenReadStream(FileParameters.MaxAvatarFileSize);
+            await using var stream = NewAvatar!.OpenReadStream(FileParameters.MaxAvatarFileSize);
             var uploadFile = new UploadFile
             {
-                Name = file.Name,
+                Name = NewAvatar.Name,
                 Stream = stream,
-                ContentType = file.Type
+                ContentType = NewAvatar.Type
             };
 
             var result = await ApiClient.SetAvatarAsync(uploadFile);
@@ -95,7 +100,7 @@ public partial class ProfileEditorModal
         }
         finally
         {
-            StateHasChanged();
+            await AfterSave.InvokeAsync();
         }
     }
 

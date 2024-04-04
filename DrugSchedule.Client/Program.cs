@@ -2,6 +2,7 @@ using Blazored.LocalStorage;
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Blazorise.RichTextEdit;
 using DrugSchedule.Client;
 using DrugSchedule.Client.Auth;
 using DrugSchedule.Client.Networking;
@@ -17,10 +18,12 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services
     .AddBlazorise(options =>
     {
-        options.DebounceInterval = 400;
+        options.DebounceInterval = 500;
     })
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
+
+builder.Services.AddBlazoriseRichTextEdit();
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddScoped<ITokenStorage, TokenStorage>();

@@ -3,34 +3,31 @@
 @using System.Text.RegularExpressions
 @using DrugSchedule.Client.Networking
 
-<EditorModal @ref=EditModal
-             AllowRemove="false"
-             Save="UpdateProfileAsync"
-             ItemText="@($"@{CurrentUser.Username} - edit")"
-             AfterSave="AfterSave">
+<EmbeddedEditor AllowRemove="false"
+                Save="UpdateProfileAsync"
+                ItemText="@CurrentUser.Username">
     <EditorModalBody>
-            <div class="d-flex align-items-center mb-3">
-                <ImagePreview TImageModel="DownloadableFileDto"
-                              ImageModel="CurrentUser.Avatar"
-                              ThumbnailUrl="@(x => x?.ThumbnailUrl)"
-                              FullImageUrl="@(x => x?.DownloadUrl)"
-                              Alt="@(x => x?.Name)"
-                              PreviewSize="100px">
-                </ImagePreview>
-                <div class="ms-3">
-                    <Field>
-                        <FieldLabel>Set new one</FieldLabel>
-                        <FileEdit Changed="@SetAvatarAsync" Filter="@_avatarFilter"/>
-                    </Field>
-                    <CustomButton Text="Remove avatar" Color="Color.Danger" Icon="fa-trash-can" Clicked="DeleteAvatarAsync" />
-                </div>
+        <Field >
+            <FieldLabel>Avatar</FieldLabel>
+            <FileEdit Changed="@SelectAvatarAsync" Filter="@_avatarFilter" />
+            <div class="mt-2">
+                @if (CurrentUser.Avatar != null)
+                {
+                    <CustomButton Class="d-block" Text="Remove existing" Color="Color.Danger" Icon="fa-trash-can" Clicked="DeleteAvatarAsync"/>
+                }
+                @if (NewAvatar != null)
+                {
+                    <CustomButton Class="d-block ms-auto" Text="Upload" Color="Color.Primary" Icon="fa-arrow-up-from-bracket" Clicked="SetAvatarAsync" />
+                }
             </div>
-           
+        </Field>
+        <hr class="mb-3"/>
+
         <Field>
             <FieldLabel>Real name</FieldLabel>
             <TextEdit Placeholder="Optional" @bind-Text=UserUpdateDto.RealName />
         </Field>
-        
+
         <Field>
             <FieldLabel>Sex</FieldLabel>
             <Select TValue="SexDto" @bind-SelectedValue="UserUpdateDto.Sex">
@@ -39,7 +36,7 @@
                 <SelectItem Value="SexDto.Female">Female</SelectItem>
             </Select>
         </Field>
-        
+
         <Field>
             <FieldLabel>Date of birth</FieldLabel>
             <FieldBody>
@@ -52,4 +49,4 @@
         </Field>
 
     </EditorModalBody>
-</EditorModal>
+</EmbeddedEditor>

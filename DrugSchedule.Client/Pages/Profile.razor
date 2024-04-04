@@ -11,56 +11,50 @@
 
         <div Class="d-flex justify-content-between mb-4">
             <h3 class="d-block">Profile</h3>
-            <CustomButton Clicked="@(async () => await LogOutAsync())"
-                          Class="d-block"
-                          Color="Color.Secondary"
-                          Text="Log out" />
+            <div>
+                <CustomButton Text="Change password" Color="Color.Danger" Icon="fa-key" Clicked="OpenPasswordModalAsync" />
+                <CustomButton Clicked="@(async () => await LogOutAsync())" Color="Color.Secondary" Text="Log out" />
+            </div>
         </div>
 
-        @if (NowLoading)
-        {
-            <h5 class="animate text-primary">Loading...</h5>
-        }
-        else
-        {
-            <div class="animate mb-5 d-flex flex-wrap align-items-center">
-                <div class="me-4 mb-2">
-                    <ImagePreview TImageModel="DownloadableFileDto"
-                                  ImageModel="CurrentUser.Avatar"
-                                  ThumbnailUrl="@(x => x?.ThumbnailUrl)"
-                                  FullImageUrl="@(x => x?.DownloadUrl)"
-                                  Alt="@(x => x?.Name)"
-                                  PreviewSize="150px">
-                    </ImagePreview>
-                </div>
-                <div class="me-3 mb-2">
-                    <div class="h3 mb-2 text-primary">@CurrentUser.Username</div>
-                    <a href="@("mailto:"+CurrentUser.Email)">@CurrentUser.Email</a>
-                </div>
-
-                <div class="me-3 mb-2">
-                    <div>
-                        <b>Real name:</b> @(CurrentUser.RealName ?? "Undefined")
-                    </div>
-                    <div>
-                        <b>Sex:</b> @CurrentUser.Sex.ToString()
-                    </div>
-                    <div>
-                        <b>Date of birth: </b> @(CurrentUser.DateOfBirth?.ToString() ?? "Undefined")
-                    </div>
-                </div>
-
-                <div class="mb-2 w-100"></div>
-                <div>
-                    <CustomButton Text="Change password" Color="Color.Secondary" Icon="fa-key" Clicked="OpenPasswordModalAsync" />
-                    <CustomButton Text="Edit profile" Color="Color.Secondary" Icon="fa-pen" Clicked="OpenProfileEditorModalAsync" />
-                </div>
-
+        <div class="animate mb-5 d-flex flex-wrap align-items-center">
+            <div class="me-4 mb-2">
+                <ImagePreview TImageModel="DownloadableFileDto"
+                              ImageModel="CurrentUser.Avatar"
+                              ThumbnailUrl="@(x => x?.ThumbnailUrl)"
+                              FullImageUrl="@(x => x?.DownloadUrl)"
+                              Alt="@(x => x?.Name)"
+                              PreviewSize="150px">
+                </ImagePreview>
             </div>
-        }
+            <div class="me-3 mb-2">
+                <div class="h3 mb-1 text-primary">@CurrentUser.Username</div>
+                <a href="@("mailto:"+CurrentUser.Email)">@CurrentUser.Email</a>
+
+                <div>
+                    <b>Real name:</b> @(CurrentUser.RealName ?? "Undefined")
+                </div>
+                <div>
+                    <b>Sex:</b> @CurrentUser.Sex.ToString()
+                </div>
+                <div>
+                    <b>Date of birth: </b> @(CurrentUser.DateOfBirth?.ToString() ?? "Undefined")
+                </div>
+            </div>
+        </div>
+
+        <Accordion>
+            <AccordionItem>
+                <AccordionHeader>
+                    <AccordionToggle>Edit profile</AccordionToggle>
+                </AccordionHeader>
+                <AccordionBody>
+                    <ProfileEditor CurrentUser="CurrentUser" AfterSave="StateHasChanged" />
+                </AccordionBody>
+            </AccordionItem>
+        </Accordion>
 
         <PasswordModal @ref=PasswordModal />
-        <ProfileEditorModal @ref=ProfileEditorModal CurrentUser="CurrentUser" AfterSave="AfterSave"/>
 
     </Authorized>
     <NotAuthorized>

@@ -16,42 +16,35 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
     [Inject] protected INotificationService NotificationService { get; set; } = default!;
     [Inject] protected IApiClient ApiClient { get; set; } = default!;
 
-    protected bool NowLoading = false;
+    protected PageState PageState { get; set; } = PageState.Default;
+
     private Dictionary<string, StringValues> _queryParameters = new();
-    
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
+
+    protected override async Task OnInitializedAsync()
     {
-        if (firstRender)
-        {
-            NavigationManager.LocationChanged += HandleLocationChanged;
-            await ProcessQueryAsync();
-        }
-
-        await base.OnAfterRenderAsync(firstRender);
+        await ProcessQueryAsync();
+        await base.OnInitializedAsync();
     }
 
     protected async Task LoadDataAsync()
     {
-        NowLoading = true;
-        await InvokeAsync(StateHasChanged);
         await LoadAsync();
-        NowLoading = false;
-        await InvokeAsync(StateHasChanged);
+        StateHasChanged();
     }
 
     protected virtual async Task LoadAsync()
     {
         await Task.CompletedTask;
     }
-    
+
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
         _queryParameters = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query);
         Task.Run(async () => await ProcessQueryAsync());
     }
 
-    protected bool TryGetParameter<T> (string parameterName, out T value)
+    protected bool TryGetParameter<T>(string parameterName, out T value)
     {
         value = default(T)!;
         return _queryParameters.TryGetQueryParameter(parameterName, out value);

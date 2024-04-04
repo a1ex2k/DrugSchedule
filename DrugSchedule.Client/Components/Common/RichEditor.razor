@@ -1,0 +1,30 @@
+﻿
+<RichTextEdit @ref="richTextEditRef"
+              Theme="@(UseBubbleTheme ? RichTextEditTheme.Bubble : RichTextEditTheme.Snow)"
+              ContentChanged="@OnContentChanged"
+              PlaceHolder=""
+              ReadOnly="@ReadOnly"
+              SubmitOnEnter="@(!Multiline)"
+              ToolbarPosition="Placement.Top"
+              ConfigureQuillJsMethod="richEditor.configureQuillJs">
+    <Toolbar>
+    @if (!HideElements)
+    {
+        <RichTextEditToolbarGroup>
+            <RichTextEditToolbarButton Action="RichTextEditAction.Bold"/>
+            <RichTextEditToolbarButton Action="RichTextEditAction.Italic"/>
+            <RichTextEditToolbarButton Action="RichTextEditAction.Underline"/>
+            <RichTextEditToolbarButton Action="RichTextEditAction.Clean"/>
+        </RichTextEditToolbarGroup>
+        @if (AdditionalButtons != null)
+        {
+            <RichTextEditToolbarGroup Float="Float.End">
+                <div class="d-flex my-auto">@AdditionalButtons</div>
+
+            </RichTextEditToolbarGroup>
+        }
+    }
+    </Toolbar>
+    
+    
+</RichTextEdit>

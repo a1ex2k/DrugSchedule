@@ -1,0 +1,21 @@
+﻿<div>
+    <Validations @ref="_validations"
+                 Mode="ValidationMode.Auto"
+                 MissingFieldsErrorMessage="Поля заполнены некорректно!"
+                 StatusChanged="@(a => { _isValid = a.Status != ValidationStatus.Error; })">
+        @EditorModalBody
+    </Validations>
+    <hr />
+    <div>
+        <CustomButton Displayable="@(AllowRemove && Delete != null)"
+                      Text="Remove" Color="Color.Danger" Icon="fa-trash-can"
+                      Clicked="@ConfirmDeleteAsync" Width="8rem"/>
+
+        <CustomButton Displayable="@(AllowSave && Save != null && _isValid)"
+                      Class="d-block ms-auto"
+                          Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="8rem"/>
+
+    </div>
+
+    <CustomAlert @ref="_alert" />
+</div>
