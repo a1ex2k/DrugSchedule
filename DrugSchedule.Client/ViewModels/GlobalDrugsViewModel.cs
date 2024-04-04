@@ -2,36 +2,31 @@
 using DrugSchedule.Client.Constants;
 using DrugSchedule.Client.Networking;
 using DrugSchedule.Client.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.ViewModels;
 
 public class GlobalDrugsViewModel : PageViewModelBase
 {
-    private int _medicamentIdParameter;
+    [SupplyParameterFromQuery(Name = "id")]
+    public int MedicamentIdParameter { get; set; }
+
     protected MedicamentExtendedDto? Medicament { get; private set; }
  
-
-    protected override async Task ProcessQueryAsync()
-    {
-        TryGetParameter("id", out _medicamentIdParameter);
-        await base.ProcessQueryAsync();
-    }
-
     protected override async Task LoadAsync()
     {
-        if (_medicamentIdParameter == default)
+        if (MedicamentIdParameter == default)
         {
             Medicament = null;
             PageState = PageState.Default;
             return;
         }
 
-        var medicamentResult = await ApiClient.GetMedicamentExtendedAsync(new MedicamentIdDto { MedicamentId = _medicamentIdParameter });
+        var medicamentResult = await ApiClient.GetMedicamentExtendedAsync(new MedicamentIdDto { MedicamentId = MedicamentIdParameter });
         if (!medicamentResult.IsOk)
         {
-            _medicamentIdParameter = default!;
-            PageState = PageState.Default;
             await ServeApiCallResult(medicamentResult);
+            ToDrugsHome();
             return;
         }
 

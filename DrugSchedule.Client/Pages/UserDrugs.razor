@@ -10,8 +10,7 @@
                 <PageTitle>@Medicament!.Name | User drugs - DrugSchedule</PageTitle>
                 <div class="h4 mb-0">@Medicament!.Name</div>
                 <div>
-                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
-                    <CustomButton Clicked="CreateNew" Color="Color.Primary" Text="New" Icon="fa-plus"/>
+                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
                 <UserMedicamentExtended Medicament="Medicament" />
 
@@ -21,32 +20,35 @@
                             <AccordionToggle>Manage item</AccordionToggle>
                         </AccordionHeader>
                         <AccordionBody>
-                            <UserMedicamentEditor ExistingMedicament="Medicament" AfterSave="AfterSave"/>
+                            <UserMedicamentEditor ExistingMedicament="Medicament" AfterSave="AfterSave" />
                         </AccordionBody>
                     </AccordionItem>
                 </Accordion>
             }
             else if (PageState == PageState.New)
             {
-                <PageTitle>New user drugs - DrugSchedule</PageTitle>
-                <div class="h4 mb-0">@Medicament!.Name</div>
+                <PageTitle>New user drug - DrugSchedule</PageTitle>
+                <div class="h4 mb-0">New user drug</div>
                 <div>
                     <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
-                <div class="card">
-                    <UserMedicamentEditor ExistingMedicament="null" AfterSave="AfterSave"/>
+                <div>
+                    <UserMedicamentEditor ExistingMedicament="null" AfterSave="AfterSave" />
                 </div>
             }
-            else if (PageState == PageState.Details)
+            else if (PageState == PageState.Default)
             {
                 <PageTitle>User drugs - DrugSchedule</PageTitle>
                 <div Class="h4 mb-0">Drug library</div>
                 <div>
-                    <UserMedicamentList Selectable="false" Navigable /> 
+                    <CustomButton Clicked="CreateNew" Color="Color.Primary" Text="New" Icon="fa-plus" />
                 </div>
+                <div>
+                    <UserMedicamentList Selectable="false" Navigable />
+                 </div>
             }
         </div>
-        
+
     </Authorized>
     <NotAuthorized>
         @{

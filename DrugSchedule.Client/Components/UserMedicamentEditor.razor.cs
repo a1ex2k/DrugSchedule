@@ -94,6 +94,14 @@ public partial class UserMedicamentEditor
         }
     }
 
+    private void SelectBaseMedicament(MedicamentSimpleDto medicament)
+    {
+        Model.BasicMedicament = medicament;
+        Model.Name = medicament.Name;
+        Model.ReleaseForm = medicament.ReleaseForm;
+        Model.ManufacturerName = medicament.ManufacturerName;
+    }
+
     private async Task DeleteImage(DownloadableFileDto image)
     {
         Model.DeleteImages.Add(image);

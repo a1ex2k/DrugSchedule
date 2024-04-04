@@ -18,16 +18,16 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
 
     protected PageState PageState { get; set; } = PageState.Default;
 
-    private Dictionary<string, StringValues> _queryParameters = new();
-
 
     protected override async Task OnInitializedAsync()
     {
         await ProcessQueryAsync();
+        NavigationManager.LocationChanged += HandleLocationChanged;
+
         await base.OnInitializedAsync();
     }
 
-    protected async Task LoadDataAsync()
+    private async Task LoadDataAsync()
     {
         await LoadAsync();
         StateHasChanged();
@@ -38,16 +38,16 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
         await Task.CompletedTask;
     }
 
-    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    private void HandleLocationChanged(object? sender, LocationChangedEventArgs args)
     {
-        _queryParameters = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query);
-        Task.Run(async () => await ProcessQueryAsync());
+        Task.Run(ProcessQueryAsync);      
     }
 
     protected bool TryGetParameter<T>(string parameterName, out T value)
     {
         value = default(T)!;
-        return _queryParameters.TryGetQueryParameter(parameterName, out value);
+        var dict = QueryHelpers.ParseQuery(NavigationManager.ToAbsoluteUri(NavigationManager.Uri).Query);
+        return dict.TryGetQueryParameter(parameterName, out value);
     }
 
     protected virtual async Task ProcessQueryAsync()

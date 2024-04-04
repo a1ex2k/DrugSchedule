@@ -13,6 +13,13 @@ public static class NavigationManagerExtensions
         navManager.NavigateTo(url, false, false);
     }
 
+    public static void NavigateWithBoolParameter(this NavigationManager navManager, string page, string parameterName)
+    {
+        var url = $"{page}?{parameterName}=true";
+        navManager.NavigateTo(url, false, false);
+    }
+
+
     public static void NavigateWithParameter(this NavigationManager navManager, string page, params (string Name, string Value)[] parameters)
     {
         var sb = new StringBuilder(page);

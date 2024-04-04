@@ -2,36 +2,43 @@
 using DrugSchedule.Client.Constants;
 using DrugSchedule.Client.Networking;
 using DrugSchedule.Client.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.ViewModels;
 
 public class UserDrugsViewModel : PageViewModelBase
 {
-    private long _medicamentIdParameter;
+    [SupplyParameterFromQuery(Name = "id")]
+    public long MedicamentIdParameter { get; set; }
+
+    [SupplyParameterFromQuery(Name = "new")]
+    public bool NewMedicamentParameter { get; set; }
+
+
     protected UserMedicamentExtendedDto? Medicament { get; private set; }
  
 
-    protected override async Task ProcessQueryAsync()
-    {
-        TryGetParameter("id", out _medicamentIdParameter);
-        await base.ProcessQueryAsync();
-    }
-
     protected override async Task LoadAsync()
     {
-        if (_medicamentIdParameter == default)
+        if (NewMedicamentParameter)
+        {
+            Medicament = null;
+            PageState = PageState.New;
+            return;
+        } 
+
+        if (MedicamentIdParameter == default)
         {
             Medicament = null;
             PageState = PageState.Default;
             return;
         }
 
-        var medicamentResult = await ApiClient.GetSingleExtendedUserMedicamentAsync(new UserMedicamentIdDto { UserMedicamentId = _medicamentIdParameter });
+        var medicamentResult = await ApiClient.GetSingleExtendedUserMedicamentAsync(new UserMedicamentIdDto { UserMedicamentId = MedicamentIdParameter });
         if (!medicamentResult.IsOk)
         {
-            _medicamentIdParameter = default!;
-            PageState = PageState.Default;
             await ServeApiCallResult(medicamentResult);
+            ToDrugsHome();
             return;
         }
 
@@ -53,12 +60,11 @@ public class UserDrugsViewModel : PageViewModelBase
 
     protected void ToDrugsHome()
     {
-        NavigationManager.NavigateTo(Routes.GlobalDrugs);
+        NavigationManager.NavigateTo(Routes.UserDrugs);
     }
 
     protected void CreateNew()
     {
-        PageState = PageState.New;
-        StateHasChanged();
+        NavigationManager.NavigateWithBoolParameter(Routes.UserDrugs, "new");
     }
 }
