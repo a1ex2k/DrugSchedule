@@ -1,4 +1,5 @@
-﻿using DrugSchedule.Api.Shared.Dtos;
+﻿using System.Text.Json;
+using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.Services.Models;
@@ -126,16 +127,18 @@ public partial class ScheduleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddConfirmationImage([FromForm] ConfirmationId confirmationId, [FromForm] IFormFile file, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> AddConfirmationImage([FromForm] string confirmationIdDtoJson, [FromForm] IFormFile file, CancellationToken cancellationToken = default)
     {
+        var dto = JsonSerializer.Deserialize<ConfirmationIdDto>(confirmationIdDtoJson);
+
         var inputFile = new InputFile
         {
-            NameWithExtension = file.Name,
+            NameWithExtension = file.FileName,
             MediaType = file.ContentType,
             Stream = file.OpenReadStream()
         };
 
-        var result = await _confirmationManipulating.AddConfirmationImageAsync(confirmationId.Adapt<ConfirmationId>(), inputFile, cancellationToken);
+        var result = await _confirmationManipulating.AddConfirmationImageAsync(dto.Adapt<ConfirmationIds>(), inputFile, cancellationToken);
         return result.Match<IActionResult>(
             file => Ok(file.Adapt<DownloadableFileDto>()),
             notFound => NotFound(notFound.ToDto()),

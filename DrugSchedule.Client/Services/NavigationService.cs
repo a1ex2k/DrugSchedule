@@ -24,7 +24,7 @@ public class NavigationService
 
     public void NavigateToSchedule()
     {
-        _navigationManager.NavigateTo(Routes.Schedule);
+        _navigationManager.NavigateTo(Routes.Schedules);
     }
 
     public void NavigateToContacts()

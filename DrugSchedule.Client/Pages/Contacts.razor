@@ -5,30 +5,25 @@
 <AuthorizeView>
     <Authorized>
         <div class="d-flex flex-column gap-4">
-
-            @if (IsDetailedView)
+            @if (PageState == PageState.Details)
             {
                 <PageTitle>@Contact!.СontactName | Contacts - DrugSchedule</PageTitle>
                 <div>
                     <CustomButton Clicked="ToContactsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
                 </div>
-            
                 <ContactExtended Contact="Contact" />
-
                 <div>
                     <CustomButton Clicked="ShowEditorAsync" Color="Color.Secondary" Text="Edit or remove contact" Icon="fa-pen" />
                 </div>
             }
-            else
+            else if (PageState == PageState.Default)
             {
                 <PageTitle>Contacts - DrugSchedule</PageTitle>
                 <div Class="h4">Contacts</div>
-
                 <div>
                     <h4 class="h5 text-primary">Find new contacts</h4>
                     <UsersList Selectable="true" OnSelect="OnUserSelectAsync" SelectButtonText="Add"/> 
                 </div>
-
                 <div>
                     <h4 class="h5 text-primary">Manage contacts</h4>
                     <ContactsList @ref=ContactsList Selectable="false" Navigable="true" OnSelect="OnContactSelectAsync" />
@@ -37,9 +32,9 @@
         </div>
         
         <EditorModal @ref="EditorModal"
-            ItemText="@((IsDetailedView ? "Add new contact: " : "Edit contact: ") + Contact?.Username)"
+            ItemText="@Contact?.Username"
             AllowSave
-            AllowRemove="IsDetailedView"
+            AllowRemove="@(PageState == PageState.Details)"
             Save="UpdateContactAsync"
             Delete="RemoveContactAsync">
             <EditorModalBody>

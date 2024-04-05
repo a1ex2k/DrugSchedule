@@ -163,7 +163,7 @@ public class UserDrugRepository : IUserDrugRepository
         var entity = new Entities.UserMedicamentFile
         {
             UserMedicamentId = id,
-            FileGuid = default,
+            FileGuid = fileGuid,
         };
 
         await _dbContext.UserMedicamentFiles.AddAsync(entity, cancellationToken);

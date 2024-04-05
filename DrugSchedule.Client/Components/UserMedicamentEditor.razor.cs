@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-using Blazorise;
+﻿using Blazorise;
 using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Components.Common;
 using DrugSchedule.Client.Constants;
@@ -15,10 +14,11 @@ public partial class UserMedicamentEditor
     [Inject] public IApiClient ApiClient { get; set; } = default!;
 
     [Parameter, EditorRequired] public UserMedicamentExtendedDto? ExistingMedicament { get; set; }
-    [Parameter] public EventCallback<bool> AfterSave { get; set; }
+    [Parameter] public EventCallback<long> AfterSave { get; set; }
+    [Parameter] public EventCallback<long> AfterDelete { get; set; }
+    [Parameter] public EventCallback<long> AfterCreate { get; set; }
 
     private UserMedicamentEditorModel Model { get; set; } = new();
-    private EmbeddedEditor EmbeddedEditor { get; set; } = new();
 
     private bool Editing => ExistingMedicament != null;
 
@@ -49,7 +49,6 @@ public partial class UserMedicamentEditor
 
         await base.OnParametersSetAsync();
     }
-
 
     private async Task<bool> DeleteImageAsync(DownloadableFileDto image, long userMedicamentId)
     {
@@ -137,19 +136,25 @@ public partial class UserMedicamentEditor
 
     protected async Task<EditorModal.ModalResult> SaveMedicamentAsync()
     {
-        var saved = ExistingMedicament == null
+        var savedId = ExistingMedicament == null
             ? await CreateMedicamentAsync()
             : await UpdateMedicamentAsync();
 
-        if (AfterSave.HasDelegate)
+        if (ExistingMedicament == null && savedId.HasValue)
         {
-            await AfterSave.InvokeAsync(true);
+            await AfterCreate.InvokeAsync(savedId.Value);
+        }
+        else if (ExistingMedicament != null && savedId.HasValue)
+        {
+            await AfterSave.InvokeAsync(savedId.Value);
         }
 
-        return new EditorModal.ModalResult(saved, []);
+        Model.DeleteImages.Clear();
+        Model.NewImages.Clear();
+        return new EditorModal.ModalResult(savedId.HasValue, []);
     }
 
-    private async Task<bool> UpdateMedicamentAsync()
+    private async Task<long?> UpdateMedicamentAsync()
     {
         var updateDto = new UserMedicamentUpdateDto
         {
@@ -163,16 +168,18 @@ public partial class UserMedicamentEditor
         };
 
         var result = await ApiClient.UpdateUserMedicamentAsync(updateDto);
-        var uploadTasks = Model.NewImages.Select(f => UploadImageAsync(f, ExistingMedicament.Id));
-        var deleteTasks = Model.DeleteImages.Select(f => DeleteImageAsync(f, ExistingMedicament.Id));
-
-        await Task.WhenAll(uploadTasks);
-        await Task.WhenAll(deleteTasks);
-
-        return result.IsOk;
+        if (result.IsOk)
+        {
+            await UpdateImagesAsync(result.ResponseDto.UserMedicamentId);
+        }
+        else
+        {
+            await NotificationService.Error(string.Join("<br>", result.Messages), $"Medicament not saved");
+        }
+        return !result.IsOk ? null : result.ResponseDto.UserMedicamentId;
     }
 
-    private async Task<bool> CreateMedicamentAsync()
+    private async Task<long?> CreateMedicamentAsync()
     {
         var updateDto = new NewUserMedicamentDto
         {
@@ -185,17 +192,25 @@ public partial class UserMedicamentEditor
         };
 
         var result = await ApiClient.AddUserMedicamentAsync(updateDto);
-
         if (result.IsOk)
         {
-            var uploadTasks = Model.NewImages.Select(f => UploadImageAsync(f, result.ResponseDto.UserMedicamentId));
-            await Task.WhenAll(uploadTasks);
+            await UpdateImagesAsync(result.ResponseDto.UserMedicamentId);
         }
         else
         {
             await NotificationService.Error(string.Join("<br>", result.Messages), $"Medicament not added");
         }
-        return result.IsOk;
+
+        return !result.IsOk ? null : result.ResponseDto.UserMedicamentId;
+    }
+
+    private async Task<bool> UpdateImagesAsync(long medicamentId)
+    {
+        var tasks = Model.NewImages.Select(f => UploadImageAsync(f, medicamentId))
+            .Union(Model.DeleteImages.Select(f => DeleteImageAsync(f, medicamentId)));
+
+        var result = await Task.WhenAll(tasks);
+        return result.All(x => x);
     }
 
     private async Task<EditorModal.ModalResult> DeleteMedicamentAsync()
@@ -205,8 +220,10 @@ public partial class UserMedicamentEditor
             UserMedicamentId = ExistingMedicament!.Id
         });
 
-        await AfterSave.InvokeAsync(false);
+        if (result.IsOk)
+        {
+            await AfterDelete.InvokeAsync(ExistingMedicament!.Id);
+        }
         return new EditorModal.ModalResult(result.IsOk, result.Messages);
     }
-
 }

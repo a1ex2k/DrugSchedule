@@ -11,12 +11,13 @@
 }
 
 #blazor-error-ui {
-    background: lightyellow;
+    background: #cfe2ff;
+    color: #084298;
     bottom: 0;
     box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
     display: none;
     left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    padding: 1rem 1.25rem 1rem 1.25rem;
     position: fixed;
     width: 100%;
     z-index: 1000;
@@ -56,15 +57,15 @@
     }
 
         .loading-progress circle:last-child {
-            stroke: #1b6ec2;
+            stroke: var(--bs-primary);
             stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
-            transition: stroke-dasharray 0.05s ease-in-out;
+            transition: stroke-dasharray 0.1s ease-in-out;
         }
 
 .loading-progress-text {
     position: absolute;
     text-align: center;
-    font-weight: bold;
+    font-size: 1.2rem;
     inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
 }
 
@@ -194,6 +195,7 @@ html {
 
 .list-element {
     margin-bottom: 0.5rem;
+    min-height: 48px;
 }
 
 .list-element .card-body {

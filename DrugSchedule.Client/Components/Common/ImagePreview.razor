@@ -1,15 +1,12 @@
 ﻿@typeparam TImageModel
 
-<div class="card overflow-hidden" style="@($"min-width: {PreviewSize}; min-height: {PreviewSize}")">
-    @if (ImageIsSet)
-    {
-        <img style="@($"width: {PreviewSize}; height: {PreviewSize}")"
-             src="@GetThumbnailUrl()" class="card-img-top bg-light" alt="@GetAltText()">
-    }
+<div class="card position-relative overflow-hidden" style="@($"min-width: {PreviewSize}")">
+    <img class="mb-auto mt-auto card-img-top" style="@($"width: {PreviewSize}; height: {PreviewSize}; object-fit: cover")"
+         src="@GetThumbnailUrl()" alt="@GetAltText()">
 
     @if (AllowDelete && OnDelete != null)
     {
-        <div class="card-body d-flex justify-content-between">
+        <div class="position-absolute d-flex justify-content-between bottom-0 p-1 gap-1">
             <CustomButton Color=Color.Danger Clicked="@(async() => await OnDelete(ImageModel))" Icon="fa-trash-can"></CustomButton>
         </div>
     }

@@ -4,40 +4,37 @@ using DrugSchedule.Client.Components.Common;
 using DrugSchedule.Client.Constants;
 using DrugSchedule.Client.Networking;
 using DrugSchedule.Client.Utils;
+using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.ViewModels;
 
 public class ContactsViewModel : PageViewModelBase
 {
-    private long _contactIdParameter;
+    [SupplyParameterFromQuery(Name = "id")]
+    private long ContactUserIdParameter { get; set; }
 
-    protected bool IsDetailedView => _contactIdParameter != default && Contact != null;
     protected UserContactDto? Contact { get; private set; }
     protected NewUserContactDto NewUserContact { get; private set; } = new(){ UserProfileId = 0, СontactName = null };
 
     protected EditorModal EditorModal { get; set; } = default!;
     protected ContactsList ContactsList { get; set; } = default!;
 
-    protected override async Task ProcessQueryAsync()
-    {
-        TryGetParameter("id", out _contactIdParameter);
-        await base.ProcessQueryAsync();
-    }
 
     protected override async Task LoadAsync()
     {
-        if (_contactIdParameter == default)
+        if (ContactUserIdParameter == default)
         {
             NewUserContact.UserProfileId = 0;
             NewUserContact.СontactName = null;
+            PageState = PageState.Default;
             return;
         }
 
-        var contactResult = await ApiClient.GetSingleExtendedContactAsync(new UserIdDto { UserProfileId = _contactIdParameter });
+        var contactResult = await ApiClient.GetSingleExtendedContactAsync(new UserIdDto { UserProfileId = ContactUserIdParameter });
         if (!contactResult.IsOk)
         {
-            _contactIdParameter = default!;
             await ServeApiCallResult(contactResult);
+            ToContactsHome();
             return;
         }
 
@@ -47,23 +44,19 @@ public class ContactsViewModel : PageViewModelBase
             UserProfileId = Contact.UserProfileId,
             СontactName = Contact.Username
         };
+        PageState = PageState.Details;
     }
 
     protected async Task<EditorModal.ModalResult> UpdateContactAsync()
     {
-        if (string.IsNullOrWhiteSpace(NewUserContact.СontactName))
-            return new EditorModal.ModalResult(false, ["Name was empty"]);
-
         var result = await ApiClient.AddOrUpdateContactAsync(NewUserContact);
-        if (result.IsOk && IsDetailedView)
+        if (result.IsOk)
         {
             Contact.СontactName = NewUserContact.СontactName;
-            StateHasChanged();
-        }
-
-        if (!IsDetailedView)
-        {
-            await ContactsList.LoadContactsAsync();
+            if (PageState == PageState.Default)
+            {
+                await ContactsList.LoadContactsAsync();
+            }
         }
 
         var text = result.IsOk ? ["Contact saved"] : result.Messages;
@@ -73,7 +66,7 @@ public class ContactsViewModel : PageViewModelBase
     protected async Task<EditorModal.ModalResult> RemoveContactAsync()
     {
         var result = await ApiClient.RemoveContactAsync(new UserIdDto { UserProfileId = NewUserContact.UserProfileId });
-        if (result.IsOk && IsDetailedView)
+        if (result.IsOk)
         {
             ToContactsHome();
         }

@@ -1,11 +1,9 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
-<EmbeddedEditor @ref=EmbeddedEditor
-                AllowRemove="Editing"
+<EmbeddedEditor AllowRemove="Editing"
                 Save="SaveMedicamentAsync"
                 Delete="DeleteMedicamentAsync"
-                ItemText="@(Editing ? $"Edit medicament" : "New user medicament")"
-                AfterSave="AfterSave">
+                ItemText="@(Editing ? $"Edit medicament" : "New user medicament")">
     <EditorModalBody>
         <div class="d-flex mb-2 gap-2">
             @foreach (var image in Model.ExistingImages)
@@ -29,7 +27,7 @@
                           TextField="(item) => item.Name"
                           ValueField="(item) => item.Name"
                           Mode="ListGroupMode.Selectable"
-                          MaxHeight="100px" />
+                          />
 
                 <FileEdit Changed="@AddImageAsync" Filter="@ImageFilter" Multiple />
          </Field>
@@ -69,7 +67,7 @@
                  </Field>
              </Validation>
              <Field ColumnSize="ColumnSize.Is6.OnTablet">
-                 <FieldLabel>Name</FieldLabel>
+                 <FieldLabel>Manufacturer</FieldLabel>
                  <TextEdit @bind-Text="Model.ManufacturerName" />
              </Field>
          </Fields>

@@ -100,8 +100,8 @@ public static class EntityMapExpressions
     {
         Id = userMedicament.Id,
         Name = userMedicament.Name,
-        ReleaseForm = userMedicament.Name,
-        ManufacturerName = userMedicament.Name,
+        ReleaseForm = userMedicament.ReleaseForm,
+        ManufacturerName = userMedicament.ManufacturerName,
         Description = userMedicament.Description,
         Composition = userMedicament.Composition,
         Images = withImages ? userMedicament.Files

@@ -1,28 +1,28 @@
-﻿@attribute [Route(Routes.UserDrugs)]
+﻿@attribute [Route(Routes.Schedules)]
 @using Microsoft.AspNetCore.Components.Authorization
-@inherits DrugSchedule.Client.ViewModels.UserDrugsViewModel
+@inherits DrugSchedule.Client.ViewModels.SchedulesViewModel
 
 <AuthorizeView>
     <Authorized>
         <div class="d-flex flex-column gap-4">
             @if (PageState == PageState.Details)
             {
-                <PageTitle>@Medicament!.Name | User drugs - DrugSchedule</PageTitle>
-                <div class="h4 mb-0">@Medicament!.Name</div>
+                <PageTitle>@($"Schedule: {MedicamentName} - DrugSchedule")</PageTitle>
+                <div class="h4 mb-0">@($"Schedule: {MedicamentName}")"</div>
                 <div>
-                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
+                    <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
-                <UserMedicamentExtended Medicament="Medicament" />
+                @* <ScheduleExtended Schedule="Schedule" /> *@
 
                 <Accordion>
                     <AccordionItem>
                         <AccordionHeader>
-                            <AccordionToggle>Manage item</AccordionToggle>
+                            <AccordionToggle>Manage schedule</AccordionToggle>
                         </AccordionHeader>
                         <AccordionBody>
-                            <UserMedicamentEditor ExistingMedicament="Medicament" 
+                            @* <ScheduleEditor ExistingSchedule="Schedule" 
                                                   AfterSave="AfterSave"
-                                                  AfterDelete="AfterDelete" />
+                                                  AfterDelete="AfterDelete" /> *@
                         </AccordionBody>
                     </AccordionItem>
                 </Accordion>
@@ -32,21 +32,21 @@
                 <PageTitle>New user drug - DrugSchedule</PageTitle>
                 <div class="h4 mb-0">New user drug</div>
                 <div>
-                    <CustomButton Clicked="ToDrugsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
+                    <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
                 <div>
-                    <UserMedicamentEditor ExistingMedicament="null" AfterCreate="AfterSave" />
+                    @* <ScheduleEditor ExistingMedicament="null" AfterCreate="AfterSave" /> *@
                 </div>
             }
             else if (PageState == PageState.Default)
             {
-                <PageTitle>User drugs - DrugSchedule</PageTitle>
-                <div Class="h4 mb-0">User drugs</div>
+                <PageTitle>Schedules - DrugSchedule</PageTitle>
+                <div Class="h4 mb-0">Schedules</div>
                 <div>
                     <CustomButton Clicked="CreateNew" Color="Color.Primary" Text="New" Icon="fa-plus" />
                 </div>
                 <div>
-                    <UserMedicamentList Selectable="false" Navigable />
+                    <ScheduleList Selectable="false" Navigable />
                  </div>
             }
         </div>

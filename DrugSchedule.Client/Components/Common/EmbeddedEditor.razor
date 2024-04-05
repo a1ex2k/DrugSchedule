@@ -6,16 +6,14 @@
         @EditorModalBody
     </Validations>
     <hr />
-    <div>
+    <div class="d-flex justify-content-between">
         <CustomButton Displayable="@(AllowRemove && Delete != null)"
                       Text="Remove" Color="Color.Danger" Icon="fa-trash-can"
-                      Clicked="@ConfirmDeleteAsync" Width="8rem"/>
+                      Clicked="@ConfirmDeleteAsync" Width="8rem" Class="d-block"/>
 
         <CustomButton Displayable="@(AllowSave && Save != null && _isValid)"
-                      Class="d-block ms-auto"
+                      Class="d-block"
                           Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="8rem"/>
-
     </div>
-
     <CustomAlert @ref="_alert" />
 </div>

@@ -33,12 +33,6 @@ public partial class UserMedicamentList
         Medicaments = await LoadMedicamentsAsync();
     }
 
-    private async Task MoreMedicamentsAsync()
-    {
-        var newItems = await LoadMedicamentsAsync(Medicaments.Count);
-        Medicaments.AddRange(newItems);
-    }
-
     private async Task NameSearchValueChanged(string value)
     {
         NameSearchValue = value;
@@ -56,7 +50,7 @@ public partial class UserMedicamentList
         await SearchForMedicamentsAsync();
     }
 
-    private async Task<List<UserMedicamentSimpleDto>> LoadMedicamentsAsync(int skipCount = 0)
+    private async Task<List<UserMedicamentSimpleDto>> LoadMedicamentsAsync()
     {
         var filter = new UserMedicamentFilterDto
         {
@@ -69,9 +63,6 @@ public partial class UserMedicamentList
             ReleaseFormNameFilter = string.IsNullOrWhiteSpace(ReleaseFormSearchValue)
                 ? null
                 : new StringFilterDto { StringSearchType = StringSearchDto.Contains, SubString = ReleaseFormSearchValue.Trim() },
-
-            Take = Numbers.MedicamentLoadCount,
-            Skip = skipCount
         };
 
         var result = await ApiClient.GetManyUserMedicamentsAsync(filter);

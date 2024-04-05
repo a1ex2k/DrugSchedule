@@ -1,4 +1,6 @@
-﻿using DrugSchedule.Api.Shared.Dtos;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Api.Utils;
 using Microsoft.AspNetCore.Mvc;
 using DrugSchedule.Services.Models;
@@ -82,20 +84,22 @@ public class UserDrugsController : ControllerBase
             id => Ok(new UserMedicamentIdDto {UserMedicamentId = id}),
             error => NotFound(error.ToDto()));
     }
-
+    
 
     [HttpPost]
-    public async Task<IActionResult> AddImage([FromForm] UserMedicamentIdDto userMedicamentId, [FromForm] IFormFile file, CancellationToken cancellationToken)
+    public async Task<IActionResult> AddImage([FromForm] string userMedicamentIdDtoJson, [FromForm] IFormFile file, CancellationToken cancellationToken)
     {
+        var dto = JsonSerializer.Deserialize<UserMedicamentIdDto>(userMedicamentIdDtoJson, new JsonSerializerOptions(){PropertyNameCaseInsensitive = true});
+
         var inputFile = new InputFile
         {
-            NameWithExtension = file.Name,
+            NameWithExtension = file.FileName,
             MediaType = file.ContentType,
             Stream = file.OpenReadStream()
         };
 
         var addResult =
-            await _drugLibraryService.AddImageAsync(userMedicamentId.UserMedicamentId, inputFile, cancellationToken);
+            await _drugLibraryService.AddImageAsync(dto.UserMedicamentId, inputFile, cancellationToken);
         return addResult.Match<IActionResult>(
             f => Ok(f.Adapt<DownloadableFileDto>()),
             error => NotFound(error.ToDto()),

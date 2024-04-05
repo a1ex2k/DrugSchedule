@@ -1,0 +1,22 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<Fields>
+    <Field ColumnSize="ColumnSize.Is9.OnTablet">
+        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search..." />
+    </Field>
+    <Field ColumnSize="ColumnSize.Is3.OnTablet">
+        <Check TValue="bool" Checked="@EnabledOnly" CheckedChanged="@EnabledValueChanged">Enabled only</Check>
+    </Field>
+</Fields>
+
+<Virtualize Items="@Schedules" OverscanCount="25">
+    <ItemContent>
+        <ScheduleListElement Schedule="@context"
+                             Selectable="Selectable" OnSelect="OnSelect"
+                             Navigable="Navigable"
+                             SelectButtonText="@SelectButtonText" />
+    </ItemContent>
+    <EmptyContent>
+        <p>There are no schedules to display</p>
+    </EmptyContent>
+</Virtualize>

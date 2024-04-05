@@ -46,17 +46,16 @@ public class UserDrugsViewModel : PageViewModelBase
         PageState = PageState.Details;
     }
 
-    protected void AfterSave(bool exist)
+    protected void AfterDelete(long id)
     {
-        if (exist && PageState == PageState.Editor)
-        {
-            StateHasChanged();
-        }
-        else
-        {
-            ToDrugsHome();
-        }
+        ToDrugsHome();
     }
+
+    protected void AfterSave(long id)
+    {
+        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", id.ToString());
+    }
+
 
     protected void ToDrugsHome()
     {

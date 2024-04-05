@@ -27,7 +27,7 @@ public partial class ImagePreview<TImageModel>
 
 
     private string? GetAltText() => Alt?.Invoke(ImageModel);
-    private string? GetThumbnailUrl() => ThumbnailUrl?.Invoke(ImageModel) ?? GetFullImageUrl();
+    private string? GetThumbnailUrl() => ThumbnailUrl?.Invoke(ImageModel) ?? GetFullImageUrl() ?? "img/no-photo.png";
     private string? GetFullImageUrl() => FullImageUrl?.Invoke(ImageModel);
 
 }

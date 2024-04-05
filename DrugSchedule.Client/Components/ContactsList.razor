@@ -1,8 +1,12 @@
 ﻿
-<div class="d-flex gap-3 mb-4">
-    <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..."/>
-    <Check TValue="bool" Checked="@Common" CheckedChanged="CommonChanged" Disabled="CommonOnly" />
-</div>
+<Fields>
+    <Field ColumnSize="ColumnSize.Is9.OnTablet">
+        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..."/>
+    </Field>
+    <Field ColumnSize="ColumnSize.Is9.OnTablet">
+        <Check TValue="bool" Checked="@Common" CheckedChanged="CommonChanged" Disabled="CommonOnly" />
+    </Field>
+</Fields>
 
 <Virtualize Items="@Contacts" OverscanCount="25">
     <ItemContent>

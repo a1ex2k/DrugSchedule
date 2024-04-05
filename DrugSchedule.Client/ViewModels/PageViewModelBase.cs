@@ -3,7 +3,6 @@ using DrugSchedule.Client.Networking;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Primitives;
 using Microsoft.JSInterop;
 using DrugSchedule.Client.Utils;
 
@@ -18,9 +17,11 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
 
     protected PageState PageState { get; set; } = PageState.Default;
 
+    private string _initialUri = default!;
 
     protected override async Task OnInitializedAsync()
     {
+        _initialUri = NavigationManager.Uri;
         await ProcessQueryAsync();
         NavigationManager.LocationChanged += HandleLocationChanged;
 
@@ -40,6 +41,7 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
 
     private void HandleLocationChanged(object? sender, LocationChangedEventArgs args)
     {
+        if(!NavigationManager.Uri.StartsWith(_initialUri)) return;
         Task.Run(ProcessQueryAsync);      
     }
 

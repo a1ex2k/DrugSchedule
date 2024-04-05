@@ -16,7 +16,9 @@ public partial class EmbeddedEditor
 
     [Parameter] public bool AllowRemove { get; set; } = true;
 
-    [Parameter] public EventCallback<bool> AfterSave { get; set; }
+    [Parameter] public EventCallback AfterSave { get; set; }
+
+    [Parameter] public EventCallback AfterDelete { get; set; }
 
     [Parameter] public bool AllowSave { get; set; } = true;
 

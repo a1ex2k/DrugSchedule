@@ -25,7 +25,7 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
         _fileService = fileService;
     }
 
-    public async Task<OneOf<ConfirmationId, NotFound, InvalidInput>> CreateConfirmationAsync(NewTakingСonfirmation newConfirmation, CancellationToken cancellationToken = default)
+    public async Task<OneOf<ConfirmationIds, NotFound, InvalidInput>> CreateConfirmationAsync(NewTakingСonfirmation newConfirmation, CancellationToken cancellationToken = default)
     {
         var repeat = await _repeatRepository.GetRepeatAsync(newConfirmation.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
         if (repeat == null)
@@ -52,11 +52,11 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
 
         var saved = await _confirmationRepository.CreateConfirmationAsync(confirmation, cancellationToken);
         return saved != null
-            ? new ConfirmationId(saved.Id, saved.ScheduleRepeatId)
+            ? new ConfirmationIds(saved.Id, saved.ScheduleRepeatId)
             : new NotFound(ErrorMessages.UserDoesntHaveRepeat);
     }
 
-    public async Task<OneOf<ConfirmationId, NotFound, InvalidInput>> UpdateConfirmationAsync(TakingСonfirmationUpdate update, CancellationToken cancellationToken = default)
+    public async Task<OneOf<ConfirmationIds, NotFound, InvalidInput>> UpdateConfirmationAsync(TakingСonfirmationUpdate update, CancellationToken cancellationToken = default)
     {
         var repeatExists = await _confirmationRepository.DoesConfirmationExistAsync(update.Id, update.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
         if (!repeatExists)
@@ -74,14 +74,14 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
 
         var saved = await _confirmationRepository.UpdateConfirmationAsync(confirmation, updateFlags, cancellationToken);
         return saved != null
-            ? new ConfirmationId(saved.Id, saved.ScheduleRepeatId)
+            ? new ConfirmationIds(saved.Id, saved.ScheduleRepeatId)
             : new NotFound(ErrorMessages.UserDoesntHaveConfirmation);
     }
 
-    public async Task<OneOf<True, NotFound>> RemoveConfirmationAsync(ConfirmationId confirmationId, CancellationToken cancellationToken = default)
+    public async Task<OneOf<True, NotFound>> RemoveConfirmationAsync(ConfirmationIds confirmationIds, CancellationToken cancellationToken = default)
     {
-        var exists = await _confirmationRepository.DoesConfirmationExistAsync(confirmationId.Id,
-            confirmationId.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
+        var exists = await _confirmationRepository.DoesConfirmationExistAsync(confirmationIds.ConfirmationId,
+            confirmationIds.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
 
         if (!exists)
         {
@@ -89,17 +89,17 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
         }
 
         var removeResult =
-            await _confirmationRepository.RemoveConfirmationAsync(confirmationId.Id, cancellationToken);
+            await _confirmationRepository.RemoveConfirmationAsync(confirmationIds.ConfirmationId, cancellationToken);
         return removeResult == RemoveOperationResult.Removed
             ? new True()
             : new NotFound(ErrorMessages.UserDoesntHaveConfirmation);
     }
 
-    public async Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddConfirmationImageAsync(ConfirmationId confirmationId, InputFile inputFile,
+    public async Task<OneOf<DownloadableFile, NotFound, InvalidInput>> AddConfirmationImageAsync(ConfirmationIds confirmationIds, InputFile inputFile,
         CancellationToken cancellationToken = default)
     {
-        var exists = await _confirmationRepository.DoesConfirmationExistAsync(confirmationId.Id,
-            confirmationId.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
+        var exists = await _confirmationRepository.DoesConfirmationExistAsync(confirmationIds.ConfirmationId,
+            confirmationIds.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
 
         if (!exists)
         {
@@ -109,22 +109,22 @@ public class ScheduleConfirmationManipulatingService : IScheduleConfirmationMani
         var addResult = await _fileService.CreateAsync(inputFile, FileCategory.DrugConfirmation.GetAwaitableParams(), FileCategory.DrugConfirmation, cancellationToken);
         if (addResult.IsT1) return addResult.AsT1;
 
-        _ = await _confirmationRepository.AddConfirmationImageAsync(confirmationId.Id, addResult.AsT0.Guid, cancellationToken);
+        _ = await _confirmationRepository.AddConfirmationImageAsync(confirmationIds.ConfirmationId, addResult.AsT0.Guid, cancellationToken);
         return _downloadableFileConverter.ToFileModel(addResult.AsT0, true)!;
     }
 
-    public async Task<OneOf<True, NotFound>> RemoveConfirmationImageAsync(ConfirmationId confirmationId, Guid fileGuid,
+    public async Task<OneOf<True, NotFound>> RemoveConfirmationImageAsync(ConfirmationIds confirmationIds, Guid fileGuid,
         CancellationToken cancellationToken = default)
     {
-        var exists = await _confirmationRepository.DoesConfirmationExistAsync(confirmationId.Id,
-            confirmationId.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
+        var exists = await _confirmationRepository.DoesConfirmationExistAsync(confirmationIds.ConfirmationId,
+            confirmationIds.RepeatId, _currentUserIdentifier.UserId, cancellationToken);
 
         if (!exists)
         {
             return new NotFound(ErrorMessages.UserDoesntHaveConfirmation);
         }
 
-        _ = await _confirmationRepository.RemoveConfirmationImageAsync(confirmationId.Id, fileGuid, cancellationToken);
+        _ = await _confirmationRepository.RemoveConfirmationImageAsync(confirmationIds.ConfirmationId, fileGuid, cancellationToken);
         return new True();
     }
 
