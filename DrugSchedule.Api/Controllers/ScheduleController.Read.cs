@@ -62,4 +62,23 @@ public partial class ScheduleController : ControllerBase
             notFound => NotFound(notFound.ToDto())
         );
     }
+
+
+    [HttpPost]
+    public async Task<IActionResult> GetTimetable([FromBody] TimetableFilterDto dto, CancellationToken cancellationToken = default)
+    {
+        if(dto.ScheduleId == null)
+        {
+            var result = await _scheduleService.GetTimetableAsync(dto.MinDate, dto.MaxDate, cancellationToken);
+            return result.Match<IActionResult>(
+                timetable => Ok(timetable.Adapt<TimetableDto>()),
+                notFound => NotFound(notFound.ToDto()));
+        }
+
+        var resultOfSchedule = await _scheduleService.GetScheduleTimetableAsync(dto.ScheduleId.Value, dto.MinDate, dto.MaxDate, cancellationToken);
+        return resultOfSchedule.Match<IActionResult>(
+            timetable => Ok(timetable.Adapt<TimetableDto>()),
+            notFound => NotFound(notFound.ToDto()),
+            bad => BadRequest(bad.ToDto()));
+    }
 }

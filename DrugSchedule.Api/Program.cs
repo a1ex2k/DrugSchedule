@@ -18,18 +18,17 @@ using TokenService = DrugSchedule.Api.Jwt.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("appsettings.local.json", true);
-builder.WebHost.UseUrls(builder.Configuration.GetValue<string>("Url")!);
 
 var useSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");
 var dbContextPoolSize = builder.Configuration.GetValue<int>("DbContextPoolSize");
 
-builder.Services.AddDateOnlyTimeOnlyStringConverters();
 #region Services
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSingleton<IFileAccessService, FileAccessService>();
 builder.Services.AddScoped<CurrentUserMiddleware>();
+builder.Services.AddDateOnlyTimeOnlyStringConverters();
 
 builder.Services.AddScoped<IFileInfoRepository, FileInfoRepository>();
 builder.Services.AddScoped<IIdentityRepository, IdentityRepository>();

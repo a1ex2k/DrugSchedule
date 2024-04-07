@@ -12,20 +12,7 @@
                 <div>
                     <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
-                @* <ScheduleExtended Schedule="Schedule" /> *@
-
-                <Accordion>
-                    <AccordionItem>
-                        <AccordionHeader>
-                            <AccordionToggle>Manage schedule</AccordionToggle>
-                        </AccordionHeader>
-                        <AccordionBody>
-                            @* <ScheduleEditor ExistingSchedule="Schedule" 
-                                                  AfterSave="AfterSave"
-                                                  AfterDelete="AfterDelete" /> *@
-                        </AccordionBody>
-                    </AccordionItem>
-                </Accordion>
+                <ScheduleExtended Schedule="Schedule" UpcomingTimetableEntries="UpcomingTimetable" />
             }
             else if (PageState == PageState.New)
             {
@@ -48,6 +35,17 @@
                 <div>
                     <ScheduleList Selectable="false" Navigable />
                  </div>
+            }
+            else if (PageState == PageState.Editor)
+            {
+                <PageTitle>@($"Edit schedule: {MedicamentName} - DrugSchedule")</PageTitle>
+                <div class="h4 mb-0">@($"Edit schedule: {MedicamentName}")"</div>
+                <div>
+                    <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
+                </div>
+                <div>
+                    
+                </div>
             }
         </div>
 

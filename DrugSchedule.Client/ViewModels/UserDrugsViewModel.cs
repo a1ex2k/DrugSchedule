@@ -53,7 +53,7 @@ public class UserDrugsViewModel : PageViewModelBase
 
     protected void AfterSave(long id)
     {
-        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", id.ToString());
+        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", id);
     }
 
 

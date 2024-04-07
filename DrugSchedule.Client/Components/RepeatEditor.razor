@@ -1,0 +1,52 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<EmbeddedEditor AllowRemove="@(!Repeat.IsNew)"
+                Save="Save"
+                Delete="Delete"
+                ItemText="Repeat">
+    <EditorModalBody>
+        <Field>
+            <FieldLabel>Rule</FieldLabel>
+            <RichEditor @bind-Content="Repeat.TakingRule" />
+        </Field>
+
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is6">
+                <FieldLabel>Time of day</FieldLabel>
+                <SelectList TItem="EnumElement<TimeOfDayDto>"
+                            TValue="TimeOfDayDto"
+                            Data="@Lists.TimeOfDay"
+                            TextField="@((item)=>item.Name)"
+                            ValueField="@((item)=>item.Value)"
+                            @bind-SelectedValue="@Repeat.TimeOfDay" />
+            </Field>
+            @if (Repeat.TimeOfDay == TimeOfDayDto.None)
+            {
+                <Field ColumnSize="ColumnSize.Is6">
+                    <FieldLabel>Time of day</FieldLabel>
+                    <SelectList TItem="EnumElement<TimeOfDayDto>"
+                                TValue="TimeOfDayDto"
+                                Data="@Lists.TimeOfDay"
+                                TextField="@((item)=>item.Name)"
+                                ValueField="@((item)=>item.Value)"
+                                @bind-SelectedValue="@Repeat.TimeOfDay" />
+                </Field>
+            }
+        </Fields>
+
+        <Validation Validator="DayOfWeekValidate">
+            <Field>
+                <FieldLabel>Days of week</FieldLabel>
+                <div class="flex gap-3">
+                    @foreach (var day in Days)
+                    {
+                        <Check TValue="bool" @bind-Checked="day.Checked">@day.Name</Check>
+                    }
+                </div>
+                <ValidationError />
+            </Field>
+        </Validation>
+
+
+    </EditorModalBody>
+</EmbeddedEditor>

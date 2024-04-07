@@ -1,9 +1,14 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using DrugSchedule.Client.Services;
+using Microsoft.AspNetCore.Components;
 
 namespace DrugSchedule.Client.Components.Common;
 
 public partial class ImagePreview<TImageModel>
 {
+    private const string NoImageUrl = "img/no-photo.png";
+
+    [Inject] public IUrlService UrlService { get; set; } = default!;
+
     [Parameter, EditorRequired] public TImageModel? ImageModel { get; set; }
 
     [Parameter] public Func<TImageModel?, string?>? ThumbnailUrl { get; set; }
@@ -18,16 +23,12 @@ public partial class ImagePreview<TImageModel>
 
     [Parameter] public Func<TImageModel?, Task>? OnDelete { get; set; } = default;
 
-    private bool ImageIsSet { get; set; }
-
-    protected override void OnParametersSet()
-    {
-        ImageIsSet = !string.IsNullOrWhiteSpace(GetThumbnailUrl());
-    }
-
 
     private string? GetAltText() => Alt?.Invoke(ImageModel);
-    private string? GetThumbnailUrl() => ThumbnailUrl?.Invoke(ImageModel) ?? GetFullImageUrl() ?? "img/no-photo.png";
-    private string? GetFullImageUrl() => FullImageUrl?.Invoke(ImageModel);
-
+    private string? GetThumbnailUrl()
+    {
+        var url = ThumbnailUrl?.Invoke(ImageModel) ?? GetFullImageUrl();
+        return string.IsNullOrWhiteSpace(url) ? NoImageUrl : UrlService.ToApiServerAbsoluteUrl(url);
+    }
+    private string? GetFullImageUrl() => UrlService.ToApiServerAbsoluteUrl(FullImageUrl?.Invoke(ImageModel));
 }

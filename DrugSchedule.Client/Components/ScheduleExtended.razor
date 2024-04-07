@@ -1,0 +1,72 @@
+﻿<div class="ms-auto text-secondary">
+    <span>@(Schedule.Enabled ? "Enabled" : "Disabled")</span>
+    <span>|</span>
+    <span class="ms-2">@Schedule.CreatedAt.ToString("dd.MM.yy HH:mm:ss")</span>
+</div>
+
+<div>
+    <div class="h5 text-primary">Information</div>
+    <div>@((MarkupString)(Schedule.Information ?? "No info"))</div>
+</div>
+
+@if (Schedule.ContactOwner != null)
+{
+    <div>
+        <div class="h5 text-primary">Contact owner</div>
+        <ContactsListElement Contact="Schedule.ContactOwner" Selectable=false Navigable />
+     </div>
+}
+
+@if (Schedule.UserMedicament != null)
+{
+    <div>
+        <div class="h5 text-primary">User medicament</div>
+        <UserMedicamentListElement Medicament="Schedule.UserMedicament" Selectable=false Navigable />
+     </div>
+}
+
+@if (Schedule.GlobalMedicament != null)
+{
+    <div>
+        <div class="h5 text-primary">Global medicament</div>
+        <GlobalMedicamentListElement Medicament="Schedule.GlobalMedicament" Selectable=false Navigable />
+     </div>
+}
+
+<div>
+    <div class="h5 text-primary">Repeats</div>
+    <Virtualize Items="@Schedule.ScheduleRepeats" OverscanCount="25">
+        <ItemContent>
+            <RepeatView Repeat="@context" />
+        </ItemContent>
+        <EmptyContent>
+            <p>There are no repeats to display</p>
+        </EmptyContent>
+    </Virtualize>
+</div>
+
+<div>
+    <div class="h5 text-primary">Upcoming timetable</div>
+    <Virtualize Items="@Schedule.ScheduleShares" OverscanCount="25">
+        <ItemContent>
+            <div>@context.Comment</div>
+            <ContactsListElement Contact="@context.UserContact" Selectable=false Navigable />
+         </ItemContent>
+         <EmptyContent>
+             No upcoming taking events
+         </EmptyContent>
+     </Virtualize>
+ </div>
+
+ <div>
+     <div class="h5 text-primary">Shared with</div>
+     <Virtualize Items="@Schedule.ScheduleShares" OverscanCount="25">
+         <ItemContent>
+             <div>@context.Comment</div>
+            <ContactsListElement Contact="@context.UserContact" Selectable=false Navigable />
+         </ItemContent>
+         <EmptyContent>
+             You don't share this schedule with any of your contacts
+         </EmptyContent>
+     </Virtualize>
+ </div>

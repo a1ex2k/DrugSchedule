@@ -2,7 +2,9 @@
 using DrugSchedule.Client.Components;
 using DrugSchedule.Client.Components.Common;
 using DrugSchedule.Client.Constants;
+using DrugSchedule.Client.Models;
 using DrugSchedule.Client.Networking;
+using DrugSchedule.Client.Pages;
 using DrugSchedule.Client.Utils;
 using Microsoft.AspNetCore.Components;
 
@@ -14,7 +16,7 @@ public class ContactsViewModel : PageViewModelBase
     private long ContactUserIdParameter { get; set; }
 
     protected UserContactDto? Contact { get; private set; }
-    protected NewUserContactDto NewUserContact { get; private set; } = new(){ UserProfileId = 0, СontactName = null };
+    protected ContactEditorModel ContactModel { get; private set; } = new();
 
     protected EditorModal EditorModal { get; set; } = default!;
     protected ContactsList ContactsList { get; set; } = default!;
@@ -24,8 +26,6 @@ public class ContactsViewModel : PageViewModelBase
     {
         if (ContactUserIdParameter == default)
         {
-            NewUserContact.UserProfileId = 0;
-            NewUserContact.СontactName = null;
             PageState = PageState.Default;
             return;
         }
@@ -39,24 +39,27 @@ public class ContactsViewModel : PageViewModelBase
         }
 
         Contact = contactResult.ResponseDto;
-        NewUserContact = new NewUserContactDto
+        ContactModel = new ContactEditorModel
         {
-            UserProfileId = Contact.UserProfileId,
-            СontactName = Contact.Username
+            Id = Contact.UserProfileId,
+            ContactName = Contact.СontactName,
         };
         PageState = PageState.Details;
     }
 
     protected async Task<EditorModal.ModalResult> UpdateContactAsync()
     {
-        var result = await ApiClient.AddOrUpdateContactAsync(NewUserContact);
+        var dto = new NewUserContactDto { UserProfileId = ContactModel.Id, СontactName = ContactModel.ContactName?.Trim()! };
+        var result = await ApiClient.AddOrUpdateContactAsync(dto);
         if (result.IsOk)
         {
-            Contact.СontactName = NewUserContact.СontactName;
+            Contact.СontactName = ContactModel.ContactName!;
             if (PageState == PageState.Default)
             {
                 await ContactsList.LoadContactsAsync();
             }
+
+            StateHasChanged();
         }
 
         var text = result.IsOk ? ["Contact saved"] : result.Messages;
@@ -65,7 +68,7 @@ public class ContactsViewModel : PageViewModelBase
 
     protected async Task<EditorModal.ModalResult> RemoveContactAsync()
     {
-        var result = await ApiClient.RemoveContactAsync(new UserIdDto { UserProfileId = NewUserContact.UserProfileId });
+        var result = await ApiClient.RemoveContactAsync(new UserIdDto { UserProfileId = ContactModel.Id });
         if (result.IsOk)
         {
             ToContactsHome();
@@ -77,24 +80,20 @@ public class ContactsViewModel : PageViewModelBase
 
     protected async Task OnUserSelectAsync(PublicUserDto user)
     {
-        NewUserContact = new NewUserContactDto
+        ContactModel = new ContactEditorModel
         {
-            UserProfileId = user.Id,
-            СontactName = null
+            Id = user.Id,
+            RealName = user.RealName,
+            UserName = user.Username,
+            ContactName = user.RealName ?? user.Username,
         };
 
-        await EditorModal.Show();
+        await ShowEditorAsync();
     }
 
     protected async Task OnContactSelectAsync(UserContactSimpleDto contact)
     {
-        NewUserContact = new NewUserContactDto
-        {
-            UserProfileId = contact.UserProfileId,
-            СontactName = contact.СontactName
-        };
-
-        NavigationManager.NavigateWithParameter(Routes.Contacts, "id", contact.UserProfileId.ToString());
+        NavigationManager.NavigateWithParameter(Routes.Contacts, "id", contact.UserProfileId);
     }
 
     protected async Task ShowEditorAsync()

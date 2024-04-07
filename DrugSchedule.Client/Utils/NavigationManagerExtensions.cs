@@ -2,14 +2,16 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Web;
+using System.Numerics;
 
 namespace DrugSchedule.Client.Utils;
 
 public static class NavigationManagerExtensions
 {
-    public static void NavigateWithParameter(this NavigationManager navManager, string page, string parameterName, string parameterValue)
+    public static void NavigateWithParameter<T>(this NavigationManager navManager, string page, string parameterName, T parameterValue)
+        where T : notnull
     {
-        var url = $"{page}?{parameterName}={HttpUtility.UrlEncode(parameterValue)}";
+        var url = $"{page}?{parameterName}={parameterValue}";
         navManager.NavigateTo(url, false, false);
     }
 
@@ -17,19 +19,5 @@ public static class NavigationManagerExtensions
     {
         var url = $"{page}?{parameterName}=true";
         navManager.NavigateTo(url, false, false);
-    }
-
-
-    public static void NavigateWithParameter(this NavigationManager navManager, string page, params (string Name, string Value)[] parameters)
-    {
-        var sb = new StringBuilder(page);
-        sb.Append('?');
-        foreach (var parameter in parameters)
-        {
-            sb.Append($"{parameter.Name}={parameter.Value}&");
-        }
-
-        sb.Remove(sb.Length - 1, 1);
-        navManager.NavigateTo(sb.ToString(), false, false);
     }
 }

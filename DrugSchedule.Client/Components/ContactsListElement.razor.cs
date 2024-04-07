@@ -19,7 +19,7 @@ public partial class ContactsListElement
     private void Navigate()
     {
         if (!Navigable) return;
-        NavigationManager.NavigateWithParameter(Routes.Contacts, "id", Contact.UserProfileId.ToString());
+        NavigationManager.NavigateWithParameter(Routes.Contacts, "id", Contact.UserProfileId);
     }
 
     private async Task SelectAsync()

@@ -8,6 +8,7 @@ namespace DrugSchedule.Api.Shared.Dtos;
 [JsonConverter(typeof(RepeatDayOfWeekDtoConverter))]
 public enum RepeatDayOfWeekDto : byte
 {
+    None = 0,
     Sunday = 1 << 0,
     Monday = 1 << 1,
     Tuesday = 1 << 2,

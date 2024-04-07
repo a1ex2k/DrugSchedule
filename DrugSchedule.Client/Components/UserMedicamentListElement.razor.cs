@@ -27,6 +27,6 @@ public partial class UserMedicamentListElement
     private async Task Navigate()
     {
         if (!Navigable) return;
-        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", Medicament.Id.ToString());
+        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", Medicament.Id);
     }
 }

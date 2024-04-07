@@ -9,7 +9,7 @@
             {
                 <PageTitle>@Contact!.СontactName | Contacts - DrugSchedule</PageTitle>
                 <div>
-                    <CustomButton Clicked="ToContactsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left"/>
+                    <CustomButton Clicked="ToContactsHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
                 <ContactExtended Contact="Contact" />
                 <div>
@@ -22,40 +22,39 @@
                 <div Class="h4">Contacts</div>
                 <div>
                     <h4 class="h5 text-primary">Find new contacts</h4>
-                    <UsersList Selectable="true" OnSelect="OnUserSelectAsync" SelectButtonText="Add"/> 
+                    <UsersList Selectable="true" OnSelect="OnUserSelectAsync" SelectButtonText="Add" />
                 </div>
+                <hr />
                 <div>
                     <h4 class="h5 text-primary">Manage contacts</h4>
                     <ContactsList @ref=ContactsList Selectable="false" Navigable="true" OnSelect="OnContactSelectAsync" />
                 </div>
             }
         </div>
-        
-        <EditorModal @ref="EditorModal"
-            ItemText="@Contact?.Username"
-            AllowSave
-            AllowRemove="@(PageState == PageState.Details)"
-            Save="UpdateContactAsync"
-            Delete="RemoveContactAsync">
-            <EditorModalBody>
-                <Validation Validator="ValidationRule.IsNotEmpty">
-                    <Field>
-                        <FieldLabel>Contact name (seen only by you)</FieldLabel>
-                        <FieldBody>
-                            <TextEdit Placeholder="Name" @bind-Text="NewUserContact.СontactName" >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </FieldBody>
-                    </Field>
-                </Validation>
-            </EditorModalBody>
-        </EditorModal>
 
-    </Authorized>
-    <NotAuthorized>
-        @{
+        <EditorModal @ref="EditorModal"
+                     ItemText="@(PageState == PageState.Details ? $"Edit contact: {ContactModel.ContactName}" : $"New contact: {ContactModel.UserName}")"
+                          AllowSave
+                      AllowRemove="@(PageState == PageState.Details)"
+                      Save="UpdateContactAsync"
+                      Delete="RemoveContactAsync">
+             <EditorModalBody>
+                 <Validation Validator="ValidationRule.IsNotEmpty">
+                     <Field>
+                         <FieldLabel>Contact name (seen only by you)</FieldLabel>
+                         <TextEdit Placeholder="Name" @bind-Text="ContactModel.ContactName">
+                             <Feedback>
+                                 <ValidationError />
+                             </Feedback>
+                         </TextEdit>
+                     </Field>
+                 </Validation>
+             </EditorModalBody>
+         </EditorModal>
+
+     </Authorized>
+     <NotAuthorized>
+         @{
             NavigationManager.NavigateTo(Routes.Auth);
         }
     </NotAuthorized>

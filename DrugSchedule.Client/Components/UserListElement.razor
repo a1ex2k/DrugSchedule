@@ -11,14 +11,14 @@
         <div class="flex-grow-1">
             @if (PublicUser.RealName != null)
             {
-                <span>@PublicUser.RealName</span>
+                <span Class="me-2">@PublicUser.RealName</span>
             }
             <span>@@@PublicUser.Username</span>
         </div>
         
         @if (Selectable)
         {
-            <CustomButton Text="@SelectButtonText" Class="d-block" Outline Icon="fa-check" Clicked="SelectAsync"/>
+            <CustomButton Text="@SelectButtonText" Class="d-block" Outline Icon="fa-check" Clicked="SelectAsync" />
         }
     </div>
 </div>

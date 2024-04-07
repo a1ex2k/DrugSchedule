@@ -16,12 +16,14 @@ public class SchedulesViewModel : PageViewModelBase
 
 
     protected ScheduleExtendedDto? Schedule { get; private set; }
+    protected List<TimetableEntryDto>? UpcomingTimetable { get; private set; }
 
     protected string? MedicamentName => Schedule?.UserMedicament?.Name ?? Schedule?.GlobalMedicament?.Name;
  
 
     protected override async Task LoadAsync()
     {
+        UpcomingTimetable = null;
         if (NewScheduleParameter)
         {
             Schedule = null;
@@ -45,6 +47,15 @@ public class SchedulesViewModel : PageViewModelBase
         }
 
         Schedule = result.ResponseDto;
+
+        var timetableFilter = new TimetableFilterDto
+        {
+            ScheduleId = Schedule.Id,
+            MinDate = DateOnly.FromDateTime(DateTime.Now),
+            MaxDate = DateOnly.FromDateTime(DateTime.Now.AddDays(5))
+        };
+        var timetableResult = await ApiClient.GetTimetableAsync(timetableFilter);
+        UpcomingTimetable = timetableResult.IsOk ? timetableResult.ResponseDto.TimetableEntries : new();
         PageState = PageState.Details;
     }
 
@@ -55,7 +66,7 @@ public class SchedulesViewModel : PageViewModelBase
 
     protected void AfterSave(long id)
     {
-        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", id.ToString());
+        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", id);
     }
 
     protected void ToSchedulesHome()
@@ -66,5 +77,11 @@ public class SchedulesViewModel : PageViewModelBase
     protected void CreateNew()
     {
         NavigationManager.NavigateWithBoolParameter(Routes.Schedules, "new");
+    }
+
+    protected void Edit()
+    {
+        PageState = PageState.Editor;
+        StateHasChanged();
     }
 }

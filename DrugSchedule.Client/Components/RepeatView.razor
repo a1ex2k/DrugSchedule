@@ -1,0 +1,29 @@
+﻿
+<div class="card p-2">
+    <h5>@Time</h5>
+    <div class="mb-2">@((MarkupString)Repeat.TakingRule)</div>
+    <div class="text-secondary mb-2">
+        <b>Period:</b> <span>@PeriodStart</span>
+        @if (PeriodEnd != null)
+        {
+            <span>-</span>
+            <span>@PeriodEnd</span>
+        }
+    </div>
+
+    <div class="flex gap-2 mb-2">
+        @foreach(var day in Days)
+        {
+            <div class="@GetClass(day)">@day.Name</div>
+        }
+    </div>
+
+    @if(UpcomingTimetable.Count > 0)
+    {
+        <div class="text-primary fw-bold mb-1">Some nearest taking events:</div>
+            @foreach(var entry in UpcomingTimetable)
+            {
+                <div class="ms-2">@entry.Date.ToString()</div>
+            }
+    }
+</div>

@@ -6,6 +6,7 @@ using Blazorise.RichTextEdit;
 using DrugSchedule.Client;
 using DrugSchedule.Client.Auth;
 using DrugSchedule.Client.Networking;
+using DrugSchedule.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -18,7 +19,7 @@ builder.Configuration.AddJsonFile("appsettings.json");
 builder.Services
     .AddBlazorise(options =>
     {
-        options.DebounceInterval = 500;
+        options.DebounceInterval = 400;
     })
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
@@ -31,7 +32,7 @@ builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<CustomAuthStateProvider>();
 builder.Services.AddScoped<AuthenticationStateProvider>(x => x.GetRequiredService<CustomAuthStateProvider>());
 builder.Services.AddScoped<IApiClient, ApiClient>();
-
+builder.Services.AddScoped<IUrlService, UrlService>();
 
 
 var apiBaseUri = builder.Configuration.GetValue<string>("ApiBaseUri");

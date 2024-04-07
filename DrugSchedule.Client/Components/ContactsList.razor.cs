@@ -57,7 +57,7 @@ public partial class ContactsList
 
     private void ApplyLocalFilter()
     {
-        if (string.IsNullOrWhiteSpace(SearchValue))
+        if (string.IsNullOrWhiteSpace(SearchValue) && !Common)
         {
             Contacts = _contactListInternal ?? new();
             return;

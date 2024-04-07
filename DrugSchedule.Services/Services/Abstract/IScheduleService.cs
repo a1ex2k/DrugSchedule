@@ -1,5 +1,4 @@
 ﻿using DrugSchedule.Services.Models;
-using DrugSchedule.Services.Models.Schedule;
 using DrugSchedule.StorageContract.Data;
 
 namespace DrugSchedule.Services.Services;
@@ -17,4 +16,8 @@ public interface IScheduleService
     Task<ScheduleExtendedCollection> GetSchedulesExtendedAsync(TakingScheduleFilter filter, CancellationToken cancellationToken = default);
     
     Task<OneOf<TakingСonfirmationCollection, NotFound>> GetTakingConfirmationsAsync(TakingConfirmationFilter filter, CancellationToken cancellationToken = default);
+
+    Task<OneOf<Timetable, NotFound, InvalidInput>> GetScheduleTimetableAsync(long scheduleId, DateOnly minDate, DateOnly maxDate, CancellationToken cancellationToken = default);
+
+    Task<OneOf<Timetable, InvalidInput>> GetTimetableAsync(DateOnly minDate, DateOnly maxDate, CancellationToken cancellationToken = default);
 }

@@ -108,6 +108,11 @@ public static class DrugScheduleControllerClient
 
     public static async Task<ApiCallResult> RemoveConfirmationImageAsync(this IApiClient client, ConfirmationImageRemoveDto body, CancellationToken cancellationToken = default)
     {
-        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveConfirmation, cancellationToken);
+        return await client.PostAsync(body, EndpointsPaths.Schedule_RemoveConfirmationImage, cancellationToken);
+    }  
+    
+    public static async Task<ApiCallResult<TimetableDto>> GetTimetableAsync(this IApiClient client, TimetableFilterDto body, CancellationToken cancellationToken = default)
+    {
+        return await client.PostAsync<TimetableFilterDto, TimetableDto>(body, EndpointsPaths.Schedule_GetTimetable, cancellationToken);
     }
 }
