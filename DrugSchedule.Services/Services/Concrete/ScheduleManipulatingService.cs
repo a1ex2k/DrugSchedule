@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using DrugSchedule.Services.Models;
 using DrugSchedule.Services.Services.Abstractions;
 using DrugSchedule.Services.Utils;
@@ -55,6 +56,23 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         };
 
         var saved = await _scheduleRepository.CreateTakingScheduleAsync(schedule, cancellationToken);
+        if (newSchedule.Shares != null)
+        {
+            foreach (var share in newSchedule.Shares)
+            {
+                var isCommon = await _contactRepository.IsContactCommon(_currentUserIdentifier.UserId, share.CommonContactProfileId);
+                if (isCommon == true)
+                {
+                    await _shareRepository.AddOrUpdateShareAsync(new ScheduleSharePlain
+                    {
+                        ScheduleId = saved.Id,
+                        ShareUserProfileId = share.CommonContactProfileId,
+                        Comment = share.Comment
+                    }, cancellationToken);
+                }
+            }
+        }
+
         return (ScheduleId)saved!.Id;
     }
 

@@ -23,7 +23,9 @@
         <div class="text-primary fw-bold mb-1">Some nearest taking events:</div>
             @foreach(var entry in UpcomingTimetable)
             {
-                <div class="ms-2">@entry.Date.ToString()</div>
+                <div class="ms-2">
+                    <TimetableElement TimetableEntry="entry" NavigableToConfirmation NavigableToSchedule="false" />
+                </div>
             }
     }
 </div>

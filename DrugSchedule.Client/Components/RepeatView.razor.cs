@@ -12,19 +12,13 @@ public partial class RepeatView
 
     [Parameter, EditorRequired] public List<TimetableEntryDto> UpcomingTimetable { get; set; } = default!;
 
-    private readonly CultureInfo _cultureInfo = new CultureInfo("en-US");
-
-    private const string DateFormat = "ddd, MMM d, yyyy";
-    private const string TimeFormat = "HH:mm";
-
-
     protected override void OnParametersSet()
     {
         Days = Repeat.RepeatDayOfWeek.ToArray();
-        PeriodStart = Repeat.BeginDate.ToString(DateFormat, _cultureInfo);
-        PeriodEnd = Repeat.EndDate?.ToString(DateFormat, _cultureInfo);
+        PeriodStart = Repeat.BeginDate.ToShortString();
+        PeriodEnd = Repeat.EndDate?.ToShortString();
         Time = Repeat.TimeOfDay == TimeOfDayDto.None 
-            ? Repeat.Time!.Value.ToString(TimeFormat)
+            ? Repeat.Time!.Value.ToShortString()
             : Repeat.TimeOfDay.ToHumanReadableString();
 
         base.OnParametersSet();

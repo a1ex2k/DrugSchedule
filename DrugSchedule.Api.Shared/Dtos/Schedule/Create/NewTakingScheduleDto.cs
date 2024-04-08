@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace DrugSchedule.Api.Shared.Dtos;
 
 public class NewScheduleDto
@@ -8,5 +10,7 @@ public class NewScheduleDto
 
     public string? Information { get; set; }
 
-    public required bool Enabled { get; set; }
+    public bool Enabled { get; set; }
+
+    public List<NewScheduleSharePartDto>? Shares { get; set; }
 }

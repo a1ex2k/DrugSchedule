@@ -1,0 +1,29 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<div class="animate d-flex">
+    <div class="me-2">
+        <span>@Time</span>
+        <span>@TimetableEntry.Date.ToLongString()</span>
+    </div>
+
+    @if (TimetableEntry.ConfirmationId != null)
+    {
+        <div class="text-secondary me-2">
+            <i class="fa-solid fa-check-double"></i>
+            @if (NavigableToConfirmation)
+            {
+                <Link Clicked="NavigateToConfirmation">Confirmed</Link>
+            }
+            else
+            {
+                <span>Confirmed</span>
+            }
+        </div>
+    }
+    @if (NavigableToSchedule)
+    {
+        <div class="text-secondary me-2">
+                <Link Clicked="NavigateToSchedule">Schedule</Link>
+        </div>
+    }
+</div>

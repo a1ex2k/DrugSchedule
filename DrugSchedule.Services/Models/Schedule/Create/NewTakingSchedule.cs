@@ -1,4 +1,6 @@
-﻿namespace DrugSchedule.Services.Models;
+﻿using DrugSchedule.Services.Models;
+
+namespace DrugSchedule.Services.Models;
 
 public class NewSchedule
 {
@@ -9,4 +11,7 @@ public class NewSchedule
     public string? Information { get; set; }
 
     public required bool Enabled { get; set; }
+
+    public List<NewScheduleSharePart>? Shares { get; set; }
+
 }

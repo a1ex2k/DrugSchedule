@@ -1,4 +1,5 @@
-﻿using DrugSchedule.Api.Shared.Dtos;
+﻿using Blazorise;
+using DrugSchedule.Api.Shared.Dtos;
 
 namespace DrugSchedule.Client.Models;
 

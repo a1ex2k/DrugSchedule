@@ -36,4 +36,16 @@ public partial class RepeatEditor
 
         args.Status = ValidationStatus.Success;
     }
+
+    public void TimeValidate(ValidatorEventArgs args)
+    {
+        if (Repeat.TimeOfDay == TimeOfDayDto.None)
+        {
+            args.Status = ValidationStatus.Error;
+            args.ErrorText = "Specify time";
+            return;
+        }
+
+        args.Status = ValidationStatus.None;
+    }
 }

@@ -52,7 +52,7 @@ public class SchedulesViewModel : PageViewModelBase
         {
             ScheduleId = Schedule.Id,
             MinDate = DateOnly.FromDateTime(DateTime.Now),
-            MaxDate = DateOnly.FromDateTime(DateTime.Now.AddDays(5))
+            MaxDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10))
         };
         var timetableResult = await ApiClient.GetTimetableAsync(timetableFilter);
         UpcomingTimetable = timetableResult.IsOk ? timetableResult.ResponseDto.TimetableEntries : new();

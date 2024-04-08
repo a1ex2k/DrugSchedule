@@ -1,7 +1,7 @@
 ﻿<div class="ms-auto text-secondary">
     <span>@(Schedule.Enabled ? "Enabled" : "Disabled")</span>
     <span>|</span>
-    <span class="ms-2">@Schedule.CreatedAt.ToString("dd.MM.yy HH:mm:ss")</span>
+    <span class="ms-2">@Schedule.CreatedAt.ToShortString()</span>
 </div>
 
 <div>
@@ -37,7 +37,7 @@
     <div class="h5 text-primary">Repeats</div>
     <Virtualize Items="@Schedule.ScheduleRepeats" OverscanCount="25">
         <ItemContent>
-            <RepeatView Repeat="@context" />
+            <RepeatView Repeat="@context" UpcomingTimetable="@GetForRepeat(@context)"/>
         </ItemContent>
         <EmptyContent>
             <p>There are no repeats to display</p>
