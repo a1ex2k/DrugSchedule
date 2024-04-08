@@ -50,6 +50,11 @@ public partial class UserMedicamentEditor
         await base.OnParametersSetAsync();
     }
 
+    private void RemoveMedicament()
+    {
+        Model.BasicMedicament = null;
+    }
+
     private async Task<bool> DeleteImageAsync(DownloadableFileDto image, long userMedicamentId)
     {
         var result = await ApiClient.RemoveUserMedicamentImageAsync(new UserMedicamentImageRemoveDto

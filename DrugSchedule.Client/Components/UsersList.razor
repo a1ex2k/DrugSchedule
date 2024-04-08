@@ -1,16 +1,19 @@
 ﻿
 <div class="mb-4">
     <Field>
-        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by username..."/>
+        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by username..." />
         <FieldHelp>Minimum 3 characters</FieldHelp>
     </Field>
 </div>
 
-<Virtualize Items="@Users" OverscanCount="10">
-    <ItemContent>
-        <UserListElement PublicUser="@context" SelectButtonText="@SelectButtonText" Selectable="@Selectable" OnSelect="OnSelect"/>
-    </ItemContent>
-    <EmptyContent>
-        <p>There are no users to display</p>
-    </EmptyContent>
-</Virtualize>
+<div class="list">
+
+    <Virtualize Items="@Users" OverscanCount="10">
+        <ItemContent>
+            <UserListElement PublicUser="@context" SelectButtonText="@SelectButtonText" Selectable="@Selectable" OnSelect="OnSelect" />
+        </ItemContent>
+        <EmptyContent>
+            <p>There are no users to display</p>
+        </EmptyContent>
+    </Virtualize>
+</div>

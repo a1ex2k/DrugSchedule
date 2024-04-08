@@ -9,14 +9,17 @@
     </Field>
 </Fields>
 
-<Virtualize Items="@Schedules" OverscanCount="25">
-    <ItemContent>
-        <ScheduleListElement Schedule="@context"
-                             Selectable="Selectable" OnSelect="OnSelect"
-                             Navigable="Navigable"
-                             SelectButtonText="@SelectButtonText" />
-    </ItemContent>
-    <EmptyContent>
-        <p>There are no schedules to display</p>
-    </EmptyContent>
-</Virtualize>
+<div class="list">
+
+    <Virtualize Items="@Schedules" OverscanCount="25">
+        <ItemContent>
+            <ScheduleListElement Schedule="@context"
+                                 Selectable="Selectable" OnSelect="OnSelect"
+                                 Navigable="Navigable"
+                                 SelectButtonText="@SelectButtonText" />
+        </ItemContent>
+        <EmptyContent>
+            <p>There are no schedules to display</p>
+        </EmptyContent>
+    </Virtualize>
+</div>

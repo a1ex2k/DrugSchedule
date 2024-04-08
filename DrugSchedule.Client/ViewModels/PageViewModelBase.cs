@@ -11,7 +11,6 @@ namespace DrugSchedule.Client.ViewModels;
 public abstract class PageViewModelBase : ComponentBase, IDisposable
 {
     [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
-    [Inject] protected IJSRuntime JSRuntime { get; set; } = default!;
     [Inject] protected INotificationService NotificationService { get; set; } = default!;
     [Inject] protected IApiClient ApiClient { get; set; } = default!;
 
@@ -21,7 +20,7 @@ public abstract class PageViewModelBase : ComponentBase, IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        _initialUri = NavigationManager.Uri;
+        _initialUri = NavigationManager.Uri.Split('?')[0];
         await ProcessQueryAsync();
         NavigationManager.LocationChanged += HandleLocationChanged;
 

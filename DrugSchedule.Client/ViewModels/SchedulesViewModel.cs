@@ -39,7 +39,7 @@ public class SchedulesViewModel : PageViewModelBase
         }
 
         var result = await ApiClient.GetScheduleExtendedAsync(new ScheduleIdDto { ScheduleId = ScheduleIdParameter });
-        if (result.IsOk)
+        if (!result.IsOk)
         {
             await ServeApiCallResult(result);
             ToSchedulesHome();
@@ -66,7 +66,7 @@ public class SchedulesViewModel : PageViewModelBase
 
     protected void AfterSave(long id)
     {
-        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", id);
+        NavigationManager.NavigateWithParameter(Routes.Schedules, "id", id);
     }
 
     protected void ToSchedulesHome()

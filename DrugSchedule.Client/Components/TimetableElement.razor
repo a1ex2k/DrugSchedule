@@ -12,7 +12,7 @@
             <i class="fa-solid fa-check-double"></i>
             @if (NavigableToConfirmation)
             {
-                <Link Clicked="NavigateToConfirmation">Confirmed</Link>
+                <Blazorise.Link Clicked="NavigateToConfirmation">Confirmed</Blazorise.Link>
             }
             else
             {
@@ -20,10 +20,11 @@
             }
         </div>
     }
+
     @if (NavigableToSchedule)
     {
         <div class="text-secondary me-2">
-                <Link Clicked="NavigateToSchedule">Schedule</Link>
+                <Blazorise.Link Clicked="NavigateToSchedule">Schedule</Blazorise.Link>
         </div>
     }
 </div>

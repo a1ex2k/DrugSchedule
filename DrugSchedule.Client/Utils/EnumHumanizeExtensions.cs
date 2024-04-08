@@ -41,7 +41,7 @@ public static class EnumHumanizeExtensions
 
     public static FlagEnumElement<RepeatDayOfWeekDto>[] ToArray(this RepeatDayOfWeekDto enumValue)
     {
-        var array = new FlagEnumElement<RepeatDayOfWeekDto>[6];
+        var array = new FlagEnumElement<RepeatDayOfWeekDto>[7];
 
         array[0] = new ("Sun", RepeatDayOfWeekDto.Sunday, enumValue.HasFlag(RepeatDayOfWeekDto.Sunday));
         array[1] = new ("Mon", RepeatDayOfWeekDto.Monday, enumValue.HasFlag(RepeatDayOfWeekDto.Monday));
@@ -56,7 +56,7 @@ public static class EnumHumanizeExtensions
 
     public static RepeatDayOfWeekDto ToEnum(this IEnumerable<FlagEnumElement<RepeatDayOfWeekDto>> enumFlagArray)
     {
-        var daysEnum = RepeatDayOfWeekDto.None;
+        var daysEnum = (RepeatDayOfWeekDto)0;
 
         foreach (var item in enumFlagArray)
         {

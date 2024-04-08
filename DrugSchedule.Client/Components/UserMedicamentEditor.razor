@@ -35,8 +35,9 @@
              <FieldLabel>Basic medicament</FieldLabel>
                 @if (Model.BasicMedicament != null)
                 {
-                    <div class="w-100">
+                    <div class="w-100 d-flex">
                         <GlobalMedicamentListElement Medicament="Model.BasicMedicament" Selectable="false" Navigable="false" />
+                        <CustomButton Icon="fa-trash-can" Color="Color.Danger" Clicked="RemoveMedicament" Outline />
                     </div>
                 }
 

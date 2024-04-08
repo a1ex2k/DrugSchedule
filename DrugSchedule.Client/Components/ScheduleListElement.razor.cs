@@ -27,6 +27,6 @@ public partial class ScheduleListElement
     private async Task Navigate()
     {
         if (!Navigable) return;
-        NavigationManager.NavigateWithParameter(Routes.UserDrugs, "id", Schedule.Id);
+        NavigationManager.NavigateWithParameter(Routes.Schedules, "id", Schedule.Id);
     }
 }

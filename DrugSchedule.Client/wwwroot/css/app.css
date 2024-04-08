@@ -181,6 +181,9 @@ html {
     margin-bottom: 1rem;
 }
 
+.accordion-button {
+    padding: 0.6rem 2rem !important;
+}
 
 
 @keyframes append-animate {
@@ -194,13 +197,18 @@ html {
 }
 
 .list-element {
-    margin-bottom: 0.5rem;
+    width: 100%;
     min-height: 48px;
+    margin-bottom: 0.1rem;
+    margin-top: 0.1rem;
+}
+
+.list .list-element {
+    margin-bottom: 0.3rem;
 }
 
 .list-element .card-body {
-    margin: auto 0.5rem;
-    padding: 0;
+    padding: 0.1rem 1rem;
 }
 
 .list-element:hover {

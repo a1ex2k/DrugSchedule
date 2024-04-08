@@ -11,6 +11,7 @@
                 <div class="h4 mb-0">@($"Schedule: {MedicamentName}")"</div>
                 <div>
                     <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
+                    <CustomButton Clicked="Edit" Color="Color.Secondary" Text="Edit" Icon="fa-pen" />
                 </div>
                 <ScheduleExtended Schedule="Schedule" UpcomingTimetableEntries="UpcomingTimetable" />
             }
@@ -22,7 +23,7 @@
                     <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
                 <div>
-                    @* <ScheduleEditor ExistingMedicament="null" AfterCreate="AfterSave" /> *@
+                    <ScheduleEditor Schedule="null" /> 
                 </div>
             }
             else if (PageState == PageState.Default)
@@ -44,7 +45,7 @@
                     <CustomButton Clicked="ToSchedulesHome" Color="Color.Secondary" Text="To search" Icon="fa-chevron-left" />
                 </div>
                 <div>
-                    
+                    <ScheduleEditor Schedule="Schedule" AfterSave="AfterSave" AfterDelete="AfterDelete"/> 
                 </div>
             }
         </div>

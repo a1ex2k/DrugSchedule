@@ -1,5 +1,7 @@
 ﻿using Blazorise;
 using DrugSchedule.Api.Shared.Dtos;
+using DrugSchedule.Client.Constants;
+using DrugSchedule.Client.Utils;
 
 namespace DrugSchedule.Client.Models;
 
@@ -11,15 +13,15 @@ public class RepeatModel
 
     public bool IsNew => RepeatId == default || ScheduleId == default;
 
-    public required DateOnly BeginDate { get; set; }
+    public DateOnly BeginDate { get; set; }
 
-    public required TimeOnly? Time { get; set; }
+    public TimeOnly? Time { get; set; }
 
-    public required TimeOfDayDto TimeOfDay { get; set; }
+    public TimeOfDayDto TimeOfDay { get; set; }
 
-    public required RepeatDayOfWeekDto RepeatDayOfWeek { get; set; }
-
-    public required DateOnly? EndDate { get; set; }
+    public DateOnly? EndDate { get; set; }
 
     public string? TakingRule { get; set; }
+
+    public FlagEnumElement<RepeatDayOfWeekDto>[] Days { get; set; } = ((RepeatDayOfWeekDto)0).ToArray();
 }

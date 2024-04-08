@@ -1,47 +1,52 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
-<EmbeddedEditor AllowRemove="@(!Repeat.IsNew)"
-                Save="Save"
-                Delete="Delete"
-                ItemText="Repeat">
-    <EditorModalBody>
-        <Field>
-            <FieldLabel>Rule</FieldLabel>
-            <RichEditor @bind-Content="Repeat.TakingRule" />
-        </Field>
+<EmbeddedEditor AllowRemove
+                 Save="SaveRepeatAsync"
+                 Delete="DeleteRepeatAsync"
+                 ItemText="">
+     <EditorModalBody>
+         <Field>
+             <FieldLabel>Rule</FieldLabel>
+             <RichEditor @bind-Content="Model.TakingRule" />
+         </Field>
 
-        <Fields>
-            <Field ColumnSize="ColumnSize.Is6">
-                <FieldLabel>Time of day</FieldLabel>
-                <SelectList TItem="EnumElement<TimeOfDayDto>"
-                            TValue="TimeOfDayDto"
-                            Data="@Schedules.TimeOfDay"
-                            TextField="@((item)=>item.Name)"
-                            ValueField="@((item)=>item.Value)"
-                            @bind-SelectedValue="@Repeat.TimeOfDay" />
-            </Field>
-            @if (Repeat.TimeOfDay == TimeOfDayDto.None)
+         <Fields>
+             <Validation Validator="TimeValidate">
+             <Field ColumnSize="ColumnSize.Is6">
+                 <FieldLabel>Time of day</FieldLabel>
+                 <SelectList TItem="EnumElement<TimeOfDayDto>"
+                             TValue="TimeOfDayDto"
+                             Data="@Schedules.TimeOfDay"
+                             TextField="@((item)=>item.Name)"
+                             ValueField="@((item)=>item.Value)"
+                             @bind-SelectedValue="@Model.TimeOfDay" />
+             </Field>
+             @if (Model.TimeOfDay == TimeOfDayDto.None)
             {
-                <Validation Validator="TimeValidate"></Validation>
-                <Field ColumnSize="ColumnSize.Is6">
-                    <FieldLabel>Exact time</FieldLabel>
-                    <TimePicker TValue="TimeOnly?" @bind-Time="@Repeat.Time" StaticPicker="false" TimeAs24hr />
-                </Field>
+                
+                    <Field ColumnSize="ColumnSize.Is6">
+                        <FieldLabel>Exact time</FieldLabel>
+                        <TimePicker TValue="TimeOnly?" @bind-Time="@Model.Time" StaticPicker="false" TimeAs24hr />
+                     </Field>
+                 
             }
+            </Validation>
         </Fields>
 
         <Validation Validator="DayOfWeekValidate">
             <Field>
                 <FieldLabel>Days of week</FieldLabel>
-                <div class="flex gap-3">
-                    @foreach (var day in Days)
+                <div class="d-flex gap-4">
+                    @foreach (var day in Model.Days)
                     {
-                        <Check TValue="bool" @bind-Checked="day.Checked">@day.Name</Check>
+                        <div>
+                            <Check TValue="bool" @bind-Checked="day.Checked">@day.Name</Check>
+                            </div>
                     }
                 </div>
                 <ValidationError />
             </Field>
         </Validation>
-        
+
     </EditorModalBody>
 </EmbeddedEditor>

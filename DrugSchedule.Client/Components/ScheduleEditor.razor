@@ -1,47 +1,86 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
-<EmbeddedEditor AllowRemove="@(!Repeat.IsNew)"
-                Save="Save"
-                Delete="Delete"
-                ItemText="Repeat">
-    <EditorModalBody>
-        <Field>
-            <FieldLabel>Rule</FieldLabel>
-            <RichEditor @bind-Content="Repeat.TakingRule" />
-        </Field>
+<div>
+    <div class="card p-2 mb-5">
 
-        <Fields>
-            <Field ColumnSize="ColumnSize.Is6">
-                <FieldLabel>Time of day</FieldLabel>
-                <SelectList TItem="EnumElement<TimeOfDayDto>"
-                            TValue="TimeOfDayDto"
-                            Data="@Schedules.TimeOfDay"
-                            TextField="@((item)=>item.Name)"
-                            ValueField="@((item)=>item.Value)"
-                            @bind-SelectedValue="@Repeat.TimeOfDay" />
-            </Field>
-            @if (Repeat.TimeOfDay == TimeOfDayDto.None)
-            {
-                <Validation Validator="TimeValidate"></Validation>
-                <Field ColumnSize="ColumnSize.Is6">
-                    <FieldLabel>Exact time</FieldLabel>
-                    <TimePicker TValue="TimeOnly?" @bind-Time="@Repeat.Time" StaticPicker="false" TimeAs24hr />
-                </Field>
-            }
-        </Fields>
+        <EmbeddedEditor AllowRemove="@(!Model.IsNew)"
+                        Save="SaveScheduleAsync"
+                        Delete="DeleteScheduleAsync"
+                        ItemText="Schedule">
+            <EditorModalBody>
 
-        <Validation Validator="DayOfWeekValidate">
-            <Field>
-                <FieldLabel>Days of week</FieldLabel>
-                <div class="flex gap-3">
-                    @foreach (var day in Days)
+                <Field>
+                    <FieldLabel>Medicament</FieldLabel>
+                    @if (Model.GlobalMedicament != null)
                     {
-                        <Check TValue="bool" @bind-Checked="day.Checked">@day.Name</Check>
+                        <div class="w-100 d-flex">
+                            <GlobalMedicamentListElement Medicament="Model.GlobalMedicament" Selectable="false" Navigable="false" />
+                            <CustomButton Icon="fa-trash-can" Color="Color.Danger" Clicked="RemoveMedicament" Outline />
+                         </div>
                     }
-                </div>
-                <ValidationError />
-            </Field>
-        </Validation>
-        
-    </EditorModalBody>
-</EmbeddedEditor>
+                    @if (Model.UserMedicament != null)
+                    {
+                        <div class="w-100 d-flex">
+                            <UserMedicamentListElement Medicament="Model.UserMedicament" Selectable="false" Navigable="false" />
+                            <CustomButton Icon="fa-trash-can" Color="Color.Danger" Clicked="RemoveMedicament" Outline />
+                         </div>
+                    }
+
+                    <Accordion Class="w-100">
+                        <AccordionItem>
+                            <AccordionHeader>
+                                <AccordionToggle>Select global medicament</AccordionToggle>
+                            </AccordionHeader>
+                            <AccordionBody Style="max-height: 300px" Class="overflow-y-auto">
+                                <GlobalMedicamentList Selectable OnSelect="SelectGlobalMedicament" />
+                             </AccordionBody>
+                         </AccordionItem>
+                         <AccordionItem>
+                             <AccordionHeader>
+                                 <AccordionToggle>Select user medicament</AccordionToggle>
+                             </AccordionHeader>
+                             <AccordionBody Style="max-height: 300px" Class="overflow-y-auto">
+                                 <UserMedicamentList Selectable OnSelect="SelectUserMedicament" />
+                             </AccordionBody>
+                         </AccordionItem>
+                     </Accordion>
+
+                     <FieldHelp>Required</FieldHelp>
+                 </Field>
+
+                 <Field>
+                     <FieldLabel>Info</FieldLabel>
+                     <RichEditor @bind-Content="Model.Information" />
+                 </Field>
+
+                 <Field>
+                     <Check TValue="bool" @bind-Checked="Model.Enabled">Enabled</Check>
+                 </Field>
+
+             </EditorModalBody>
+         </EmbeddedEditor>
+
+     </div>
+
+     <div>
+         @if (!Model.IsNew)
+        {
+            <h5 class="text-primary">Repeats</h5>
+            <Virtualize Items="@Model.Repeats" OverscanCount="25">
+                <ItemContent>
+                    <div class="card p-2 mt-2 mb-3">
+                        <RepeatEditor Repeat="@context.Value"
+                                      TempId="@context.Key" ScheduleId="@Model.ScheduleId"
+                                      AfterDelete="RemoveRepeat" />
+                    </div>
+                </ItemContent>
+                <EmptyContent>
+                    <p>There are no repeats to display</p>
+                </EmptyContent>
+            </Virtualize>
+
+            <CustomButton Icon="fa-plus" Text="Add" Clicked="AddNewRepeat" Outline />
+
+        }   
+        </div>
+</div>

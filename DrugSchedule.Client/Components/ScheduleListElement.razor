@@ -15,7 +15,7 @@
                 <div class="ms-auto">
                     <span>@(Schedule.Enabled ? "Enabled" : "Disabled")</span>
                     <span>|</span>
-                    <span class="ms-2">@Schedule.CreatedAt.ToString("dd.MM.yy HH:mm:ss")</span>
+                    <span>@Schedule.CreatedAt.ToShortDateString()</span>
                 </div>
             </div>
         </div>

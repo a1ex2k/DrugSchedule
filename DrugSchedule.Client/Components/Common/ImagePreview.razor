@@ -3,11 +3,17 @@
 <div class="card position-relative overflow-hidden" style="@($"min-width: {PreviewSize}")">
     <img class="mb-auto mt-auto card-img-top" style="@($"width: {PreviewSize}; height: {PreviewSize}; object-fit: cover")"
          src="@GetThumbnailUrl()" alt="@GetAltText()">
+    <div class="position-absolute d-flex justify-content-between bottom-0 p-1 gap-1">
+        @if (FullImageUrl != null)
+        {
+            <Blazorise.Link To="@GetFullImageUrl()" Target="Target.Blank" Unstyled>
+                <CustomButton Icon="fa-up-right-from-square" />
+            </Blazorise.Link>
+        }
 
-    @if (AllowDelete && OnDelete != null)
-    {
-        <div class="position-absolute d-flex justify-content-between bottom-0 p-1 gap-1">
-            <CustomButton Color=Color.Danger Clicked="@(async() => await OnDelete(ImageModel))" Icon="fa-trash-can"></CustomButton>
-        </div>
-    }
+        @if (AllowDelete && OnDelete != null)
+        {
+            <CustomButton Color=Color.Danger Clicked="@(async() => await OnDelete(ImageModel))" Icon="fa-trash-can" />
+        }
+    </div>
 </div>

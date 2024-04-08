@@ -1,18 +1,20 @@
 ﻿
 <Fields>
     <Field ColumnSize="ColumnSize.Is9.OnTablet">
-        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..."/>
+        <TextEdit Text="@SearchValue" TextChanged="SearchValueChanged" Placeholder="Search by name..." />
     </Field>
     <Field ColumnSize="ColumnSize.Is3.OnTablet">
         <Check TValue="bool" Checked="@Common" CheckedChanged="CommonChanged" Disabled="CommonOnly">Common only</Check>
     </Field>
 </Fields>
 
-<Virtualize Items="@Contacts" OverscanCount="25">
-    <ItemContent>
-        <ContactsListElement Contact="@context" Navigable="Navigable" Selectable="Selectable" SelectButtonText="@SelectButtonText" OnSelect="OnSelect" />
-    </ItemContent>
-    <EmptyContent>
-        <p>There are no contacts to display</p>
-    </EmptyContent>
-</Virtualize>
+<div class="list">
+    <Virtualize Items="@Contacts" OverscanCount="25">
+        <ItemContent>
+            <ContactsListElement Contact="@context" Navigable="Navigable" Selectable="Selectable" SelectButtonText="@SelectButtonText" OnSelect="OnSelect" />
+        </ItemContent>
+        <EmptyContent>
+            <p>There are no contacts to display</p>
+        </EmptyContent>
+    </Virtualize>
+</div>

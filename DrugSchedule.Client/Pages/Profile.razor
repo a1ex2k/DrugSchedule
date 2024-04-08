@@ -13,7 +13,7 @@
             <h3 class="d-block">Profile</h3>
             <div>
                 <CustomButton Text="Change password" Color="Color.Danger" Icon="fa-key" Clicked="OpenPasswordModalAsync" />
-                <CustomButton Clicked="@(async () => await LogOutAsync())" Color="Color.Secondary" Text="Log out" />
+                <CustomButton Clicked="LogOutAsync" Color="Color.Secondary" Text="Log out" />
             </div>
         </div>
 
