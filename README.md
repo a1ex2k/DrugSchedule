@@ -48,7 +48,7 @@ Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.
    dotnet ef database update --connection "<YourConnectionString>"
    ```
 1. Fill `appsettings.json` of `DrugSchedule.Api`
-   - Specify correct values where `<env. specific>`. Predуfined ones caт be left default.
+   - Specify correct values where `<env. specific>`. Predefined ones can be left default.
      Probably, connection string might have `TrustServerCertificate=True; Trusted_Connection=True;`
    - Mind to specify correct URL under `ValidAudience`, `ValidIssuer`, `CorsOrigins` to make auth work.    
      *Default launch URL is `http://localhost:5126` and `http://localhost:5127` is for Blazor client.* 
