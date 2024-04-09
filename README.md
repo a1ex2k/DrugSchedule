@@ -36,6 +36,7 @@ Blazor client project is an example of using API and provides the main functiona
 - Manage user medicaments
 - Manage user profile and contacts
 - Create schedules
+
 Look through the source code to find out basic principals and run the project to check the API functionality using the GUI. We recommend to **fill medicament library** with provided sample data from [103.by](https://apteka.103.by/).    
 Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.     
      
