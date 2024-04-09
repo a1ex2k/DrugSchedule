@@ -35,7 +35,7 @@ Blazor client project is an example of using API and provides the main functiona
 - Explore medicament library
 - Manage user medicaments
 - Manage user profile and contacts
-- Create schedules     
+- Create schedules
 Look through the source code to find out basic principals and run the project to check the API functionality using the GUI. We recommend to **fill medicament library** with provided sample data from [103.by](https://apteka.103.by/).    
 Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.     
      
@@ -69,7 +69,7 @@ Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.
    - `ApiBaseUri` property in `wwwroot/appsettings.json` of `DrugSchedule.Client`
         
 ### Fill medicament library
-1. Download [DrugScheduleSampleData.7z](https://www.mediafire.com/file/r42zsb7uqqze8t9/DrugScheduleSampleData.7z/file) and extract its content.
+1. Download [DrugScheduleSampleData.7z](https://drive.google.com/file/d/1jQhQEunzjMeytzffdpDUFravuY0pUqrG/view?usp=sharing) and extract its content.
 1. Ensure migrations are already applied. 
 1. Build `Utils/DrugScheduleFill` and run it with parameters:
    ```
