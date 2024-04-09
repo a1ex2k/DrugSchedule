@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DrugScheduleFill.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace DrugScheduleFill;
 

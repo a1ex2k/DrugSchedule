@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DrugScheduleFill;
+namespace DrugScheduleFill.Models;
 
 public class MedicamentFile
 {

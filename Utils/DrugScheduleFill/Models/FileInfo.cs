@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace DrugScheduleFill;
+namespace DrugScheduleFill.Models;
 
 public class FileInfo
 {

@@ -1,4 +1,4 @@
-﻿namespace DrugScheduleFill;
+﻿namespace DrugScheduleFill.Models;
 
 public enum FileCategory
 {
