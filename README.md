@@ -43,7 +43,7 @@ Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.
 ## How to host
 ### Run WebAPI
 1. Clone repository
-1. Apply migrations. In `DrugSchedule.Storage` directory, run
+1. Apply migrations (app tested with SQL Server 2019). In `DrugSchedule.Storage` directory, run
    ```
    dotnet ef database update --connection "<YourConnectionString>"
    ```
@@ -75,7 +75,7 @@ Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.
    ```
    DrugScheduleFill.exe -s "<path/to/extracted>" -c "<YourConnectionString>" -o "<storage/directory>"
    ```
-   where `<storage/directory?` is `FileStorageOptions:DirectoryPath` of API project appsettings     
+   where `<storage/directory>` is `FileStorageOptions:DirectoryPath` of API project appsettings     
         
 ## Planning features
 - Make Blazor WASM client better
