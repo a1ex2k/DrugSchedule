@@ -58,13 +58,12 @@ Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.
    ```
         
 ### Run Blazor client
-1. Set multiple startup projects in Visual Studio:    
-   `DrugSchedule.Api` and `DrugSchedule.Client`
+1. Set multiple startup projects in Visual Studio: `DrugSchedule.Api` and `DrugSchedule.Client`
 1. Build and run. Client will be available on
    ```
    http://localhost:5127/
    ```
-1. If you want use different address/port, update respectfully:
+1. If you want use different address/port, update respectively:
    - `CorsOrigins` property in `appsettings.json` of `DrugSchedule.Api`
    - `ApiBaseUri` property in `wwwroot/appsettings.json` of `DrugSchedule.Client`
         
