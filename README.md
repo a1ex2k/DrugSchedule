@@ -5,7 +5,7 @@
 ![Static Badge](https://img.shields.io/badge/Blazor_WASM-592c8c?style=for-the-badge)    
      
 **Do not forget taking your medicine!**    
-ASP.NET WebAPI project that allows users to create timetable of taking medicine, confirm and control themselves and contacts
+ASP.NET WebAPI project that allows users to create timetable of taking medicine, confirm and control themselves and contacts     
     
 ## App Features
 ### User features
@@ -17,29 +17,29 @@ ASP.NET WebAPI project that allows users to create timetable of taking medicine,
 - **Sharing schedules** with other app users to let them control you
 
 ### API Features
-- JWT Auth
+- JWT Auth with refresh tokens
 - Signed URLs for downloading files
 - Simplified and Extended DTOs, collections, filters
 - Human readable error messages with 404 and 400 status codes
 
 ### Code Features
-- OneOf<> as return type of serevices' methods
+- Discriminated Unions as return type of serevices
 - IQueryable extensions for filters applying and more
 - Custom Expressions for data projection and filtering
 - Separate project with DTOs for referencing from client app project
 - Options pattern for various parameters
-- Libraries in use: [Mapster](https://github.com/MapsterMapper/Mapster), [ImageSharp](https://github.com/SixLabors/ImageSharp), etc.
-
+- Libraries in use: [OneOf](https://github.com/mcintyre321/OneOf), [Mapster](https://github.com/MapsterMapper/Mapster), [ImageSharp](https://github.com/SixLabors/ImageSharp), etc.     
+     
 ## Blazor Client
 Blazor client project is an example of using API and provides the main functionality:
 - Explore medicament library
 - Manage user medicaments
 - Manage user profile and contacts
-- Create schedules 
-Look through the source code to find out basic principals and run the project to check the API functionality using the GUI.    
-We recommend to **fill medicament library** with provided sample data from [103.by](https://apteka.103.by/)
-    
-
+- Create schedules     
+Look through the source code to find out basic principals and run the project to check the API functionality using the GUI. We recommend to **fill medicament library** with provided sample data from [103.by](https://apteka.103.by/).    
+Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.     
+     
+     
 ## How to host
 ### Run WebAPI
 1. Clone repository
@@ -69,13 +69,13 @@ We recommend to **fill medicament library** with provided sample data from [103.
    - `ApiBaseUri` property in `wwwroot/appsettings.json` of `DrugSchedule.Client`
         
 ### Fill medicament library
-1. Download archive *[in pragress]* and extract its content.
+1. Download [DrugScheduleSampleData.7z](https://www.mediafire.com/file/r42zsb7uqqze8t9/DrugScheduleSampleData.7z/file) and extract its content.
 1. Ensure migrations are already applied. 
 1. Build `Utils/DrugScheduleFill` and run it with parameters:
    ```
    DrugScheduleFill.exe -s "<path/to/extracted>" -c "<YourConnectionString>" -o "<storage/directory>"
    ```
-   where `<storage/directory?` is `FileStorageOptions:DirectoryPath` of API project appsettings
+   where `<storage/directory?` is `FileStorageOptions:DirectoryPath` of API project appsettings     
         
 ## Planning features
 - Make Blazor WASM client better

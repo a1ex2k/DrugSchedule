@@ -34,5 +34,5 @@ public partial class RepeatView
     private string Time { get; set; } = default!;
 
     private string GetClass(FlagEnumElement<RepeatDayOfWeekDto> day) =>
-        day.Checked ? "badge me-1 text-bg-primary" : "badge me-1 text-bg-light";
+        day.Checked ? "badge me-1 text-bg-primary" : "badge me-1 text-bg-secondary";
 }
