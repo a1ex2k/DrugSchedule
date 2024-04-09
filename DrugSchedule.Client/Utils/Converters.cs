@@ -12,7 +12,7 @@ public static class Converters
             ScheduleId = dto.MedicamentTakingScheduleId,
             RepeatId = dto.Id,
             BeginDate = dto.BeginDate,
-            Time = dto.Time,
+            Time = dto.Time?.ToTimeSpan() ?? TimeSpan.FromHours(12),
             TimeOfDay = dto.TimeOfDay,
             EndDate = dto.EndDate,
             TakingRule = dto.TakingRule,

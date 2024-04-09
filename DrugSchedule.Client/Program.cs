@@ -38,4 +38,8 @@ builder.Services.AddScoped<IUrlService, UrlService>();
 var apiBaseUri = builder.Configuration.GetValue<string>("ApiBaseUri");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUri!) });
 
-await builder.Build().RunAsync();
+var app = builder.Build();
+var apiClient = app.Services.GetRequiredService<IApiClient>();
+await apiClient.CheckClientAuthAsync();
+
+await app.RunAsync();

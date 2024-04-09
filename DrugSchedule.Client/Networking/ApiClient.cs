@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Http.Json;
 using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Auth;
@@ -90,6 +91,15 @@ public class ApiClient : IApiClient
 
         await _tokenStorage.RemoveTokensAsync();
         await _authStateProvider.UpdateStateFromTokensAsync();
+    }
+
+    public async Task CheckClientAuthAsync(CancellationToken cancellationToken = default)
+    {
+        var response = await _httpClient.PostAsync(EndpointsPaths.Auth_CheckClientAuth, null, cancellationToken);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            await RefreshTokensAsync(cancellationToken);
+        }
     }
 
 

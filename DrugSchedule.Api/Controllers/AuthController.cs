@@ -63,7 +63,7 @@ public class AuthController : ControllerBase
         var newTokenModel = await _tokenService.RefreshTokensAsync(tokenDto.Adapt<TokenModel>(), cancellationToken);
         return newTokenModel.Match<IActionResult>(
             tokenModel => Ok(tokenModel.Adapt<TokenDto>()),
-            error => BadRequest(error.ToDto()));
+            error => Forbid());
     }
 
 
@@ -81,5 +81,13 @@ public class AuthController : ControllerBase
     {
         var usernameResult = await _identityService.IsUsernameAvailableAsync(usernameDto.Username!, cancellationToken);
         return Ok(usernameResult.Adapt<AvailableUsername>());
+    }
+
+
+    [HttpPost]
+    [Authorize]
+    public IActionResult CheckClientAuth()
+    {
+        return Ok();
     }
 }

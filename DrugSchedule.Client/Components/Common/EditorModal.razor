@@ -19,11 +19,11 @@
 
             <CustomButton Displayable="@(AllowRemove && Delete != null)"
                           Text="Remove" Color="Color.Danger" Icon="fa-trash-can"
-                          Clicked="@ConfirmDeleteAsync" Width="8rem" />
+                          Clicked="@ConfirmDeleteAsync" Width="7rem" />
 
             <div class="ms-auto d-flex">
                 <CustomButton Displayable="@(AllowSave && Save != null && _isValid)"
-                              Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="10rem" />
+                              Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="7rem" />
                 <CustomButton Text="Cancel" Color="Color.Secondary" Icon="fa-ban" Clicked="@Hide" Width="7rem" />
             </div>
 

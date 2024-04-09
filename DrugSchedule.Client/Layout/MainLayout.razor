@@ -10,7 +10,7 @@
         <div class="width-limit edge-padding  d-flex justify-content-between align-items-center h-100">
             <div class="fw-bold fs-4">DrugSchedule</div>
             <div>
-                <button class="btn btn-dark border-0" id="btnThemeSwitch"><i class="fa-solid fa-circle-half-stroke"></i></button>
+                <button class="btn btn-dark border-0" id="theme-toggle-btn"><i class="fa-solid fa-circle-half-stroke"></i></button>
             </div>
         </div>
 
@@ -33,7 +33,7 @@
     {
         if (firstRender)
         {
-            await JsRuntime.InvokeVoidAsync("setThemeToggler", "btnThemeSwitch");
+            await JsRuntime.InvokeVoidAsync("addThemeToggleClick");
         }
         await base.OnAfterRenderAsync(firstRender);
     }

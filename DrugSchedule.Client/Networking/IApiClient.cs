@@ -19,4 +19,6 @@ public interface IApiClient
     Task<ApiCallResult> LogInAsync(LoginDto loginDto, CancellationToken cancellationToken = default);
 
     Task LogOutAsync(CancellationToken cancellationToken = default);
+
+    Task CheckClientAuthAsync(CancellationToken cancellationToken = default);
 }

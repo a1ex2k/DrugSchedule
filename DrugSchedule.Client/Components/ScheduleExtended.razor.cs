@@ -10,5 +10,5 @@ public partial class ScheduleExtended
     [Parameter, EditorRequired] public List<TimetableEntryDto> UpcomingTimetableEntries { get; set; } = default!;
 
     private List<TimetableEntryDto> GetForRepeat(ScheduleRepeatDto repeat)
-        => UpcomingTimetableEntries?.FindAll(e => e.RepeatId == repeat.Id) ?? new();
+        => UpcomingTimetableEntries?.Where(e => e.RepeatId == repeat.Id).Take(4).ToList() ?? new();
 }

@@ -12,10 +12,10 @@
             <span>@Schedule.MedicamentName</span>
             <div class="d-flex text-secondary ">
                 <div>@Schedule.MedicamentReleaseFormName</div>
-                <div class="ms-auto">
+                <div class="ms-auto me-2">
                     <span>@(Schedule.Enabled ? "Enabled" : "Disabled")</span>
                     <span>|</span>
-                    <span>@Schedule.CreatedAt.ToShortDateString()</span>
+                    <span>@Schedule.CreatedAt.ToShortString()</span>
                 </div>
             </div>
         </div>

@@ -1,36 +1,45 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
 <EmbeddedEditor AllowRemove
-                 Save="SaveRepeatAsync"
-                 Delete="DeleteRepeatAsync"
-                 ItemText="">
-     <EditorModalBody>
-         <Field>
-             <FieldLabel>Rule</FieldLabel>
-             <RichEditor @bind-Content="Model.TakingRule" />
-         </Field>
+                Save="SaveRepeatAsync"
+                Delete="DeleteRepeatAsync"
+                ItemText="">
+    <EditorModalBody>
+        <Field>
+            <FieldLabel>Rule</FieldLabel>
+            <RichEditor @bind-Content="Model.TakingRule" />
+        </Field>
 
-         <Fields>
-             <Validation Validator="TimeValidate">
-             <Field ColumnSize="ColumnSize.Is6">
-                 <FieldLabel>Time of day</FieldLabel>
-                 <SelectList TItem="EnumElement<TimeOfDayDto>"
-                             TValue="TimeOfDayDto"
-                             Data="@Schedules.TimeOfDay"
-                             TextField="@((item)=>item.Name)"
-                             ValueField="@((item)=>item.Value)"
-                             @bind-SelectedValue="@Model.TimeOfDay" />
-             </Field>
-             @if (Model.TimeOfDay == TimeOfDayDto.None)
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is6">
+                <FieldLabel>Start date</FieldLabel>
+                <DatePicker TValue="DateOnly" @bind-Date="@Model.BeginDate" StaticPicker="false" 
+                            InputFormat="dd.MM.yyyy" DisplayFormat="dd.MM.yyyy" />
+            </Field>
+            <Field ColumnSize="ColumnSize.Is6">
+                <FieldLabel>End date</FieldLabel>
+                <DatePicker TValue="DateOnly?" @bind-Date="@Model.EndDate" StaticPicker="false" 
+                            InputFormat="dd.MM.yyyy" DisplayFormat="dd.MM.yyyy" />
+            </Field>
+        </Fields>
+
+        <Fields>
+            <Field ColumnSize="ColumnSize.Is6">
+                <FieldLabel>Time of day</FieldLabel>
+                <SelectList TItem="EnumElement<TimeOfDayDto>"
+                            TValue="TimeOfDayDto"
+                            Data="@Schedules.TimeOfDay"
+                            TextField="@((item)=>item.Name)"
+                            ValueField="@((item)=>item.Value)"
+                            @bind-SelectedValue="@Model.TimeOfDay" />
+            </Field>
+            @if (Model.TimeOfDay == TimeOfDayDto.None)
             {
-                
-                    <Field ColumnSize="ColumnSize.Is6">
-                        <FieldLabel>Exact time</FieldLabel>
-                        <TimePicker TValue="TimeOnly?" @bind-Time="@Model.Time" StaticPicker="false" TimeAs24hr />
-                     </Field>
-                 
+                <Field ColumnSize="ColumnSize.Is6">
+                    <FieldLabel>Exact time</FieldLabel>
+                    <TimePicker TValue="TimeSpan" @bind-Time="@Model.Time" StaticPicker="false" TimeAs24hr />
+                </Field>
             }
-            </Validation>
         </Fields>
 
         <Validation Validator="DayOfWeekValidate">
@@ -41,7 +50,7 @@
                     {
                         <div>
                             <Check TValue="bool" @bind-Checked="day.Checked">@day.Name</Check>
-                            </div>
+                        </div>
                     }
                 </div>
                 <ValidationError />

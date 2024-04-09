@@ -23,7 +23,9 @@ internal static class DateUtility
 
         while (startDate <= endDate)
         {
-            if (((byte)dayOfWeek & (byte)startDate.DayOfWeek) == (byte)startDate.DayOfWeek)
+            var repeatDayOfWeek = (RepeatDayOfWeek)(1 << (int)startDate.DayOfWeek);
+
+            if (dayOfWeek.HasFlag(repeatDayOfWeek))
             {
                 yield return startDate;
             }

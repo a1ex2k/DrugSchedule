@@ -45,22 +45,12 @@ public partial class RepeatEditor
         args.Status = ValidationStatus.None;
     }
 
-    public void TimeValidate(ValidatorEventArgs args)
-    {
-        if (Model.TimeOfDay == TimeOfDayDto.None)
-        {
-            args.Status = ValidationStatus.Error;
-            args.ErrorText = "Specify time";
-            return;
-        }
-
-        args.Status = ValidationStatus.None;
-    }
 
     protected async Task<EditorModal.ModalResult> SaveRepeatAsync()
     {
         if (Model.IsNew)
         {
+            StateHasChanged();
             return await CreateRepeatAsync();
         }
 
@@ -74,7 +64,7 @@ public partial class RepeatEditor
         {
             Id = Model.RepeatId,
             BeginDate = Model.BeginDate,
-            Time = Model.Time,
+            Time = Model.TimeOfDay == TimeOfDayDto.None ? TimeOnly.FromTimeSpan(Model.Time) : null,
             TimeOfDay = Model.TimeOfDay,
             RepeatDayOfWeek = Model.Days.ToEnum(),
             EndDate = Model.EndDate,
@@ -96,7 +86,7 @@ public partial class RepeatEditor
         {
             ScheduleId = Model.ScheduleId,
             BeginDate = Model.BeginDate,
-            Time = Model.Time,
+            Time = Model.TimeOfDay == TimeOfDayDto.None ? TimeOnly.FromTimeSpan(Model.Time) : null,
             TimeOfDay = Model.TimeOfDay,
             RepeatDayOfWeek = Model.Days.ToEnum(),
             EndDate = Model.EndDate,

@@ -76,7 +76,6 @@ public partial class ScheduleEditor
     {
         if (Model.IsNew)
         {
-            StateHasChanged();
             return await CreateScheduleAsync();
         }
 

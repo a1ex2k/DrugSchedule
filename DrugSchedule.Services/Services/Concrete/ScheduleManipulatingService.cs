@@ -192,6 +192,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
 
         var repeat = new ScheduleRepeatPlain
         {
+            Id = repeatUpdate.Id,
             BeginDate = repeatUpdate.BeginDate,
             Time = repeatUpdate.Time,
             TimeOfDay = repeatUpdate.TimeOfDay,

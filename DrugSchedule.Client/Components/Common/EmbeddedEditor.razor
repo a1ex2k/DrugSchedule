@@ -9,11 +9,11 @@
     <div class="d-flex justify-content-between">
         <CustomButton Displayable="@(AllowRemove && Delete != null)"
                       Text="Remove" Color="Color.Danger" Icon="fa-trash-can"
-                      Clicked="@ConfirmDeleteAsync" Width="8rem" Class="d-block"/>
+                      Clicked="@ConfirmDeleteAsync" Width="7rem" Class="d-block"/>
 
         <CustomButton Displayable="@(AllowSave && Save != null && _isValid)"
                       Class="d-block"
-                          Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="8rem"/>
+                          Text="Save" Color="Color.Primary" Icon="fa-floppy-disk" Clicked="@ConfirmSaveAsync" Width="7rem"/>
     </div>
     <CustomAlert @ref="_alert" />
 </div>

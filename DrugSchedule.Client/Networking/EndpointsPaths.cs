@@ -7,6 +7,7 @@ internal static class EndpointsPaths
     public const string Auth_RefreshToken = "Auth/RefreshToken";
     public const string Auth_UsernameAvailable = "Auth/UsernameAvailable";
     public const string Auth_RevokeTokens = "Auth/RevokeTokens";
+    public const string Auth_CheckClientAuth = "Auth/CheckClientAuth";
     public const string Contacts_GetAll = "Contacts/GetAll";
     public const string Contacts_GetCommon = "Contacts/GetCommon";
     public const string Contacts_GetSingleExtended = "Contacts/GetSingleExtended";

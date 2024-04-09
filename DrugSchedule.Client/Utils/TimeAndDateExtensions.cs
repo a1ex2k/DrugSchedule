@@ -20,8 +20,8 @@ public static class TimeAndDateExtensions
         => time.ToString(Schedules.TimeShortFormat);
 
     public static string ToLongString(this DateTime dateTime)
-        => dateTime.ToString(Schedules.DateTimeLongFormat, FormatProvider);
+        => dateTime.ToLocalTime().ToString(Schedules.DateTimeLongFormat, FormatProvider);
 
     public static string ToShortString(this DateTime dateTime)
-        => dateTime.ToString(Schedules.DateTimeShortFormat, FormatProvider);
+        => dateTime.ToLocalTime().ToString(Schedules.DateTimeShortFormat, FormatProvider);
 }

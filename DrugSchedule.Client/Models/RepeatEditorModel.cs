@@ -1,6 +1,4 @@
-﻿using Blazorise;
-using DrugSchedule.Api.Shared.Dtos;
-using DrugSchedule.Client.Constants;
+﻿using DrugSchedule.Api.Shared.Dtos;
 using DrugSchedule.Client.Utils;
 
 namespace DrugSchedule.Client.Models;
@@ -13,9 +11,9 @@ public class RepeatModel
 
     public bool IsNew => RepeatId == default || ScheduleId == default;
 
-    public DateOnly BeginDate { get; set; }
+    public DateOnly BeginDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
 
-    public TimeOnly? Time { get; set; }
+    public TimeSpan Time { get; set; } = TimeSpan.FromHours(12);
 
     public TimeOfDayDto TimeOfDay { get; set; }
 

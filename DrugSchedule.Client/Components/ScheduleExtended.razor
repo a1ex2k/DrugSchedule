@@ -1,7 +1,7 @@
 ﻿<div class="text-secondary">
     <span>@(Schedule.Enabled ? "Enabled" : "Disabled")</span>
     <span>|</span>
-    <span>@Schedule.CreatedAt.ToShortString()</span>
+    <span>@Schedule.CreatedAt.ToLongString()</span>
 </div>
 
 <div>
@@ -47,10 +47,9 @@
 
 <div>
     <div class="h5 text-primary">Upcoming timetable</div>
-    <Virtualize Items="@Schedule.ScheduleShares" OverscanCount="25">
+    <Virtualize Items="@UpcomingTimetableEntries" OverscanCount="25">
         <ItemContent>
-            <div>@context.Comment</div>
-            <ContactsListElement Contact="@context.UserContact" Selectable=false Navigable />
+            <TimetableElement TimetableEntry="@context" />
          </ItemContent>
          <EmptyContent>
              No upcoming taking events

@@ -78,7 +78,7 @@ public class TokenService : ITokenService
         var newTokenModel = await CreateTokensInternalAsync(tokenParams, cancellationToken);
         await _tokenRepository.RemoveRefreshTokenAsync(guid, refreshToken!, cancellationToken).ConfigureAwait(false);
 
-        return tokenModel;
+        return newTokenModel;
     }
 
     public async Task<OneOf<TokenModel, InvalidInput>> CreateTokensAsync(TokenCreateParams parameters, CancellationToken cancellationToken = default)

@@ -1,9 +1,13 @@
 ﻿@using DrugSchedule.Api.Shared.Dtos
 
-<div class="animate d-flex">
-    <div class="me-2">
-        <span>@Time</span>
-        <span>@TimetableEntry.Date.ToLongString()</span>
+<div class="animate d-flex mb-1">
+    <div class="me-3">
+        <span class="me-2">@TimetableEntry.Date.ToLongString()</span>
+        @if (!DateOnly)
+        {
+            <span>-</span>
+            <span>@Time</span>
+        }
     </div>
 
     @if (TimetableEntry.ConfirmationId != null)

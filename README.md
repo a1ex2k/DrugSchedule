@@ -1,9 +1,11 @@
 # DrugSchedule
 ![Static Badge](https://img.shields.io/badge/.NET%208-blue?style=for-the-badge)
 ![Static Badge](https://img.shields.io/badge/EF%20Core-8A2BE2?style=for-the-badge)
-![Static Badge](https://img.shields.io/badge/SQL%20Server-d38712?style=for-the-badge)    
-**Do not forget taking your medicine with .NET 8**    
-ASP.NET WebAPI project that allows user to create timetable of taking medicine, confirm and control themselves and contacts
+![Static Badge](https://img.shields.io/badge/SQL%20Server-d38712?style=for-the-badge)
+![Static Badge](https://img.shields.io/badge/Blazor_WASM-592c8c?style=for-the-badge)    
+     
+**Do not forget taking your medicine!**    
+ASP.NET WebAPI project that allows users to create timetable of taking medicine, confirm and control themselves and contacts
     
 ## App Features
 ### User features
@@ -25,25 +27,56 @@ ASP.NET WebAPI project that allows user to create timetable of taking medicine, 
 - IQueryable extensions for filters applying and more
 - Custom Expressions for data projection and filtering
 - Separate project with DTOs for referencing from client app project
-- Options pattern for 
-- Libraries in use: [ImageSharp](https://github.com/SixLabors/ImageSharp), [Mapster](https://github.com/MapsterMapper/Mapster), etc.
+- Options pattern for various parameters
+- Libraries in use: [Mapster](https://github.com/MapsterMapper/Mapster), [ImageSharp](https://github.com/SixLabors/ImageSharp), etc.
 
-## How to run
+## Blazor Client
+Blazor client project is an example of using API and provides the main functionality:
+- Explore medicament library
+- Manage user medicaments
+- Manage user profile and contacts
+- Create schedules 
+Look through the source code to find out basic principals and run the project to check the API functionality using the GUI.    
+We recommend to **fill medicament library** with provided sample data from [103.by](https://apteka.103.by/)
+    
+
+## How to host
+### Run WebAPI
 1. Clone repository
 1. Apply migrations. In `DrugSchedule.Storage` directory, run
    ```
-   dotnet ef database update --connection "<YourConnectionsString>"
+   dotnet ef database update --connection "<YourConnectionString>"
    ```
 1. Fill `appsettings.json` of `DrugSchedule.Api`
    - Specify correct values where `<env. specific>`. Predifined ones cam be left default.    
-   - Mind to specify correct URL under `ValidAudience` and `ValidIssuer` to make auth work. *Default launch URL is `http://localhost:5126`*    
+   - Mind to specify correct URL under `ValidAudience`, `ValidIssuer`, `CorsOrigins` to make auth work.    
+     *Default launch URL is `http://localhost:5126` and `http://localhost:5127` is for Blazor client.* 
 1. Build `DrugSchedule.Api` and run.   
 1. If `EnableSwagger` set to `true`, open in browser
    ```
    http://localhost:5126/swagger/index.html
    ```
-   
+        
+### Run Blazor client
+1. Set multiple startup projects in Visual Studio:    
+   `DrugSchedule.Api` and `DrugSchedule.Client`
+1. Build and run. Client will be available on
+   ```
+   http://localhost:5127/
+   ```
+1. If you want use different address/port, update respectfully:
+   - `CorsOrigins` property in `appsettings.json` of `DrugSchedule.Api`
+   - `ApiBaseUri` property in `wwwroot/appsettings.json` of `DrugSchedule.Client`
+        
+### Fill medicament library
+1. Download archive *[in pragress]* and extract its content.
+1. Ensure migrations are already applied. 
+1. Build `Utils/DrugScheduleFill` and run it with parameters:
+   ```
+   DrugScheduleFill.exe -s "<path/to/extracted>" -c "<YourConnectionString>" -o "<storage/directory>"
+   ```
+   where `<storage/directory?` is `FileStorageOptions:DirectoryPath` of API project appsettings
+        
 ## Planning features
-- Sample data collection for Drug Library *(under development)*
-- Blazor WASM client *(under development)*
-- Email confirmation...
+- Make Blazor WASM client better
+- Email confirmation

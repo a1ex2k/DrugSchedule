@@ -11,9 +11,11 @@ public partial class TimetableElement
 
     [Parameter, EditorRequired] public TimetableEntryDto TimetableEntry { get; set; } = default!;
 
-    [Parameter] public bool NavigableToSchedule { get; set; } = true;
+    [Parameter] public bool NavigableToSchedule { get; set; } = false;
 
     [Parameter] public bool NavigableToConfirmation { get; set; } = true;
+
+    [Parameter] public bool DateOnly { get; set; } = false;
 
     protected override void OnParametersSet()
     {
