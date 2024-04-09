@@ -56,7 +56,7 @@ try
     var allFiles = Directory.GetFiles(fromPath, "*.*", SearchOption.TopDirectoryOnly);
     foreach (string filePath in allFiles)
     {
-        File.Copy(filePath, newPath.Replace(fromPath, newPath), true);
+        File.Copy(filePath, filePath.Replace(fromPath, newPath), true);
     }
     
     transaction.Commit();
