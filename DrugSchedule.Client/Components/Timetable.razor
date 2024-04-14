@@ -1,0 +1,19 @@
+﻿@using DrugSchedule.Api.Shared.Dtos
+
+<div class="list">
+
+    <Virtualize Items="@Days" OverscanCount="25">
+        <ItemContent>
+           <div Class="card list-element p-2">
+               <h5>@context.Date.ToLongString()</h5>
+                @foreach (var entry in context.Entries)
+                {
+                    <TimetableElement TimetableEntry="entry" NavigableToSchedule ShowMode="TimetableElement.Mode.TimeOnly" />
+                }
+            </div>
+        </ItemContent>
+        <EmptyContent>
+            <p>There are no timetable entries to display</p>
+        </EmptyContent>
+    </Virtualize>
+</div>

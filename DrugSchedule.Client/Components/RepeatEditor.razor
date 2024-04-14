@@ -28,7 +28,7 @@
                 <FieldLabel>Time of day</FieldLabel>
                 <SelectList TItem="EnumElement<TimeOfDayDto>"
                             TValue="TimeOfDayDto"
-                            Data="@Schedules.TimeOfDay"
+                            Data="@DateAndTime.TimeOfDay"
                             TextField="@((item)=>item.Name)"
                             ValueField="@((item)=>item.Value)"
                             @bind-SelectedValue="@Model.TimeOfDay" />

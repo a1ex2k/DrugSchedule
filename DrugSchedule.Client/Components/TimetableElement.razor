@@ -2,11 +2,17 @@
 
 <div class="animate d-flex mb-1">
     <div class="me-3">
-        <span class="me-2">@TimetableEntry.Date.ToLongString()</span>
-        @if (!DateOnly)
+        @if (ShowMode == Mode.DateAndTime)
         {
-            <span>-</span>
-            <span>@Time</span>
+            <span class="me-2">@TimetableEntry.Date.ToLongString() - @Time</span>
+        }
+        else if (ShowMode == Mode.DateOnly)
+        {
+            <span class="me-2">@TimetableEntry.Date.ToLongString()</span>
+        }
+        else if (ShowMode == Mode.TimeOnly)
+        {
+            <span class="me-2">@Time</span>
         }
     </div>
 
@@ -28,7 +34,7 @@
     @if (NavigableToSchedule)
     {
         <div class="text-secondary me-2">
-                <Blazorise.Link Clicked="NavigateToSchedule">Schedule</Blazorise.Link>
+            <Blazorise.Link Clicked="NavigateToSchedule">Schedule</Blazorise.Link>
         </div>
     }
 </div>

@@ -27,7 +27,7 @@
             @foreach (var entry in UpcomingTimetable)
             {
                 <div>
-                    <TimetableElement DateOnly TimetableEntry="entry" NavigableToConfirmation NavigableToSchedule="false" />
+                    <TimetableElement TimetableEntry="@entry" NavigableToSchedule="false" />
                 </div>
             }
             </div>

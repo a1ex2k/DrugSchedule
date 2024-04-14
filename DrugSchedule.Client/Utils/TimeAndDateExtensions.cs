@@ -8,20 +8,19 @@ public static class TimeAndDateExtensions
     private static readonly IFormatProvider FormatProvider = new CultureInfo("en-US");
 
     public static string ToLongString(this DateOnly date)
-        => date.ToString(Schedules.DateLongFormat, FormatProvider);   
+        => date.ToString(date.Year == DateTime.Now.Year ? DateAndTime.DateLongFormatCurrentYear : DateAndTime.DateLongFormat, FormatProvider);   
     
     public static string ToShortString(this DateOnly date)
-        => date.ToString(Schedules.DateShortFormat, FormatProvider);
+        => date.ToString(date.Year == DateTime.Now.Year ? DateAndTime.DateShortFormatCurrentYear : DateAndTime.DateShortFormat, FormatProvider);
 
     public static string ToLongString(this TimeOnly time)
-        => time.ToString(Schedules.TimeLongFormat);
+        => time.ToString(DateAndTime.TimeLongFormat);
 
     public static string ToShortString(this TimeOnly time)
-        => time.ToString(Schedules.TimeShortFormat);
-
+        => time.ToString(DateAndTime.TimeShortFormat);
     public static string ToLongString(this DateTime dateTime)
-        => dateTime.ToLocalTime().ToString(Schedules.DateTimeLongFormat, FormatProvider);
+        => dateTime.ToLocalTime().ToString(dateTime.Year == DateTime.Now.Year ? DateAndTime.DateTimeLongFormatCurrentYear : DateAndTime.DateTimeLongFormat, FormatProvider);
 
     public static string ToShortString(this DateTime dateTime)
-        => dateTime.ToLocalTime().ToString(Schedules.DateTimeShortFormat, FormatProvider);
+        => dateTime.ToLocalTime().ToString(dateTime.Year == DateTime.Now.Year ? DateAndTime.DateTimeShortFormatCurrentYear : DateAndTime.DateTimeShortFormat, FormatProvider);
 }

@@ -1,12 +1,15 @@
 ﻿@page "/"
 
-
 <PageTitle>DrugSchedule</PageTitle>
-
 <h3 class="h3 text-primary">DrugSchedule</h3>
 
-<h5>Welcome to DrugSchedule Blazor Client!</h5>
-
-<div>DrugSchedule is the ASP.NET WebAPI project that allows users to create timetable of taking medicine, confirm and control themselves and contacts</div>
-
-<a href="https://github.com/a1ex2k/DrugSchedule" target="_blank">https://github.com/a1ex2k/DrugSchedule</a>
+<Microsoft.AspNetCore.Components.Authorization.AuthorizeView>
+    <Authorized>
+        <Timetable />
+    </Authorized>
+    <NotAuthorized>
+        <h5>Welcome to DrugSchedule Blazor Client!</h5>
+        <div>DrugSchedule is the ASP.NET WebAPI project that allows users to create timetable of taking medicine, confirm and control themselves and contacts</div>
+        <a href="https://github.com/a1ex2k/DrugSchedule" target="_blank">https://github.com/a1ex2k/DrugSchedule</a>
+    </NotAuthorized>
+</Microsoft.AspNetCore.Components.Authorization.AuthorizeView>

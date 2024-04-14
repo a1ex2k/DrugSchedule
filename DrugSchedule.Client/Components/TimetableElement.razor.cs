@@ -15,7 +15,10 @@ public partial class TimetableElement
 
     [Parameter] public bool NavigableToConfirmation { get; set; } = true;
 
-    [Parameter] public bool DateOnly { get; set; } = false;
+    [Parameter] public Mode ShowMode { get; set; } = Mode.DateAndTime;
+
+    public enum Mode { DateAndTime, DateOnly, TimeOnly }
+
 
     protected override void OnParametersSet()
     {
