@@ -10,11 +10,13 @@ using DrugSchedule.Client.Services;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using static System.Net.WebRequestMethods;
+
+const string ApiUri = "http://127.0.0.1:5126/api/";
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Configuration.AddJsonFile("appsettings.json");
 
 builder.Services
     .AddBlazorise(options =>
@@ -34,9 +36,7 @@ builder.Services.AddScoped<AuthenticationStateProvider>(x => x.GetRequiredServic
 builder.Services.AddScoped<IApiClient, ApiClient>();
 builder.Services.AddScoped<IUrlService, UrlService>();
 
-
-var apiBaseUri = builder.Configuration.GetValue<string>("ApiBaseUri");
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(apiBaseUri!) });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(ApiUri) });
 
 var app = builder.Build();
 var apiClient = app.Services.GetRequiredService<IApiClient>();

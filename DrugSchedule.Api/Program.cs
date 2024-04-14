@@ -14,9 +14,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog.Web;
 using TokenService = DrugSchedule.Api.Jwt.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+builder.Host.UseNLog();
+
 builder.Configuration.AddJsonFile("appsettings.local.json", true);
 
 var useSwagger = builder.Configuration.GetValue<bool>("EnableSwagger");

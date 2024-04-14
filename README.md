@@ -67,7 +67,7 @@ Made with [Blazorise](https://github.com/Megabit/Blazorise) component library.
    ```
 1. If you want use different address/port, update respectively:
    - `CorsOrigins` property in `appsettings.json` of `DrugSchedule.Api`
-   - `ApiBaseUri` property in `wwwroot/appsettings.json` of `DrugSchedule.Client`
+   - `const string ApiUri` in `DrugSchedule.Client/Program.cs` (rebuild required)
         
 ### Fill medicament library
 1. Download [DrugScheduleSampleData.7z](https://drive.google.com/file/d/1jQhQEunzjMeytzffdpDUFravuY0pUqrG/view?usp=sharing) and extract its content.
