@@ -25,6 +25,7 @@ public partial class ProfileEditor
     {
         UserUpdateDto.Sex = CurrentUser.Sex;
         UserUpdateDto.DateOfBirth = CurrentUser.DateOfBirth;
+        UserUpdateDto.RealName = CurrentUser.RealName;
         return base.OnParametersSetAsync();
     }
 
@@ -111,10 +112,15 @@ public partial class ProfileEditor
             UserUpdateDto.RealName = null;
         }
 
+        if (UserUpdateDto.DateOfBirth?.Year < 1800)
+        {
+            UserUpdateDto.DateOfBirth = null;
+        }
+
         var result = await ApiClient.UpdateProfileAsync(UserUpdateDto);
         if (result.IsOk)
         {
-            CurrentUser.RealName = UserUpdateDto.RealName;
+            CurrentUser.RealName = UserUpdateDto.RealName ;
             CurrentUser.DateOfBirth = UserUpdateDto.DateOfBirth;
             CurrentUser.Sex = UserUpdateDto.Sex;
             await AfterSave.InvokeAsync();
