@@ -18,7 +18,7 @@ public partial class RepeatView
         PeriodStart = Repeat.BeginDate.ToShortString();
         PeriodEnd = Repeat.EndDate?.ToShortString();
         Time = Repeat.TimeOfDay == TimeOfDayDto.None 
-            ? Repeat.Time!.Value.ToShortString()
+            ? Repeat.Time?.ToShortString()
             : Repeat.TimeOfDay.ToHumanReadableString();
 
         base.OnParametersSet();

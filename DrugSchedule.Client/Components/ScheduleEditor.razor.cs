@@ -144,6 +144,7 @@ public partial class ScheduleEditor
             await AfterCreate.InvokeAsync(Model.ScheduleId);
         }
 
+        StateHasChanged();
         return new EditorModal.ModalResult(result.IsOk, result.Messages);
     }
 

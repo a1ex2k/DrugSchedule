@@ -130,7 +130,7 @@ public class ScheduleManipulatingService : IScheduleManipulatingService
         }
 
         var invalidInput = new InvalidInput();
-        if (newRepeat.EndDate != null && newRepeat.EndDate <= newRepeat.BeginDate)
+        if (newRepeat.EndDate != null && newRepeat.EndDate < newRepeat.BeginDate)
         {
             invalidInput.Add(ErrorMessages.ScheduleDatesInvalid);
         }

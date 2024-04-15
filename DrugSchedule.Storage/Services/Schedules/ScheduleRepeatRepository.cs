@@ -77,7 +77,7 @@ public class ScheduleRepeatRepository : IScheduleRepeatRepository
             Id = 0,
             BeginDate = repeat.BeginDate,
             Time = repeat.Time,
-            TimeOfDay = Contract.TimeOfDay.None,
+            TimeOfDay = repeat.TimeOfDay,
             RepeatDayOfWeek = repeat.RepeatDayOfWeek,
             EndDate = repeat.EndDate,
             MedicamentTakingScheduleId = repeat.MedicamentTakingScheduleId,

@@ -22,9 +22,13 @@ public partial class TimetableElement
 
     protected override void OnParametersSet()
     {
-        Time = TimetableEntry.TimeOfDay == TimeOfDayDto.None
-            ? TimetableEntry.Time!.Value.ToShortString()
-            : TimetableEntry.TimeOfDay.ToHumanReadableString();
+        if (TimetableEntry != null)
+        {
+            Time = TimetableEntry.TimeOfDay == TimeOfDayDto.None
+                ? TimetableEntry.Time?.ToShortString()
+                : TimetableEntry.TimeOfDay.ToHumanReadableString();
+        }
+
 
         base.OnParametersSet();
     }
